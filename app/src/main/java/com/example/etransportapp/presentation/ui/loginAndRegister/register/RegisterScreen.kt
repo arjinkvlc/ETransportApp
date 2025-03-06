@@ -228,7 +228,7 @@ fun RegisterScreen(
                     viewModel.registerUser(context, onNavigateToNext)
                 },
                 modifier = Modifier
-                    .width(120.dp) // ✅ Butonun boyutunu küçülttük
+                    .width(90.dp) // ✅ Butonun boyutunu küçülttük
                     .height(40.dp), // ✅ Daha küçük yükseklik
                 colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
                 shape = RoundedCornerShape(12.dp) // ✅ Köşeleri biraz daha yumuşattık

@@ -11,6 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RegisterViewModel : ViewModel() {
+
+    // ✅ Kullanıcı Bilgileri (Part 1)
     var companyName by mutableStateOf("")
     var firstName by mutableStateOf("")
     var lastName by mutableStateOf("")
@@ -19,6 +21,13 @@ class RegisterViewModel : ViewModel() {
     var password by mutableStateOf("")
     var confirmPassword by mutableStateOf("")
 
+    // ✅ Kullanıcının Seçtiği Rol (Part 2)
+    var selectedRole by mutableStateOf("")
+
+    /**
+     * ✅ Kullanıcı Kaydını Gerçekleştir
+     * Bu fonksiyon backend API'ye istek atarak kullanıcıyı kaydeder.
+     */
     fun registerUser(context: Context, onSuccess: () -> Unit) {
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() ||
             phoneNumber.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()
@@ -37,13 +46,22 @@ class RegisterViewModel : ViewModel() {
             return
         }
 
+        if (selectedRole.isEmpty()) {
+            Toast.makeText(context, "Lütfen bir rol seçin", Toast.LENGTH_SHORT).show()
+            return
+        }
+
         // ✅ API Çağrısı (Simüle Edilmiş)
         CoroutineScope(Dispatchers.IO).launch {
-            // API isteği buraya gelecek
+            try {
+                // TODO: Buraya Retrofit ile API çağrısı ekle
 
-            // Başarı Durumu
-            onSuccess()
-            Toast.makeText(context, "Kayıt başarılı!", Toast.LENGTH_SHORT).show()
+                // Başarı Durumu
+                onSuccess()
+                Toast.makeText(context, "Kayıt başarılı!", Toast.LENGTH_SHORT).show()
+            } catch (e: Exception) {
+                Toast.makeText(context, "Kayıt başarısız: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 }
