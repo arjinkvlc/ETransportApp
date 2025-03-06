@@ -4,5 +4,13 @@
         <!-- Saydam Status Bar -->
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:windowTranslucentStatus">true</item>
+
+        <!-- Tam ekran deneyimi sağlamak için -->
+        <item name="android:fitsSystemWindows">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
+        <!-- Navigation barı da şeffaf yapma (eğer istersen) -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 </resources>

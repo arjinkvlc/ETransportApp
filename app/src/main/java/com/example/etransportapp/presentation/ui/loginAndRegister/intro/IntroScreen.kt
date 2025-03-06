@@ -20,7 +20,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.graphics.toColor
 import com.example.etransportapp.R
 import com.example.etransportapp.ui.theme.LightBlue
 
@@ -36,7 +35,7 @@ fun IntroScreen() {
         Row(modifier = Modifier.padding(bottom = 20.dp)) {
             Image(
                 modifier = Modifier,
-                painter = painterResource(id = R.drawable.icon),
+                painter = painterResource(id = R.drawable.icon_logo),
                 contentDescription = "Logo Image"
             )
             Image(
