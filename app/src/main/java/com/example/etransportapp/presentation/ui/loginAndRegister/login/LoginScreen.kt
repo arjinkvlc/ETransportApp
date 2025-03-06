@@ -45,7 +45,7 @@ fun LoginScreen(viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = R.drawable.icon),
+                painter = painterResource(id = R.drawable.icon_logo),
                 contentDescription = "App Logo",
                 modifier = Modifier.height(50.dp), // Sadece yükseklik belirledik, genişlik orantılı olur
                 contentScale = ContentScale.FillHeight
