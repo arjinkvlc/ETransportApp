@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.etransportapp.R
+import com.example.etransportapp.ui.theme.LightBlue
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -127,7 +128,7 @@ fun LoginScreen(viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose
 
             Text(
                 text = "Şifremi Unuttum?",
-                color = Color.Cyan,
+                color = LightBlue,
                 modifier = Modifier.clickable { /* Şifremi unuttum işlemi */ }
             )
         }
@@ -146,7 +147,7 @@ fun LoginScreen(viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose
                 .fillMaxWidth()
                 .height(50.dp)
                 .clip(RoundedCornerShape(10.dp)),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Cyan)
+            colors = ButtonDefaults.buttonColors(containerColor = LightBlue)
         ) {
             Text("Giriş Yap", fontSize = 18.sp)
         }
@@ -155,7 +156,7 @@ fun LoginScreen(viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose
 
         Text(
             text = "Hesabın yok mu? Kayıt Ol",
-            color = Color.Cyan,
+            color = LightBlue,
             modifier = Modifier.clickable { onNavigateToRegister() }
         )
     }
