@@ -50,7 +50,7 @@ fun RegisterScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = R.drawable.icon),
+                painter = painterResource(id = R.drawable.icon_logo),
                 contentDescription = "App Logo",
                 modifier = Modifier.height(50.dp),
                 contentScale = ContentScale.FillHeight
