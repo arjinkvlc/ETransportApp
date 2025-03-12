@@ -1,5 +1,7 @@
 package com.example.etransportapp.presentation.ui.home
 
+import android.content.Context
+import android.content.Intent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,15 +18,18 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat.startActivity
 import com.example.etransportapp.R
 import com.example.etransportapp.presentation.ui.home.loads.LoadsScreen
 import com.example.etransportapp.presentation.ui.home.profile.ProfileScreen
 import com.example.etransportapp.presentation.ui.home.trucks.TrucksScreen
+import com.example.etransportapp.presentation.ui.loginAndRegister.LoginAndRegisterActivity
 import com.example.etransportapp.ui.theme.LightBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun HomeScreen() {
+fun HomeScreen(context: Context) {
+    var isLoggedIn by remember { mutableStateOf(false) }
     var selectedItem by remember { mutableStateOf(0) }
     val items = listOf("Yük İlanları", "Araç İlanları", "Profil")
     val icons = listOf(
@@ -61,7 +66,10 @@ fun HomeScreen() {
                 items.forEachIndexed { index, item ->
                     NavigationBarItem(
                         selected = selectedItem == index,
-                        onClick = { selectedItem = index },
+                        onClick = {
+                            selectedItem = index
+
+                        },
                         icon = {
                             Image(
                                 painter = icons[index],
@@ -91,11 +99,15 @@ fun HomeScreen() {
                     .padding(innerPadding)
             )
 
-            2 -> ProfileScreen(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding)
-            )
+            2 -> if (!isLoggedIn) {
+                startActivity(context, Intent(context, LoginAndRegisterActivity::class.java), null)
+            } else {
+                ProfileScreen(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                )
+            }
 
             else ->
                 LoadsScreen(

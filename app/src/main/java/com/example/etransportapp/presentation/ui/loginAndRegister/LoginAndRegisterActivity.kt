@@ -2,11 +2,16 @@ package com.example.etransportapp.presentation.ui.loginAndRegister
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
 import com.example.etransportapp.R
+import com.example.etransportapp.presentation.ui.loginAndRegister.intro.IntroScreen
 
-class LoginAndRegisterActivity : AppCompatActivity() {
+class LoginAndRegisterActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login_and_register)
+        setContent {
+            IntroScreen()
+        }
     }
 }
