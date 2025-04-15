@@ -113,7 +113,7 @@ fun RegisterPart2Screen(
             ) {
                 Button(
                     onClick = {
-                        viewModel.registerUser(context, onNavigateToNext)
+                        viewModel.registerUser(context, /*onNavigateToNext*/)
                     },
                     modifier = Modifier
                         .width(90.dp)

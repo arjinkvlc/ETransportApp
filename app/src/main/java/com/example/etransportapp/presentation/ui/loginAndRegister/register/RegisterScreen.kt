@@ -1,6 +1,5 @@
 package com.example.etransportapp.presentation.ui.loginAndRegister.register
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -22,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.etransportapp.R
 import com.example.etransportapp.ui.theme.LightBlue
 
@@ -29,7 +29,9 @@ import com.example.etransportapp.ui.theme.LightBlue
 @Composable
 fun RegisterScreen(
     viewModel: RegisterViewModel = viewModel(),
-    onNavigateToNext: () -> Unit
+    modifier: Modifier,
+    navController: NavHostController,
+    //onNavigateToNext: () -> Unit
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
@@ -225,7 +227,7 @@ fun RegisterScreen(
         ) {
             Button(
                 onClick = {
-                    viewModel.registerUser(context, onNavigateToNext)
+                    viewModel.registerUser(context, /*onNavigateToNext*/)
                 },
                 modifier = Modifier
                     .width(90.dp) // ✅ Butonun boyutunu küçülttük
@@ -242,8 +244,8 @@ fun RegisterScreen(
     }
 }
 
-@Preview
+/*@Preview
 @Composable
 fun PreviewRegisterScreen() {
-    RegisterScreen(onNavigateToNext = {})
-}
+    RegisterScreen(modifier = modifier, navController = navController)
+}*/
