@@ -17,17 +17,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.etransportapp.R
 import com.example.etransportapp.ui.theme.LightBlue
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginScreen(viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose.viewModel(),
-                onNavigateToRegister: () -> Unit
+fun LoginScreen(
+    viewModel: LoginViewModel = viewModel(),
+    modifier: Modifier,
+    navController: NavHostController
 ) {
     var passwordVisible by remember { mutableStateOf(false) }
     var rememberMe by remember { mutableStateOf(false) }
@@ -45,14 +47,14 @@ fun LoginScreen(viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = R.drawable.icon_logo),
+                painter = painterResource(id = R.drawable.ic_logo),
                 contentDescription = "App Logo",
                 modifier = Modifier.height(50.dp), // Sadece yükseklik belirledik, genişlik orantılı olur
                 contentScale = ContentScale.FillHeight
             )
             Spacer(modifier = Modifier.width(10.dp))
             Image(
-                painter = painterResource(id = R.drawable.e_tasimacilik),
+                painter = painterResource(id = R.drawable.text_etasimacilik),
                 contentDescription = "App text",
                 modifier = Modifier.height(50.dp), // Aynı yükseklik veriyoruz, genişlik otomatik ayarlanacak
                 contentScale = ContentScale.FillHeight
@@ -157,13 +159,8 @@ fun LoginScreen(viewModel: LoginViewModel = androidx.lifecycle.viewmodel.compose
         Text(
             text = "Hesabın yok mu? Kayıt Ol",
             color = LightBlue,
-            modifier = Modifier.clickable { onNavigateToRegister() }
+            modifier = Modifier.clickable { }
         )
     }
 }
 
-@Preview
-@Composable
-fun PreviewLoginScreen() {
-    LoginScreen(onNavigateToRegister = {})
-}

@@ -1,13 +1,11 @@
 package com.example.etransportapp.presentation.ui.loginAndRegister.register
 
-import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
@@ -61,14 +59,14 @@ fun RegisterPart2Screen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Image(
-                    painter = painterResource(id = R.drawable.icon_logo),
+                    painter = painterResource(id = R.drawable.ic_logo),
                     contentDescription = "App Logo",
                     modifier = Modifier.height(50.dp),
                     contentScale = ContentScale.FillHeight
                 )
                 Spacer(modifier = Modifier.width(10.dp))
                 Image(
-                    painter = painterResource(id = R.drawable.e_tasimacilik),
+                    painter = painterResource(id = R.drawable.text_etasimacilik),
                     contentDescription = "App text",
                     modifier = Modifier.height(50.dp),
                     contentScale = ContentScale.FillHeight
@@ -113,7 +111,7 @@ fun RegisterPart2Screen(
             ) {
                 Button(
                     onClick = {
-                        viewModel.registerUser(context, onNavigateToNext)
+                        viewModel.registerUser(context, /*onNavigateToNext*/)
                     },
                     modifier = Modifier
                         .width(90.dp)
