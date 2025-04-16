@@ -1,4 +1,4 @@
-package com.example.etransportapp.presentation.ui.home.loads
+package com.example.etransportapp.presentation.ui.home.loadAds
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,10 +15,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.example.etransportapp.data.model.LoadItem
+import com.example.etransportapp.data.model.LoadAdItem
 
 @Composable
-fun LoadCard(item: LoadItem) {
+fun LoadCard(item: LoadAdItem) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

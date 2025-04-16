@@ -1,9 +1,8 @@
-package com.example.etransportapp.presentation.ui.home.loads
+package com.example.etransportapp.presentation.ui.home.loadAds
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -13,7 +12,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.etransportapp.data.model.LoadItem
+import com.example.etransportapp.data.model.LoadAdItem
 import com.example.etransportapp.ui.theme.LightBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,7 +20,7 @@ import com.example.etransportapp.ui.theme.LightBlue
 fun CreateLoadScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: LoadViewModel// ViewModel'i burada da kullan
+    viewModel: LoadAdViewModel// ViewModel'i burada da kullan
 ) {
     var title by remember { mutableStateOf(TextFieldValue("")) }
     var description by remember { mutableStateOf(TextFieldValue("")) }
@@ -63,7 +62,7 @@ fun CreateLoadScreen(
                             date.text.isNotBlank()
                         ) {
                             viewModel.addLoad(
-                                LoadItem(
+                                LoadAdItem(
                                     title = title.text,
                                     description = description.text,
                                     origin = origin.text,

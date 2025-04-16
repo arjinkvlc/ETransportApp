@@ -1,4 +1,4 @@
-package com.example.etransportapp.presentation.ui.home.trucks
+package com.example.etransportapp.presentation.ui.home.truckAds
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -6,7 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 
 @Composable
-fun TrucksScreen(modifier: Modifier, navController: NavHostController){
-    Text(text ="TRUCKS SCREEN")
+fun VehicleAdsScreen(modifier: Modifier, navController: NavHostController){
+    Text(text ="VEHICLE ADS SCREEN")
 
 }

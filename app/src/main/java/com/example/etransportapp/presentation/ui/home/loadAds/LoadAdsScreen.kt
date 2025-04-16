@@ -1,4 +1,4 @@
-package com.example.etransportapp.presentation.ui.home.loads
+package com.example.etransportapp.presentation.ui.home.loadAds
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,7 +21,7 @@ import com.example.etransportapp.ui.theme.LightBlue
 fun LoadsScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: LoadViewModel
+    viewModel: LoadAdViewModel
 ) {
     val loads by viewModel.loads.collectAsState()
 
@@ -51,7 +51,7 @@ fun LoadsScreen(
         }
 
         FloatingActionButton(
-            onClick = { navController.navigate("create_load") },
+            onClick = { navController.navigate("create_load_ad") },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)

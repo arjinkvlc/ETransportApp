@@ -30,8 +30,8 @@ fun HomeScreen(navController: NavHostController) {
     val currentRoute = currentBackStackEntry.value?.destination?.route
 
     val showTopBar = currentRoute in listOf(
-        NavRoutes.LOADS,
-        NavRoutes.TRUCKS,
+        NavRoutes.LOAD_ADS,
+        NavRoutes.VEHICLE_ADS,
         NavRoutes.PROFILE
     )
     val showBottomBar = showTopBar
@@ -44,8 +44,8 @@ fun HomeScreen(navController: NavHostController) {
                     title = {
                         Text(
                             text = when (currentRoute) {
-                                NavRoutes.LOADS -> "Yük İlanları"
-                                NavRoutes.TRUCKS -> "Araç İlanları"
+                                NavRoutes.LOAD_ADS -> "Yük İlanları"
+                                NavRoutes.VEHICLE_ADS -> "Araç İlanları"
                                 NavRoutes.PROFILE -> "Profil"
                                 else -> ""
                             },
@@ -72,8 +72,8 @@ fun HomeScreen(navController: NavHostController) {
                     R.drawable.baseline_person_24
                 )
                 val routes = listOf(
-                    NavRoutes.LOADS,
-                    NavRoutes.TRUCKS,
+                    NavRoutes.LOAD_ADS,
+                    NavRoutes.VEHICLE_ADS,
                     NavRoutes.PROFILE
                 )
 
