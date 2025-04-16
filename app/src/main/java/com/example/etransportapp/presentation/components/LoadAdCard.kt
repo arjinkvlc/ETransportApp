@@ -62,7 +62,7 @@ fun LoadAdCard(item: LoadAd,onClick: () -> Unit) {
                     modifier = Modifier.size(40.dp)
                 ) {
                     Icon(
-                        painter = painterResource(R.drawable.ic_loadads), // Örn: yük ikonu
+                        painter = painterResource(R.drawable.ic_loadads),
                         contentDescription = null,
                         tint = Color.White,
                         modifier = Modifier.padding(8.dp)

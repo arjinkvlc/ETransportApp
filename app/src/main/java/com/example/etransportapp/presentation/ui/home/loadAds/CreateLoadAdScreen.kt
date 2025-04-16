@@ -20,7 +20,7 @@ import com.example.etransportapp.ui.theme.LightBlue
 fun CreateLoadAdScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: LoadAdViewModel// ViewModel'i burada da kullan
+    viewModel: LoadAdViewModel
 ) {
     var title by remember { mutableStateOf(TextFieldValue("")) }
     var description by remember { mutableStateOf(TextFieldValue("")) }
@@ -72,7 +72,7 @@ fun CreateLoadAdScreen(
                                     userId = "username"
                                 )
                             )
-                            navController.popBackStack() // oluşturma sonrası geri dön
+                            navController.popBackStack()
                         }
                     },
                     modifier = Modifier

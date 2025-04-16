@@ -1,6 +1,5 @@
 package com.example.etransportapp.presentation.ui.home
 
-
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -35,7 +34,6 @@ fun HomeScreen(navController: NavHostController) {
         NavRoutes.MY_ADS,
         NavRoutes.PROFILE
     )
-    val showBottomBar = showTopBar
     val context = LocalContext.current
 
     Scaffold(
@@ -66,8 +64,8 @@ fun HomeScreen(navController: NavHostController) {
             }
         },
         bottomBar = {
-            if (showBottomBar) {
-                val items = listOf("Yük İlanları", "Araç İlanları","İlanlarım", "Profil")
+            if (showTopBar) {
+                val items = listOf("Yük İlanları", "Araç İlanları", "İlanlarım", "Profil")
                 val icons = listOf(
                     R.drawable.ic_loadads,
                     R.drawable.ic_vehicleads,
