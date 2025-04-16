@@ -19,7 +19,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.R
@@ -42,11 +41,11 @@ fun IntroScreen(
         Row(modifier = Modifier.padding(bottom = 20.dp)) {
             Image(
                 modifier = Modifier,
-                painter = painterResource(id = R.drawable.icon_logo),
+                painter = painterResource(id = R.drawable.ic_logo),
                 contentDescription = "Logo Image"
             )
             Image(
-                painter = painterResource(id = R.drawable.e_tasimacilik),
+                painter = painterResource(id = R.drawable.text_etasimacilik),
                 contentDescription = "E-Tasimacilik"
             )
         }
@@ -59,7 +58,7 @@ fun IntroScreen(
             colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
             onClick = {
                 viewModel.saveLoginState(context,true) // Kullanıcı giriş yaptı
-                navController.navigate("loads") {
+                navController.navigate("load_ads") {
                     popUpTo("intro") { inclusive = true } // IntroScreen'i back stack'ten sil
                 }
             }

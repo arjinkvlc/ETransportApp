@@ -1,57 +1,61 @@
-package com.example.etransportapp.presentation.ui.home.loadAds
+package com.example.etransportapp.presentation.ui.home.vehicleAds
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdCard
 import com.example.etransportapp.ui.theme.LightBlue
 
 @Composable
-fun LoadAdsScreen(
+fun VehicleAdsScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: LoadAdViewModel
+    viewModel: VehicleAdViewModel
 ) {
-    val loads by viewModel.loadAds.collectAsState()
+    val vehicles by viewModel.vehicleAds.collectAsState()
 
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            items(loads) { item ->
-                LoadAdCard(item)
+            items(vehicles) { item ->
+                VehicleAdCard(item)
             }
         }
 
         FloatingActionButton(
-            onClick = { navController.navigate("create_load_ad") },
+            onClick = { navController.navigate("create_vehicle_ad") },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
-                .size(72.dp), // Daha büyük ve yuvarlak
+                .size(72.dp),
             containerColor = LightBlue,
-            shape = CircleShape // Tam yuvarlak form
+            shape = CircleShape
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
-                contentDescription = "Yeni Yük İlanı Ekle",
+                contentDescription = "Yeni Araç İlanı Ekle",
                 modifier = Modifier.size(32.dp),
                 tint = Color.White
             )
         }
-
     }
 }

@@ -17,7 +17,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -52,14 +51,14 @@ fun RegisterScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             Image(
-                painter = painterResource(id = R.drawable.icon_logo),
+                painter = painterResource(id = R.drawable.ic_logo),
                 contentDescription = "App Logo",
                 modifier = Modifier.height(50.dp),
                 contentScale = ContentScale.FillHeight
             )
             Spacer(modifier = Modifier.width(10.dp))
             Image(
-                painter = painterResource(id = R.drawable.e_tasimacilik),
+                painter = painterResource(id = R.drawable.text_etasimacilik),
                 contentDescription = "App text",
                 modifier = Modifier.height(50.dp),
                 contentScale = ContentScale.FillHeight

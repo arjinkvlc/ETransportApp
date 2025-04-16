@@ -12,12 +12,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.etransportapp.data.model.LoadAdItem
+import com.example.etransportapp.data.model.LoadAd
 import com.example.etransportapp.ui.theme.LightBlue
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CreateLoadScreen(
+fun CreateLoadAdScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
     viewModel: LoadAdViewModel// ViewModel'i burada da kullan
@@ -61,14 +61,15 @@ fun CreateLoadScreen(
                             price.text.isNotBlank() &&
                             date.text.isNotBlank()
                         ) {
-                            viewModel.addLoad(
-                                LoadAdItem(
+                            viewModel.addLoadAd(
+                                LoadAd(
                                     title = title.text,
                                     description = description.text,
                                     origin = origin.text,
                                     destination = destination.text,
                                     price = price.text,
-                                    date = date.text
+                                    date = date.text,
+                                    userId = "username"
                                 )
                             )
                             navController.popBackStack() // oluşturma sonrası geri dön

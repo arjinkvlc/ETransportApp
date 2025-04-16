@@ -32,6 +32,7 @@ fun HomeScreen(navController: NavHostController) {
     val showTopBar = currentRoute in listOf(
         NavRoutes.LOAD_ADS,
         NavRoutes.VEHICLE_ADS,
+        NavRoutes.MY_ADS,
         NavRoutes.PROFILE
     )
     val showBottomBar = showTopBar
@@ -46,6 +47,7 @@ fun HomeScreen(navController: NavHostController) {
                             text = when (currentRoute) {
                                 NavRoutes.LOAD_ADS -> "Yük İlanları"
                                 NavRoutes.VEHICLE_ADS -> "Araç İlanları"
+                                NavRoutes.MY_ADS -> "İlanlarım"
                                 NavRoutes.PROFILE -> "Profil"
                                 else -> ""
                             },
@@ -65,15 +67,17 @@ fun HomeScreen(navController: NavHostController) {
         },
         bottomBar = {
             if (showBottomBar) {
-                val items = listOf("Yük İlanları", "Araç İlanları", "Profil")
+                val items = listOf("Yük İlanları", "Araç İlanları","İlanlarım", "Profil")
                 val icons = listOf(
-                    R.drawable.icon_tirbul,
-                    R.drawable.icon_yukbul,
+                    R.drawable.ic_loadads,
+                    R.drawable.ic_vehicleads,
+                    R.drawable.ic_myads,
                     R.drawable.baseline_person_24
                 )
                 val routes = listOf(
                     NavRoutes.LOAD_ADS,
                     NavRoutes.VEHICLE_ADS,
+                    NavRoutes.MY_ADS,
                     NavRoutes.PROFILE
                 )
 
