@@ -25,9 +25,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.etransportapp.R
 import com.example.etransportapp.ui.theme.LightBlue
 
-
-
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterPart2Screen(
     viewModel: RegisterViewModel = viewModel(),
@@ -40,7 +37,7 @@ fun RegisterPart2Screen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color(0xFF121212)) // Dış siyah çerçeve için arka plan
+            .background(Color(0xFF121212))
     ) {
         Column(
             modifier = Modifier
@@ -48,12 +45,11 @@ fun RegisterPart2Screen(
                 .background(
                     color = Color.White,
                 )
-                .padding(24.dp), // İçerik için padding
+                .padding(24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Spacer(modifier = Modifier.height(20.dp))
 
-            // ✅ Firma İsmi ve Logo
             Spacer(modifier = Modifier.height(50.dp))
             Row(
                 verticalAlignment = Alignment.CenterVertically
@@ -75,7 +71,6 @@ fun RegisterPart2Screen(
 
             Spacer(modifier = Modifier.height(50.dp))
 
-            // ✅ Başlık ve Açıklama
             Text(
                 text = "Senin İçin Uygun Olanı Seç",
                 fontSize = 22.sp,
@@ -93,7 +88,6 @@ fun RegisterPart2Screen(
 
             Spacer(modifier = Modifier.height(60.dp))
 
-            // ✅ Seçenek Butonları
             roleOptions.forEach { role ->
                 RoleSelectionButton(
                     text = role,
@@ -104,10 +98,9 @@ fun RegisterPart2Screen(
 
             Spacer(modifier = Modifier.height(60.dp))
 
-            // ✅ Sağ Alt Köşedeki "İlerle" Butonu
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End // ✅ Butonu sağa hizalar
+                horizontalArrangement = Arrangement.End
             ) {
                 Button(
                     onClick = {
@@ -117,16 +110,15 @@ fun RegisterPart2Screen(
                         .width(90.dp)
                         .height(40.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
-                    shape = RoundedCornerShape(12.dp) // ✅ Köşeleri biraz daha yumuşattık
+                    shape = RoundedCornerShape(12.dp)
                 ) {
-                    Text("İlerle", fontSize = 14.sp) // ✅ Daha küçük yazı boyutu
+                    Text("İlerle", fontSize = 14.sp)
                 }
             }
         }
     }
 }
 
-// ✅ Rol Seçimi İçin Buton Tasarımı
 @Composable
 fun RoleSelectionButton(text: String, isSelected: Boolean, onClick: () -> Unit) {
     val interactionSource = remember { MutableInteractionSource() }
@@ -140,7 +132,7 @@ fun RoleSelectionButton(text: String, isSelected: Boolean, onClick: () -> Unit) 
             .background(if (isSelected) LightBlue else Color.Black)
             .clickable(
                 interactionSource = interactionSource,
-                indication = LocalIndication.current, // ✅ Yeni Material3 Ripple API kullanımı
+                indication = LocalIndication.current,
                 onClick = onClick
             ),
         contentAlignment = Alignment.CenterStart
@@ -152,7 +144,6 @@ fun RoleSelectionButton(text: String, isSelected: Boolean, onClick: () -> Unit) 
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-            // Radyo butonu efekti
             Box(
                 modifier = Modifier
                     .size(16.dp)

@@ -13,7 +13,7 @@ import com.example.etransportapp.presentation.ui.loginAndRegister.intro.IntroVie
 
 @Composable
 fun ProfileScreen(modifier: Modifier, navController: NavHostController) {
-    val viewModel = IntroViewModel() // ViewModel çağrısı
+    val viewModel = IntroViewModel()
     val context = LocalContext.current
 
     Column(
@@ -25,10 +25,7 @@ fun ProfileScreen(modifier: Modifier, navController: NavHostController) {
         Text(text = "PROFILE SCREEN")
         Spacer(modifier = Modifier.height(24.dp))
         Button(onClick = {
-            // Oturum bilgisini sil
             viewModel.saveLoginState(context, false)
-
-            // Intro ekranına yönlendir, geri gelinmesin
             navController.navigate(NavRoutes.INTRO) {
                 popUpTo(0) { inclusive = true }
             }

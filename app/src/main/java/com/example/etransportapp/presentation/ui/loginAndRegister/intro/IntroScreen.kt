@@ -28,7 +28,7 @@ import com.example.etransportapp.ui.theme.LightBlue
 fun IntroScreen(
     modifier: Modifier,
     navController: NavHostController,
-    viewModel: IntroViewModel = IntroViewModel() // ViewModel örneğini alıyoruz
+    viewModel: IntroViewModel = IntroViewModel()
 ) {
     val context = LocalContext.current
     Column(
@@ -50,16 +50,15 @@ fun IntroScreen(
             )
         }
 
-        // Giriş Yap Butonu
         Button(
             modifier = Modifier
                 .padding(horizontal = 30.dp)
                 .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
             onClick = {
-                viewModel.saveLoginState(context,true) // Kullanıcı giriş yaptı
+                viewModel.saveLoginState(context,true)
                 navController.navigate("load_ads") {
-                    popUpTo("intro") { inclusive = true } // IntroScreen'i back stack'ten sil
+                    popUpTo("intro") { inclusive = true }
                 }
             }
         ) {

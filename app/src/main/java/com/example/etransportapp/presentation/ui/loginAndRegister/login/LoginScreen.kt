@@ -49,14 +49,14 @@ fun LoginScreen(
             Image(
                 painter = painterResource(id = R.drawable.ic_logo),
                 contentDescription = "App Logo",
-                modifier = Modifier.height(50.dp), // Sadece yükseklik belirledik, genişlik orantılı olur
+                modifier = Modifier.height(50.dp),
                 contentScale = ContentScale.FillHeight
             )
             Spacer(modifier = Modifier.width(10.dp))
             Image(
                 painter = painterResource(id = R.drawable.text_etasimacilik),
                 contentDescription = "App text",
-                modifier = Modifier.height(50.dp), // Aynı yükseklik veriyoruz, genişlik otomatik ayarlanacak
+                modifier = Modifier.height(50.dp),
                 contentScale = ContentScale.FillHeight
             )
         }

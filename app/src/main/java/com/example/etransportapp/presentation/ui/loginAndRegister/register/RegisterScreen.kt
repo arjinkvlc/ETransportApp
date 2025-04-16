@@ -24,7 +24,6 @@ import androidx.navigation.NavHostController
 import com.example.etransportapp.R
 import com.example.etransportapp.ui.theme.LightBlue
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     viewModel: RegisterViewModel = viewModel(),
@@ -42,7 +41,7 @@ fun RegisterScreen(
             .fillMaxSize()
             .background(Color.White)
             .padding(16.dp)
-            .verticalScroll(scrollState),  // Sayfanın kaydırılabilir olmasını sağlıyor
+            .verticalScroll(scrollState),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // ✅ Firma İsmi ve Logo
@@ -80,15 +79,15 @@ fun RegisterScreen(
             onValueChange = { viewModel.companyName = it },
             label = { Text("Firma Adı") },
             modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(16.dp),// ✅ Daha yuvarlak köşeler
+            shape = RoundedCornerShape(16.dp),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White, // **Tıklanınca beyaz kalmasını sağlar**
-                unfocusedContainerColor = Color.White, // **Normalde de beyaz**
-                cursorColor = LightBlue, // **Yazı yazarken imleç rengi**
-                focusedIndicatorColor = LightBlue, // **Seçili kenarlık rengi**
-                unfocusedIndicatorColor = Color.Gray, // **Boşken kenarlık rengi**f
-                focusedLabelColor = LightBlue, // **✅ Label (Firma Adı) seçiliyken LightBlue olur
-                unfocusedLabelColor = Color.Gray // **Boşken gri olur**
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                cursorColor = LightBlue,
+                focusedIndicatorColor = LightBlue,
+                unfocusedIndicatorColor = Color.Gray,
+                focusedLabelColor = LightBlue,
+                unfocusedLabelColor = Color.Gray
             )
         )
 
@@ -101,13 +100,13 @@ fun RegisterScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White, // **Tıklanınca beyaz kalmasını sağlar**
-                unfocusedContainerColor = Color.White, // **Normalde de beyaz**
-                cursorColor = LightBlue, // **Yazı yazarken imleç rengi**
-                focusedIndicatorColor = LightBlue, // **Seçili kenarlık rengi**
-                unfocusedIndicatorColor = Color.Gray, // **Boşken kenarlık rengi**f
-                focusedLabelColor = LightBlue, // **✅ Label (Firma Adı) seçiliyken LightBlue olur
-                unfocusedLabelColor = Color.Gray // **Boşken gri olur**
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                cursorColor = LightBlue,
+                focusedIndicatorColor = LightBlue,
+                unfocusedIndicatorColor = Color.Gray,
+                focusedLabelColor = LightBlue,
+                unfocusedLabelColor = Color.Gray
             )
         )
 
@@ -120,13 +119,13 @@ fun RegisterScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White, // **Tıklanınca beyaz kalmasını sağlar**
-                unfocusedContainerColor = Color.White, // **Normalde de beyaz**
-                cursorColor = LightBlue, // **Yazı yazarken imleç rengi**
-                focusedIndicatorColor = LightBlue, // **Seçili kenarlık rengi**
-                unfocusedIndicatorColor = Color.Gray, // **Boşken kenarlık rengi**f
-                focusedLabelColor = LightBlue, // **✅ Label (Firma Adı) seçiliyken LightBlue olur
-                unfocusedLabelColor = Color.Gray // **Boşken gri olur**
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                cursorColor = LightBlue,
+                focusedIndicatorColor = LightBlue,
+                unfocusedIndicatorColor = Color.Gray,
+                focusedLabelColor = LightBlue,
+                unfocusedLabelColor = Color.Gray
             )
         )
 
@@ -139,13 +138,13 @@ fun RegisterScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White, // **Tıklanınca beyaz kalmasını sağlar**
-                unfocusedContainerColor = Color.White, // **Normalde de beyaz**
-                cursorColor = LightBlue, // **Yazı yazarken imleç rengi**
-                focusedIndicatorColor = LightBlue, // **Seçili kenarlık rengi**
-                unfocusedIndicatorColor = Color.Gray, // **Boşken kenarlık rengi**f
-                focusedLabelColor = LightBlue, // **✅ Label (Firma Adı) seçiliyken LightBlue olur
-                unfocusedLabelColor = Color.Gray // **Boşken gri olur**
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                cursorColor = LightBlue,
+                focusedIndicatorColor = LightBlue,
+                unfocusedIndicatorColor = Color.Gray,
+                focusedLabelColor = LightBlue,
+                unfocusedLabelColor = Color.Gray
             )
         )
 
@@ -158,13 +157,13 @@ fun RegisterScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White, // **Tıklanınca beyaz kalmasını sağlar**
-                unfocusedContainerColor = Color.White, // **Normalde de beyaz**
-                cursorColor = LightBlue, // **Yazı yazarken imleç rengi**
-                focusedIndicatorColor = LightBlue, // **Seçili kenarlık rengi**
-                unfocusedIndicatorColor = Color.Gray, // **Boşken kenarlık rengi**f
-                focusedLabelColor = LightBlue, // **✅ Label (Firma Adı) seçiliyken LightBlue olur
-                unfocusedLabelColor = Color.Gray // **Boşken gri olur**
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                cursorColor = LightBlue,
+                focusedIndicatorColor = LightBlue,
+                unfocusedIndicatorColor = Color.Gray,
+                focusedLabelColor = LightBlue,
+                unfocusedLabelColor = Color.Gray
             )
         )
 
@@ -177,19 +176,19 @@ fun RegisterScreen(
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Text(if (passwordVisible) "👁️" else "🔒") // Şifre gösterme/gizleme ikonu
+                    Text(if (passwordVisible) "👁️" else "🔒")
                 }
             },
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White, // **Tıklanınca beyaz kalmasını sağlar**
-                unfocusedContainerColor = Color.White, // **Normalde de beyaz**
-                cursorColor = LightBlue, // **Yazı yazarken imleç rengi**
-                focusedIndicatorColor = LightBlue, // **Seçili kenarlık rengi**
-                unfocusedIndicatorColor = Color.Gray, // **Boşken kenarlık rengi**f
-                focusedLabelColor = LightBlue, // **✅ Label (Firma Adı) seçiliyken LightBlue olur
-                unfocusedLabelColor = Color.Gray // **Boşken gri olur**
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                cursorColor = LightBlue,
+                focusedIndicatorColor = LightBlue,
+                unfocusedIndicatorColor = Color.Gray,
+                focusedLabelColor = LightBlue,
+                unfocusedLabelColor = Color.Gray
             )
         )
 
@@ -208,13 +207,13 @@ fun RegisterScreen(
             modifier = Modifier.fillMaxWidth(),
             shape = RoundedCornerShape(16.dp),
             colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.White, // **Tıklanınca beyaz kalmasını sağlar**
-                unfocusedContainerColor = Color.White, // **Normalde de beyaz**
-                cursorColor = LightBlue, // **Yazı yazarken imleç rengi**
-                focusedIndicatorColor = LightBlue, // **Seçili kenarlık rengi**
-                unfocusedIndicatorColor = Color.Gray, // **Boşken kenarlık rengi**f
-                focusedLabelColor = LightBlue, // **✅ Label (Firma Adı) seçiliyken LightBlue olur
-                unfocusedLabelColor = Color.Gray // **Boşken gri olur**
+                focusedContainerColor = Color.White,
+                unfocusedContainerColor = Color.White,
+                cursorColor = LightBlue,
+                focusedIndicatorColor = LightBlue,
+                unfocusedIndicatorColor = Color.Gray,
+                focusedLabelColor = LightBlue,
+                unfocusedLabelColor = Color.Gray
             )
         )
 
@@ -222,19 +221,19 @@ fun RegisterScreen(
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End // ✅ Butonu sağa hizalar
+            horizontalArrangement = Arrangement.End
         ) {
             Button(
                 onClick = {
                     viewModel.registerUser(context, /*onNavigateToNext*/)
                 },
                 modifier = Modifier
-                    .width(90.dp) // ✅ Butonun boyutunu küçülttük
-                    .height(40.dp), // ✅ Daha küçük yükseklik
+                    .width(90.dp)
+                    .height(40.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
-                shape = RoundedCornerShape(12.dp) // ✅ Köşeleri biraz daha yumuşattık
+                shape = RoundedCornerShape(12.dp)
             ) {
-                Text("İlerle", fontSize = 14.sp) // ✅ Daha küçük yazı boyutu
+                Text("İlerle", fontSize = 14.sp)
             }
         }
 

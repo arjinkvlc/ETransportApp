@@ -15,6 +15,7 @@ import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdViewModel
 import com.example.etransportapp.presentation.components.LoadAdCard
 import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdViewModel
 import com.example.etransportapp.presentation.components.VehicleAdCard
+import com.example.etransportapp.presentation.navigation.NavRoutes
 import com.example.etransportapp.ui.theme.LightBlue
 
 @Composable
@@ -27,8 +28,6 @@ fun MyAdsScreen(
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabTitles = listOf("Yük İlanları", "Araç İlanları")
 
-    // TODO : Geçici olarak kullanıcı ID'si sabit, ileride dinamik alınabilir
-    val userId = "username"
     val myLoadAds by loadAdViewModel.myLoadAds.collectAsState()
     val myVehicleAds by vehicleAdViewModel.myVehicleAds.collectAsState()
 
@@ -50,12 +49,12 @@ fun MyAdsScreen(
         when (selectedTabIndex) {
             0 -> LoadAdsList(myLoadAds) { selectedAd ->
                 loadAdViewModel.selectedAd = selectedAd
-                navController.navigate("load_ad_detail")
+                navController.navigate(NavRoutes.LOAD_AD_DETAIL)
             }
 
             1 -> VehicleAdsList(myVehicleAds) { selectedAd ->
                 vehicleAdViewModel.selectedAd = selectedAd
-                navController.navigate("vehicle_ad_detail")
+                navController.navigate(NavRoutes.VEHICLE_AD_DETAIL)
             }
         }
     }
