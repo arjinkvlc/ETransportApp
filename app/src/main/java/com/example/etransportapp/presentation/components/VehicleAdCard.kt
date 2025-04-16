@@ -1,5 +1,6 @@
-package com.example.etransportapp.presentation.ui.home.vehicleAds
+package com.example.etransportapp.presentation.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -20,11 +21,12 @@ import com.example.etransportapp.data.model.VehicleAd
 import com.example.etransportapp.ui.theme.LightBlue
 
 @Composable
-fun VehicleAdCard(item: VehicleAd) {
+fun VehicleAdCard(item: VehicleAd, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable { onClick() },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)

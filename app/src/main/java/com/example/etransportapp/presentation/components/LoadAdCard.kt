@@ -1,5 +1,6 @@
-package com.example.etransportapp.presentation.ui.home.loadAds
+package com.example.etransportapp.presentation.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -29,11 +30,12 @@ import com.example.etransportapp.data.model.LoadAd
 import com.example.etransportapp.ui.theme.LightBlue
 
 @Composable
-fun LoadAdCard(item: LoadAd) {
+fun LoadAdCard(item: LoadAd,onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .padding(vertical = 8.dp)
+            .clickable { onClick() },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)

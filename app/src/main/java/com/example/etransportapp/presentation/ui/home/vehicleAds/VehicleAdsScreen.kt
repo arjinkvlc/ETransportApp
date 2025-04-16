@@ -12,7 +12,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -21,6 +20,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.etransportapp.presentation.components.VehicleAdCard
+import com.example.etransportapp.presentation.navigation.NavRoutes
 import com.example.etransportapp.ui.theme.LightBlue
 
 @Composable
@@ -34,15 +35,18 @@ fun VehicleAdsScreen(
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
         ) {
             items(vehicles) { item ->
-                VehicleAdCard(item)
+                VehicleAdCard(item){
+                    viewModel.selectedAd = item
+                    navController.navigate(NavRoutes.VEHICLE_AD_DETAIL)
+                }
             }
         }
 
         FloatingActionButton(
-            onClick = { navController.navigate("create_vehicle_ad") },
+            onClick = { navController.navigate(NavRoutes.CREATE_VEHICLE_AD) },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)

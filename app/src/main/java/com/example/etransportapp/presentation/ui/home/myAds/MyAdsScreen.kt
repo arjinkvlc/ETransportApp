@@ -12,9 +12,9 @@ import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.LoadAd
 import com.example.etransportapp.data.model.VehicleAd
 import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdViewModel
-import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdCard
+import com.example.etransportapp.presentation.components.LoadAdCard
 import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdViewModel
-import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdCard
+import com.example.etransportapp.presentation.components.VehicleAdCard
 import com.example.etransportapp.ui.theme.LightBlue
 
 @Composable
@@ -27,7 +27,7 @@ fun MyAdsScreen(
     var selectedTabIndex by remember { mutableStateOf(0) }
     val tabTitles = listOf("Yük İlanları", "Araç İlanları")
 
-    // Geçici olarak kullanıcı ID'si sabit, ileride dinamik alınabilir
+    // TODO : Geçici olarak kullanıcı ID'si sabit, ileride dinamik alınabilir
     val userId = "username"
     val myLoadAds by loadAdViewModel.myLoadAds.collectAsState()
     val myVehicleAds by vehicleAdViewModel.myVehicleAds.collectAsState()
@@ -48,27 +48,47 @@ fun MyAdsScreen(
         }
 
         when (selectedTabIndex) {
-            0 -> LoadAdsList(myLoadAds)
-            1 -> VehicleAdsList(myVehicleAds)
+            0 -> LoadAdsList(myLoadAds) { selectedAd ->
+                loadAdViewModel.selectedAd = selectedAd
+                navController.navigate("load_ad_detail")
+            }
+
+            1 -> VehicleAdsList(myVehicleAds) { selectedAd ->
+                vehicleAdViewModel.selectedAd = selectedAd
+                navController.navigate("vehicle_ad_detail")
+            }
         }
     }
 }
 
 @Composable
-fun LoadAdsList(loadAds: List<LoadAd>) {
-    LazyColumn(modifier = Modifier.padding(16.dp)) {
+fun LoadAdsList(loadAds: List<LoadAd>, onAdClick: (LoadAd) -> Unit) {
+    //TODO : MOCK ÖRNEK İLAN DAHA SONRA KALDIRILACAK
+    val mockLoadAdItem =
+        LoadAd("Örnek Yük İlanı", "Örnek Açıklama", "Mersin", "Istanbul", "5000", "05/03/2001")
+    LoadAdCard(item = mockLoadAdItem) {
+        onAdClick(mockLoadAdItem)
+    }
+    LazyColumn(modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)) {
         items(loadAds) { ad ->
-            LoadAdCard(item = ad)
+            LoadAdCard(item = ad, onClick = { onAdClick(ad) })
         }
     }
 }
 
 
 @Composable
-fun VehicleAdsList(vehicleAds: List<VehicleAd>) {
-    LazyColumn(modifier = Modifier.padding(16.dp)) {
+fun VehicleAdsList(vehicleAds: List<VehicleAd>, onAdClick: (VehicleAd) -> Unit) {
+    //TODO : MOCK ÖRNEK İLAN DAHA SONRA KALDIRILACAK
+    val mockVehicleAdItem =
+        VehicleAd("Örnek Araç İlanı", "Örnek Açıklama", "Mersin", "05/03/2001", "username")
+    VehicleAdCard(item = mockVehicleAdItem) {
+        onAdClick(mockVehicleAdItem)
+    }
+
+    LazyColumn(modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)) {
         items(vehicleAds) { ad ->
-            VehicleAdCard(item = ad) // Daha sonra bu composable'ı yazarsın
+            VehicleAdCard(item = ad, onClick = { onAdClick(ad) })
         }
     }
 }

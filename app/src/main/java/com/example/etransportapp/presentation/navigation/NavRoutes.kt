@@ -10,4 +10,7 @@ object NavRoutes {
     const val INTRO = "intro"
     const val LOGIN = "login"
     const val REGISTER = "register"
+    const val LOAD_AD_DETAIL = "load_ad_detail"
+    const val VEHICLE_AD_DETAIL = "vehicle_ad_detail"
+
 }

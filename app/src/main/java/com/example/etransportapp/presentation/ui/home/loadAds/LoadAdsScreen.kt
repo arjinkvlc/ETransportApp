@@ -11,11 +11,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
-import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdCard
+import com.example.etransportapp.presentation.components.LoadAdCard
+import com.example.etransportapp.presentation.navigation.NavRoutes
 import com.example.etransportapp.ui.theme.LightBlue
 
 @Composable
@@ -29,10 +28,13 @@ fun LoadAdsScreen(
     Box(modifier = modifier.fillMaxSize()) {
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+            contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
         ) {
             items(loads) { item ->
-                LoadAdCard(item)
+                LoadAdCard(item) {
+                    viewModel.selectedAd = item
+                    navController.navigate(NavRoutes.LOAD_AD_DETAIL)
+                }
             }
         }
 
@@ -41,9 +43,9 @@ fun LoadAdsScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(16.dp)
-                .size(72.dp), // Daha büyük ve yuvarlak
+                .size(72.dp),
             containerColor = LightBlue,
-            shape = CircleShape // Tam yuvarlak form
+            shape = CircleShape
         ) {
             Icon(
                 imageVector = Icons.Default.Add,
@@ -52,6 +54,5 @@ fun LoadAdsScreen(
                 tint = Color.White
             )
         }
-
     }
 }
