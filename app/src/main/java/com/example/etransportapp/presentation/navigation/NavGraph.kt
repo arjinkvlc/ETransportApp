@@ -20,6 +20,7 @@ import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdsScree
 import com.example.etransportapp.presentation.ui.loginAndRegister.intro.IntroScreen
 import com.example.etransportapp.presentation.ui.loginAndRegister.login.LoginScreen
 import com.example.etransportapp.presentation.ui.loginAndRegister.login.LoginViewModel
+import com.example.etransportapp.presentation.ui.loginAndRegister.onboarding.OnboardingScreen
 import com.example.etransportapp.presentation.ui.loginAndRegister.register.RegisterScreen
 import com.example.etransportapp.presentation.ui.loginAndRegister.register.RegisterViewModel
 
@@ -29,7 +30,7 @@ fun NavGraph(
     modifier: Modifier = Modifier,
     context: Context
 ) {
-    val startDestination = if (isUserLoggedIn(context)) NavRoutes.LOAD_ADS else NavRoutes.INTRO
+    val startDestination = if (isUserLoggedIn(context)) NavRoutes.LOAD_ADS else NavRoutes.ONBOARDING
     val loadAdViewModel: LoadAdViewModel = viewModel()
     val vehicleAdViewModel: VehicleAdViewModel = viewModel()
 
@@ -37,6 +38,16 @@ fun NavGraph(
         navController = navController,
         startDestination = startDestination
     ) {
+        composable(NavRoutes.ONBOARDING) { OnboardingScreen(navController) }
+        composable(NavRoutes.INTRO) { IntroScreen(modifier, navController) }
+        composable(NavRoutes.LOGIN) { LoginScreen(LoginViewModel(), modifier, navController) }
+        composable(NavRoutes.REGISTER) {
+            RegisterScreen(
+                RegisterViewModel(),
+                modifier,
+                navController
+            )
+        }
         composable(NavRoutes.LOAD_ADS) { LoadAdsScreen(modifier, navController, loadAdViewModel) }
         composable(NavRoutes.VEHICLE_ADS) {
             VehicleAdsScreen(
@@ -66,15 +77,6 @@ fun NavGraph(
                 modifier,
                 navController,
                 vehicleAdViewModel
-            )
-        }
-        composable(NavRoutes.INTRO) { IntroScreen(modifier, navController) }
-        composable(NavRoutes.LOGIN) { LoginScreen(LoginViewModel(), modifier, navController) }
-        composable(NavRoutes.REGISTER) {
-            RegisterScreen(
-                RegisterViewModel(),
-                modifier,
-                navController
             )
         }
         composable(NavRoutes.LOAD_AD_DETAIL) {
@@ -111,7 +113,6 @@ fun NavGraph(
         }
     }
 }
-
 
 fun isUserLoggedIn(context: Context): Boolean {
     val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
