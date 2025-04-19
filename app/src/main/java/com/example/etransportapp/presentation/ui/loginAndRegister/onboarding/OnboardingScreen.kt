@@ -7,9 +7,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.example.etransportapp.R
 import com.example.etransportapp.data.model.onboardingPages
 import com.example.etransportapp.presentation.components.DotsIndicator
 import com.example.etransportapp.presentation.components.OnboardingPage
@@ -33,11 +37,12 @@ fun OnboardingScreen(navController: NavHostController) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(end = 4.dp, top = 4.dp),
+                    .padding( top = 4.dp),
                 horizontalArrangement = Arrangement.End
             ) {
                 TextButton(onClick = { navController.navigate(NavRoutes.INTRO) }) {
-                    Text(fontSize = 24.sp,text = "Geç", color = LightBlue)
+                    Text(fontSize = 24.sp,text = "Geç ", color = LightBlue, fontWeight = FontWeight.Medium)
+                    Icon(painter = painterResource(id = R.drawable.baseline_arrow_right_alt_24), contentDescription ="Skip button icon", tint = LightBlue )
                 }
             }
 
