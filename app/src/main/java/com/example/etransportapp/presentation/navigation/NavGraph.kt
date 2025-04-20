@@ -23,6 +23,7 @@ import com.example.etransportapp.presentation.ui.loginAndRegister.login.LoginVie
 import com.example.etransportapp.presentation.ui.loginAndRegister.onboarding.OnboardingScreen
 import com.example.etransportapp.presentation.ui.loginAndRegister.register.RegisterScreen
 import com.example.etransportapp.presentation.ui.loginAndRegister.register.RegisterViewModel
+import com.example.etransportapp.util.PreferenceHelper
 
 @Composable
 fun NavGraph(
@@ -30,7 +31,11 @@ fun NavGraph(
     modifier: Modifier = Modifier,
     context: Context
 ) {
-    val startDestination = if (isUserLoggedIn(context)) NavRoutes.LOAD_ADS else NavRoutes.ONBOARDING
+    val startDestination = when {
+        PreferenceHelper.isFirstTime(context) -> NavRoutes.ONBOARDING
+        PreferenceHelper.isLoggedIn(context) -> NavRoutes.LOAD_ADS
+        else -> NavRoutes.INTRO
+    }
     val loadAdViewModel: LoadAdViewModel = viewModel()
     val vehicleAdViewModel: VehicleAdViewModel = viewModel()
 

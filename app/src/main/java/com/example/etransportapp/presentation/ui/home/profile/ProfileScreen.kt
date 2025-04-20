@@ -32,6 +32,7 @@ import com.example.etransportapp.presentation.components.ProfileInfoRow
 import com.example.etransportapp.presentation.components.ProfileMenuItem
 import com.example.etransportapp.presentation.navigation.NavRoutes
 import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.util.PreferenceHelper
 
 @Composable
 fun ProfileScreen(modifier: Modifier = Modifier, navController: NavHostController) {
@@ -92,8 +93,12 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavHostControlle
         }
 
         OutlinedButton(
-            onClick = { /* TODO: Logout işlemi */
-                      navController.navigate(NavRoutes.ONBOARDING)},
+            onClick = {
+                PreferenceHelper.logout(navController.context)
+                navController.navigate(NavRoutes.INTRO) {
+                    popUpTo(0) { inclusive = true } // Tüm backstack temizlensin
+                }
+            },
             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red),
             border = BorderStroke(1.dp, Color.Red),
             modifier = Modifier.fillMaxWidth()

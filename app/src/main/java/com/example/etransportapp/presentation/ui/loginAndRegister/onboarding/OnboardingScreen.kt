@@ -8,7 +8,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -19,6 +18,7 @@ import com.example.etransportapp.presentation.components.DotsIndicator
 import com.example.etransportapp.presentation.components.OnboardingPage
 import com.example.etransportapp.presentation.navigation.NavRoutes
 import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.util.PreferenceHelper
 import kotlinx.coroutines.launch
 
 @Composable
@@ -69,6 +69,7 @@ fun OnboardingScreen(navController: NavHostController) {
                             pagerState.animateScrollToPage(pagerState.currentPage + 1)
                         }
                     } else {
+                        PreferenceHelper.setFirstTime(navController.context, false)
                         navController.navigate(NavRoutes.INTRO) {
                             popUpTo(NavRoutes.ONBOARDING) { inclusive = true }
                         }
