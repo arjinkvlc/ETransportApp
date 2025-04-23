@@ -12,8 +12,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.etransportapp.data.model.LoadAd
-import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.data.model.ad.LoadAd
+import com.example.etransportapp.ui.theme.DarkGray
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,7 +39,7 @@ fun CreateLoadAdScreen(
                     }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = LightBlue,
+                    containerColor = DarkGray,
                     titleContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
@@ -78,7 +78,7 @@ fun CreateLoadAdScreen(
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
                         .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = LightBlue)
+                    colors = ButtonDefaults.buttonColors(containerColor = DarkGray)
                 ) {
                     Text("İlanı Oluştur")
                 }

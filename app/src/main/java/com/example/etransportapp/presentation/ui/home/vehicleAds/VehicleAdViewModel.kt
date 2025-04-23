@@ -1,7 +1,7 @@
 package com.example.etransportapp.presentation.ui.home.vehicleAds
 
 import androidx.lifecycle.ViewModel
-import com.example.etransportapp.data.model.VehicleAd
+import com.example.etransportapp.data.model.ad.VehicleAd
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

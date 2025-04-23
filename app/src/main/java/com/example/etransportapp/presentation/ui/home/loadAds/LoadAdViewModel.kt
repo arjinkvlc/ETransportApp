@@ -1,7 +1,7 @@
 package com.example.etransportapp.presentation.ui.home.loadAds
 
 import androidx.lifecycle.ViewModel
-import com.example.etransportapp.data.model.LoadAd
+import com.example.etransportapp.data.model.ad.LoadAd
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 

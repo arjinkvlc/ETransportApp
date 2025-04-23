@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.etransportapp.R
-import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.ui.theme.DarkGray
 
 
 @Composable
@@ -130,7 +130,7 @@ fun LoginScreen(
 
             Text(
                 text = "Şifremi Unuttum?",
-                color = LightBlue,
+                color = DarkGray,
                 modifier = Modifier.clickable { /* Şifremi unuttum işlemi */ }
             )
         }
@@ -149,7 +149,7 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .height(50.dp)
                 .clip(RoundedCornerShape(10.dp)),
-            colors = ButtonDefaults.buttonColors(containerColor = LightBlue)
+            colors = ButtonDefaults.buttonColors(containerColor = DarkGray)
         ) {
             Text("Giriş Yap", fontSize = 18.sp)
         }
@@ -158,7 +158,7 @@ fun LoginScreen(
 
         Text(
             text = "Hesabın yok mu? Kayıt Ol",
-            color = LightBlue,
+            color = DarkGray,
             modifier = Modifier.clickable { }
         )
     }

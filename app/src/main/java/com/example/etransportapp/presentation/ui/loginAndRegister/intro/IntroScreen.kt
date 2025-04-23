@@ -22,7 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.R
-import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.ui.theme.DarkGray
 
 @Composable
 fun IntroScreen(
@@ -54,7 +54,7 @@ fun IntroScreen(
             modifier = Modifier
                 .padding(horizontal = 30.dp)
                 .fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
+            colors = ButtonDefaults.buttonColors(containerColor = DarkGray),
             onClick = {
                 viewModel.saveLoginState(context,true)
                 navController.navigate("load_ads") {
@@ -70,7 +70,7 @@ fun IntroScreen(
             modifier = Modifier
                 .padding(horizontal = 30.dp)
                 .fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
+            colors = ButtonDefaults.buttonColors(containerColor = DarkGray),
             onClick = {
                 navController.navigate("register")
             }

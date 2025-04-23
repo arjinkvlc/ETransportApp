@@ -26,11 +26,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.etransportapp.R
-import com.example.etransportapp.data.model.LoadAd
-import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.data.model.ad.LoadAd
+import com.example.etransportapp.ui.theme.DarkGray
 
 @Composable
-fun LoadAdCard(item: LoadAd,onClick: () -> Unit) {
+fun LoadAdCard(item: LoadAd, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -58,7 +58,7 @@ fun LoadAdCard(item: LoadAd,onClick: () -> Unit) {
                 Spacer(modifier = Modifier.height(16.dp))
                 Surface(
                     shape = CircleShape,
-                    color = LightBlue,
+                    color = DarkGray,
                     modifier = Modifier.size(40.dp)
                 ) {
                     Icon(

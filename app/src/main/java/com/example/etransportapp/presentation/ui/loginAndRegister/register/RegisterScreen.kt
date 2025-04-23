@@ -22,7 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.etransportapp.R
-import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.ui.theme.DarkGray
 
 @Composable
 fun RegisterScreen(
@@ -69,7 +69,7 @@ fun RegisterScreen(
         Text(
             text = "Kayıt Ol",
             fontSize = 24.sp,
-            color = LightBlue, fontWeight = FontWeight.ExtraBold
+            color = DarkGray, fontWeight = FontWeight.ExtraBold
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -83,10 +83,10 @@ fun RegisterScreen(
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
-                cursorColor = LightBlue,
-                focusedIndicatorColor = LightBlue,
+                cursorColor = DarkGray,
+                focusedIndicatorColor = DarkGray,
                 unfocusedIndicatorColor = Color.Gray,
-                focusedLabelColor = LightBlue,
+                focusedLabelColor = DarkGray,
                 unfocusedLabelColor = Color.Gray
             )
         )
@@ -102,10 +102,10 @@ fun RegisterScreen(
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
-                cursorColor = LightBlue,
-                focusedIndicatorColor = LightBlue,
+                cursorColor = DarkGray,
+                focusedIndicatorColor = DarkGray,
                 unfocusedIndicatorColor = Color.Gray,
-                focusedLabelColor = LightBlue,
+                focusedLabelColor = DarkGray,
                 unfocusedLabelColor = Color.Gray
             )
         )
@@ -121,10 +121,10 @@ fun RegisterScreen(
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
-                cursorColor = LightBlue,
-                focusedIndicatorColor = LightBlue,
+                cursorColor = DarkGray,
+                focusedIndicatorColor = DarkGray,
                 unfocusedIndicatorColor = Color.Gray,
-                focusedLabelColor = LightBlue,
+                focusedLabelColor = DarkGray,
                 unfocusedLabelColor = Color.Gray
             )
         )
@@ -140,10 +140,10 @@ fun RegisterScreen(
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
-                cursorColor = LightBlue,
-                focusedIndicatorColor = LightBlue,
+                cursorColor = DarkGray,
+                focusedIndicatorColor = DarkGray,
                 unfocusedIndicatorColor = Color.Gray,
-                focusedLabelColor = LightBlue,
+                focusedLabelColor = DarkGray,
                 unfocusedLabelColor = Color.Gray
             )
         )
@@ -159,10 +159,10 @@ fun RegisterScreen(
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
-                cursorColor = LightBlue,
-                focusedIndicatorColor = LightBlue,
+                cursorColor = DarkGray,
+                focusedIndicatorColor = DarkGray,
                 unfocusedIndicatorColor = Color.Gray,
-                focusedLabelColor = LightBlue,
+                focusedLabelColor = DarkGray,
                 unfocusedLabelColor = Color.Gray
             )
         )
@@ -184,10 +184,10 @@ fun RegisterScreen(
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
-                cursorColor = LightBlue,
-                focusedIndicatorColor = LightBlue,
+                cursorColor = DarkGray,
+                focusedIndicatorColor = DarkGray,
                 unfocusedIndicatorColor = Color.Gray,
-                focusedLabelColor = LightBlue,
+                focusedLabelColor = DarkGray,
                 unfocusedLabelColor = Color.Gray
             )
         )
@@ -209,10 +209,10 @@ fun RegisterScreen(
             colors = TextFieldDefaults.colors(
                 focusedContainerColor = Color.White,
                 unfocusedContainerColor = Color.White,
-                cursorColor = LightBlue,
-                focusedIndicatorColor = LightBlue,
+                cursorColor = DarkGray,
+                focusedIndicatorColor = DarkGray,
                 unfocusedIndicatorColor = Color.Gray,
-                focusedLabelColor = LightBlue,
+                focusedLabelColor = DarkGray,
                 unfocusedLabelColor = Color.Gray
             )
         )
@@ -230,7 +230,7 @@ fun RegisterScreen(
                 modifier = Modifier
                     .width(90.dp)
                     .height(40.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
+                colors = ButtonDefaults.buttonColors(containerColor = DarkGray),
                 shape = RoundedCornerShape(12.dp)
             ) {
                 Text("İlerle", fontSize = 14.sp)
