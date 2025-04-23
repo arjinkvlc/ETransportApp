@@ -1,4 +1,4 @@
-package com.example.etransportapp.data.model
+package com.example.etransportapp.data.model.ad
 
 data class LoadAd(
     val title: String,

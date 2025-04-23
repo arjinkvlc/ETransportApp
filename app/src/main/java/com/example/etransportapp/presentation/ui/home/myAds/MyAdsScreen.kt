@@ -9,14 +9,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.etransportapp.data.model.LoadAd
-import com.example.etransportapp.data.model.VehicleAd
+import com.example.etransportapp.data.model.ad.LoadAd
+import com.example.etransportapp.data.model.ad.VehicleAd
 import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdViewModel
 import com.example.etransportapp.presentation.components.LoadAdCard
 import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdViewModel
 import com.example.etransportapp.presentation.components.VehicleAdCard
 import com.example.etransportapp.presentation.navigation.NavRoutes
-import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.ui.theme.DarkGray
 
 @Composable
 fun MyAdsScreen(
@@ -34,7 +34,7 @@ fun MyAdsScreen(
     Column(modifier = modifier.fillMaxSize()) {
         TabRow(
             selectedTabIndex = selectedTabIndex,
-            containerColor = LightBlue,
+            containerColor = DarkGray,
             contentColor = Color.White
         ) {
             tabTitles.forEachIndexed { index, title ->

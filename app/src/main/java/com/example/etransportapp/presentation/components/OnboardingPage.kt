@@ -12,7 +12,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.etransportapp.data.model.OnboardingPageData
-import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.ui.theme.DarkGray
 
 @Composable
 fun OnboardingPage(page: OnboardingPageData) {
@@ -31,7 +31,7 @@ fun OnboardingPage(page: OnboardingPageData) {
             text = page.title,
             fontSize = 24.sp,
             fontWeight = FontWeight.Bold,
-            color = LightBlue
+            color = DarkGray
         )
         Spacer(modifier = Modifier.height(12.dp))
         Text(

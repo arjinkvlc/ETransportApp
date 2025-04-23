@@ -31,7 +31,7 @@ import com.example.etransportapp.R
 import com.example.etransportapp.presentation.components.ProfileInfoRow
 import com.example.etransportapp.presentation.components.ProfileMenuItem
 import com.example.etransportapp.presentation.navigation.NavRoutes
-import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.util.PreferenceHelper
 
 @Composable
@@ -54,7 +54,7 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavHostControlle
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Surface(
                     shape = CircleShape,
-                    color = LightBlue,
+                    color = DarkGray,
                     modifier = Modifier.size(64.dp)
                 ) {
                     Icon(

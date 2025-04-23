@@ -27,9 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.etransportapp.data.model.LoadAd
+import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.presentation.components.InfoText
-import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.ui.theme.DarkGray
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -93,7 +93,7 @@ fun LoadAdDetailScreen(
                     }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = LightBlue
+                    containerColor = DarkGray
                 )
             )
         }

@@ -14,8 +14,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.etransportapp.R
-import com.example.etransportapp.data.model.VehicleAd
-import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.data.model.ad.VehicleAd
+import com.example.etransportapp.ui.theme.DarkGray
 
 @Composable
 fun VehicleAdCard(item: VehicleAd, onClick: () -> Unit) {
@@ -62,7 +62,7 @@ fun VehicleAdCard(item: VehicleAd, onClick: () -> Unit) {
 
                 Surface(
                     shape = CircleShape,
-                    color = LightBlue,
+                    color = DarkGray,
                     modifier = Modifier.size(40.dp)
                 ) {
                     Icon(

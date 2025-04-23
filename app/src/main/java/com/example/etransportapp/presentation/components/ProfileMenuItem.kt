@@ -7,12 +7,12 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
-import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.ui.theme.DarkGray
 
 @Composable
 fun ProfileMenuItem(text: String, onClick: () -> Unit) {
     TextButton(onClick = onClick, modifier = Modifier.fillMaxWidth()) {
-        Text(text, fontSize = 16.sp, color = LightBlue)
+        Text(text, fontSize = 16.sp, color = DarkGray)
     }
     HorizontalDivider()
 }

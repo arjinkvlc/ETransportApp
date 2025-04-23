@@ -1,13 +1,13 @@
 package com.example.etransportapp.presentation.ui.home
 
-import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -18,9 +18,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.etransportapp.R
+import com.example.etransportapp.presentation.navigation.BottomBarScreen
 import com.example.etransportapp.presentation.navigation.NavGraph
 import com.example.etransportapp.presentation.navigation.NavRoutes
-import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.ui.theme.DarkGray
+import com.example.etransportapp.ui.theme.RoseRed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -57,7 +59,7 @@ fun HomeScreen(navController: NavHostController) {
                         )
                     },
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
-                        containerColor = LightBlue,
+                        containerColor = DarkGray,
                         titleContentColor = Color.White
                     )
                 )
@@ -80,29 +82,37 @@ fun HomeScreen(navController: NavHostController) {
                 )
 
                 NavigationBar {
-                    routes.forEachIndexed { index, route ->
+                    BottomBarScreen.all.forEach { screen ->
                         NavigationBarItem(
-                            selected = currentRoute == route,
+                            selected = currentRoute == screen.route,
                             onClick = {
-                                navController.navigate(route) {
-                                    popUpTo(navController.graph.startDestinationId) {
-                                        saveState = true
-                                    }
+                                navController.navigate(screen.route) {
+                                    popUpTo(navController.graph.startDestinationId) { saveState = true }
                                     launchSingleTop = true
                                     restoreState = true
                                 }
                             },
                             icon = {
-                                Image(
-                                    painter = painterResource(id = icons[index]),
-                                    contentDescription = items[index],
-                                    modifier = Modifier.size(32.dp),
-                                    colorFilter = ColorFilter.tint(LightBlue)
-                                )
-                            }
+                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                    Icon(
+                                        painter = painterResource(id = screen.icon),
+                                        contentDescription = screen.label,
+                                        modifier = Modifier.size(28.dp),
+                                        tint = if (currentRoute == screen.route) RoseRed else DarkGray
+                                    )
+                                    Text(
+                                        text = screen.label,
+                                        fontSize = 12.sp,
+                                        color = if (currentRoute == screen.route) RoseRed else DarkGray
+                                    )
+                                }
+                            },
+                            alwaysShowLabel = false,
+
                         )
                     }
                 }
+
             }
         }
     ) { innerPadding ->

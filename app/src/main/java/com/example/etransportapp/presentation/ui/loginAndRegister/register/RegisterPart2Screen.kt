@@ -23,7 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.etransportapp.R
-import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.ui.theme.DarkGray
 
 @Composable
 fun RegisterPart2Screen(
@@ -109,7 +109,7 @@ fun RegisterPart2Screen(
                     modifier = Modifier
                         .width(90.dp)
                         .height(40.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = LightBlue),
+                    colors = ButtonDefaults.buttonColors(containerColor = DarkGray),
                     shape = RoundedCornerShape(12.dp)
                 ) {
                     Text("İlerle", fontSize = 14.sp)
@@ -129,7 +129,7 @@ fun RoleSelectionButton(text: String, isSelected: Boolean, onClick: () -> Unit) 
             .height(50.dp)
             .padding(vertical = 6.dp)
             .clip(RoundedCornerShape(30.dp))
-            .background(if (isSelected) LightBlue else Color.Black)
+            .background(if (isSelected) DarkGray else Color.Black)
             .clickable(
                 interactionSource = interactionSource,
                 indication = LocalIndication.current,

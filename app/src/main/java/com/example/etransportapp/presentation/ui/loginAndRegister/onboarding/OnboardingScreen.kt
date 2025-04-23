@@ -17,7 +17,7 @@ import com.example.etransportapp.data.model.onboardingPages
 import com.example.etransportapp.presentation.components.DotsIndicator
 import com.example.etransportapp.presentation.components.OnboardingPage
 import com.example.etransportapp.presentation.navigation.NavRoutes
-import com.example.etransportapp.ui.theme.LightBlue
+import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.util.PreferenceHelper
 import kotlinx.coroutines.launch
 
@@ -41,8 +41,8 @@ fun OnboardingScreen(navController: NavHostController) {
                 horizontalArrangement = Arrangement.End
             ) {
                 TextButton(onClick = { navController.navigate(NavRoutes.INTRO) }) {
-                    Text(fontSize = 24.sp,text = "Geç ", color = LightBlue, fontWeight = FontWeight.Medium)
-                    Icon(painter = painterResource(id = R.drawable.baseline_arrow_right_alt_24), contentDescription ="Skip button icon", tint = LightBlue )
+                    Text(fontSize = 24.sp,text = "Geç ", color = DarkGray, fontWeight = FontWeight.Medium)
+                    Icon(painter = painterResource(id = R.drawable.baseline_arrow_right_alt_24), contentDescription ="Skip button icon", tint = DarkGray )
                 }
             }
 
@@ -56,7 +56,7 @@ fun OnboardingScreen(navController: NavHostController) {
             DotsIndicator(
                 totalDots = onboardingPages.size,
                 selectedIndex = pagerState.currentPage,
-                selectedColor = LightBlue,
+                selectedColor = DarkGray,
                 unselectedColor = Color.LightGray
             )
 
@@ -78,7 +78,7 @@ fun OnboardingScreen(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(vertical = 16.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = LightBlue)
+                colors = ButtonDefaults.buttonColors(containerColor = DarkGray)
             ) {
                 Text(
                     text = if (pagerState.currentPage == onboardingPages.lastIndex) "Başla" else "İleri",
