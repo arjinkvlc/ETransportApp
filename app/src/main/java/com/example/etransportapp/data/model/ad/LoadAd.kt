@@ -7,5 +7,6 @@ data class LoadAd(
     val destination: String,
     val price: String,
     val date: String,
-    val userId: String = "username"
+    val userId: String = "username",
+    val isListing: Boolean = true,
 )

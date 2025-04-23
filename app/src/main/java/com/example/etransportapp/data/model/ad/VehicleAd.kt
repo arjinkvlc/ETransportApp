@@ -6,4 +6,5 @@ data class VehicleAd(
     val location: String,
     val date: String,
     val userId: String = "username",
+    val isListing: Boolean = true,
 )
