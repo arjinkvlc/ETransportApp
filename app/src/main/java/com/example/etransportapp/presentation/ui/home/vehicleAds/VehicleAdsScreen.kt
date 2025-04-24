@@ -38,28 +38,11 @@ fun VehicleAdsScreen(
             contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
         ) {
             items(vehicles) { item ->
-                VehicleAdCard(item){
+                VehicleAdCard(item) {
                     viewModel.selectedAd = item
                     navController.navigate(NavRoutes.VEHICLE_AD_DETAIL)
                 }
             }
-        }
-
-        FloatingActionButton(
-            onClick = { navController.navigate(NavRoutes.CREATE_VEHICLE_AD) },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-                .size(72.dp),
-            containerColor = DarkGray,
-            shape = CircleShape
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Yeni Araç İlanı Ekle",
-                modifier = Modifier.size(32.dp),
-                tint = Color.White
-            )
         }
     }
 }

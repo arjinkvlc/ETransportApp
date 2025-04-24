@@ -38,21 +38,5 @@ fun LoadAdsScreen(
             }
         }
 
-        FloatingActionButton(
-            onClick = { navController.navigate("create_load_ad") },
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-                .size(72.dp),
-            containerColor = DarkGray,
-            shape = CircleShape
-        ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Yeni Yük İlanı Ekle",
-                modifier = Modifier.size(32.dp),
-                tint = Color.White
-            )
-        }
     }
 }
