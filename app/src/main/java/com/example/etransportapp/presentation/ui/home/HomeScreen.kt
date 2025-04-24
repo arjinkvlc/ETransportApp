@@ -1,8 +1,10 @@
 package com.example.etransportapp.presentation.ui.home
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -18,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.etransportapp.R
+import com.example.etransportapp.presentation.components.FloatingActionMenu
 import com.example.etransportapp.presentation.navigation.BottomBarScreen
 import com.example.etransportapp.presentation.navigation.NavGraph
 import com.example.etransportapp.presentation.navigation.NavRoutes
@@ -29,6 +32,9 @@ import com.example.etransportapp.ui.theme.RoseRed
 fun HomeScreen(navController: NavHostController) {
     val currentBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry.value?.destination?.route
+    val context = LocalContext.current
+
+    var showActionModal by remember { mutableStateOf(false) }
 
     val showTopBar = currentRoute in listOf(
         NavRoutes.LOAD_ADS,
@@ -36,7 +42,6 @@ fun HomeScreen(navController: NavHostController) {
         NavRoutes.MY_ADS,
         NavRoutes.PROFILE
     )
-    val context = LocalContext.current
 
     Scaffold(
         topBar = {
@@ -67,55 +72,83 @@ fun HomeScreen(navController: NavHostController) {
         },
         bottomBar = {
             if (showTopBar) {
-                val items = listOf("Yük İlanları", "Araç İlanları", "İlanlarım", "Profil")
-                val icons = listOf(
-                    R.drawable.ic_loadads,
-                    R.drawable.ic_vehicleads,
-                    R.drawable.ic_myads,
-                    R.drawable.baseline_person_24
-                )
-                val routes = listOf(
-                    NavRoutes.LOAD_ADS,
-                    NavRoutes.VEHICLE_ADS,
-                    NavRoutes.MY_ADS,
-                    NavRoutes.PROFILE
-                )
-
                 NavigationBar {
                     BottomBarScreen.all.forEach { screen ->
-                        NavigationBarItem(
-                            selected = currentRoute == screen.route,
-                            onClick = {
-                                navController.navigate(screen.route) {
-                                    popUpTo(navController.graph.startDestinationId) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = true
-                                }
-                            },
-                            icon = {
-                                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Icon(
-                                        painter = painterResource(id = screen.icon),
-                                        contentDescription = screen.label,
-                                        modifier = Modifier.size(28.dp),
-                                        tint = if (currentRoute == screen.route) RoseRed else DarkGray
-                                    )
-                                    Text(
-                                        text = screen.label,
-                                        fontSize = 12.sp,
-                                        color = if (currentRoute == screen.route) RoseRed else DarkGray
-                                    )
-                                }
-                            },
-                            alwaysShowLabel = false,
+                        if (screen == BottomBarScreen.CenterAction) {
+                            NavigationBarItem(
+                                selected = false,
+                                onClick = { showActionModal = !showActionModal },
+                                icon = {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Icon(
+                                            imageVector = if (showActionModal) Icons.Filled.Close else Icons.Filled.AddCircle,
+                                            contentDescription = "Aksiyonlar",
+                                            modifier = Modifier.size(28.dp),
+                                            tint = RoseRed
+                                        )
+                                        Text(
+                                            text = screen.label,
+                                            fontSize = 12.sp,
+                                            color = if (currentRoute == screen.route) RoseRed else DarkGray
+                                        )
+                                    }
 
-                        )
+                                },
+                                label = null
+                            )
+                        } else {
+                            NavigationBarItem(
+                                selected = currentRoute == screen.route,
+                                onClick = {
+                                    navController.navigate(screen.route) {
+                                        popUpTo(navController.graph.startDestinationId) {
+                                            saveState = true
+                                        }
+                                        launchSingleTop = true
+                                        restoreState = true
+                                    }
+                                },
+                                icon = {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Icon(
+                                            painter = painterResource(id = screen.icon),
+                                            contentDescription = screen.label,
+                                            modifier = Modifier.size(28.dp),
+                                            tint = if (currentRoute == screen.route) RoseRed else DarkGray
+                                        )
+                                        Text(
+                                            text = screen.label,
+                                            fontSize = 12.sp,
+                                            color = if (currentRoute == screen.route) RoseRed else DarkGray
+                                        )
+                                    }
+                                },
+                                alwaysShowLabel = false,
+                                colors = NavigationBarItemDefaults.colors(
+                                    selectedIconColor = RoseRed,
+                                    unselectedIconColor = DarkGray,
+                                    indicatorColor = Color.Transparent
+                                )
+                            )
+                        }
                     }
                 }
-
             }
         }
     ) { innerPadding ->
-        NavGraph(navController = navController, modifier = Modifier.padding(innerPadding), context = context)
+        Box(modifier = Modifier.padding(innerPadding)) {
+            NavGraph(navController = navController, modifier = Modifier, context = context)
+
+            FloatingActionMenu(
+                show = showActionModal,
+                onDismiss = { showActionModal = false },
+                onNavigate = {
+                    navController.navigate(it)
+                    showActionModal = false
+                }
+            )
+
+
+        }
     }
 }

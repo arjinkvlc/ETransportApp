@@ -17,6 +17,7 @@ import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdViewMo
 import com.example.etransportapp.presentation.components.VehicleAdCard
 import com.example.etransportapp.presentation.navigation.NavRoutes
 import com.example.etransportapp.ui.theme.DarkGray
+import com.example.etransportapp.ui.theme.RoseRed
 
 @Composable
 fun MyAdsScreen(
@@ -35,13 +36,13 @@ fun MyAdsScreen(
         TabRow(
             selectedTabIndex = selectedTabIndex,
             containerColor = DarkGray,
-            contentColor = Color.White
+            contentColor = Color.White,
         ) {
             tabTitles.forEachIndexed { index, title ->
                 Tab(
                     selected = selectedTabIndex == index,
                     onClick = { selectedTabIndex = index },
-                    text = { Text(title) }
+                    text = { Text(title) },
                 )
             }
         }
