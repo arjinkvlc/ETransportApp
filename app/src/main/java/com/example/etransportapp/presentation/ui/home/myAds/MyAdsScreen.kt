@@ -65,7 +65,7 @@ fun MyAdsScreen(
 fun LoadAdsList(loadAds: List<LoadAd>, onAdClick: (LoadAd) -> Unit) {
     //TODO : MOCK ÖRNEK İLAN DAHA SONRA KALDIRILACAK
     val mockLoadAdItem =
-        LoadAd("Örnek Yük İlanı", "Örnek Açıklama", "Mersin", "Istanbul", "5000", "05/03/2001")
+        LoadAd("Örnek Yük İlanı", "Örnek Açıklama", "Mersin", "Istanbul", "5000", "05/03/2001", weight = "20")
     LoadAdCard(item = mockLoadAdItem) {
         onAdClick(mockLoadAdItem)
     }
@@ -81,7 +81,7 @@ fun LoadAdsList(loadAds: List<LoadAd>, onAdClick: (LoadAd) -> Unit) {
 fun VehicleAdsList(vehicleAds: List<VehicleAd>, onAdClick: (VehicleAd) -> Unit) {
     //TODO : MOCK ÖRNEK İLAN DAHA SONRA KALDIRILACAK
     val mockVehicleAdItem =
-        VehicleAd("Örnek Araç İlanı", "Örnek Açıklama", "Mersin", "05/03/2001", "username")
+        VehicleAd(title = "Örnek Araç İlanı", description = "Örnek Açıklama", location = "Mersin", date = "05/03/2001", userId = "username",capacity = "20")
     VehicleAdCard(item = mockVehicleAdItem) {
         onAdClick(mockVehicleAdItem)
     }

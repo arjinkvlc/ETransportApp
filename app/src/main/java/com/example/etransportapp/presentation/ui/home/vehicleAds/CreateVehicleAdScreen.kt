@@ -1,30 +1,11 @@
 package com.example.etransportapp.presentation.ui.home.vehicleAds
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +15,8 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.VehicleAd
 import com.example.etransportapp.ui.theme.DarkGray
+import java.text.SimpleDateFormat
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -45,7 +28,19 @@ fun CreateVehicleAdScreen(
     var title by remember { mutableStateOf(TextFieldValue("")) }
     var description by remember { mutableStateOf(TextFieldValue("")) }
     var location by remember { mutableStateOf(TextFieldValue("")) }
-    var date by remember { mutableStateOf(TextFieldValue("")) }
+    var date by remember {
+        mutableStateOf(
+            TextFieldValue(
+                SimpleDateFormat(
+                    "dd/MM/yyyy",
+                    Locale.getDefault()
+                ).format(Date())
+            )
+        )
+    }
+    var capacity by remember { mutableStateOf(TextFieldValue("")) }
+    val openDatePicker = remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState()
 
     Scaffold(
         topBar = {
@@ -87,6 +82,7 @@ fun CreateVehicleAdScreen(
                                     description = description.text,
                                     location = location.text,
                                     date = date.text,
+                                    capacity = capacity.text,
                                     userId = "username"
                                 )
                             )
@@ -103,6 +99,34 @@ fun CreateVehicleAdScreen(
             }
         }
     ) { innerPadding ->
+
+        if (openDatePicker.value) {
+            DatePickerDialog(
+                onDismissRequest = { openDatePicker.value = false },
+                confirmButton = {
+                    TextButton(onClick = {
+                        openDatePicker.value = false
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            val formattedDate =
+                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                                    Date(millis)
+                                )
+                            date = TextFieldValue(formattedDate)
+                        }
+                    }) {
+                        Text("Tamam")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { openDatePicker.value = false }) {
+                        Text("İptal")
+                    }
+                }
+            ) {
+                DatePicker(state = datePickerState)
+            }
+        }
+
         Column(
             modifier = modifier
                 .padding(innerPadding)
@@ -123,16 +147,33 @@ fun CreateVehicleAdScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
-                value = location,
-                onValueChange = { location = it },
-                label = { Text("Kalkış Noktası") },
+                value = capacity,
+                onValueChange = { capacity = it },
+                label = { Text("Taşıma Kapasitesi (ton)") },
                 modifier = Modifier.fillMaxWidth()
             )
             OutlinedTextField(
-                value = date,
-                onValueChange = { date = it },
-                label = { Text("Tarih") },
+                value = location,
+                onValueChange = { location = it },
+                label = { Text("Konum") },
                 modifier = Modifier.fillMaxWidth()
+            )
+
+
+            OutlinedTextField(
+                value = date,
+                onValueChange = {},
+                label = { Text("Tarih") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { openDatePicker.value = true },
+                colors = OutlinedTextFieldDefaults.colors(
+                    disabledTextColor = Color.Black,
+                    disabledContainerColor = Color.Transparent,
+                    disabledBorderColor = Color.Black,
+                    disabledLabelColor = Color.Black
+                ),
+                enabled = false
             )
         }
     }
