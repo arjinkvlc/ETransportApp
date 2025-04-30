@@ -33,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.etransportapp.R
 import com.example.etransportapp.ui.theme.DarkGray
+import com.example.etransportapp.ui.theme.RoseRed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -201,10 +202,10 @@ fun StepIndicator(currentStep: Int) {
         (1..3).forEach {
             Box(
                 modifier = Modifier
-                    .size(12.dp)
+                    .size(16.dp)
                     .padding(4.dp)
                     .background(
-                        color = if (it <= currentStep) Color.DarkGray else Color.LightGray,
+                        color = if (it <= currentStep) RoseRed else Color.LightGray,
                         shape = CircleShape
                     )
             )
