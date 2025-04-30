@@ -1,5 +1,6 @@
 package com.example.etransportapp.presentation.ui.home.loadAds
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -15,6 +16,9 @@ import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.ui.theme.DarkGray
 
+import java.text.SimpleDateFormat
+import java.util.*
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CreateLoadAdScreen(
@@ -28,6 +32,9 @@ fun CreateLoadAdScreen(
     var destination by remember { mutableStateOf(TextFieldValue("")) }
     var price by remember { mutableStateOf(TextFieldValue("")) }
     var date by remember { mutableStateOf(TextFieldValue("")) }
+
+    val openDatePicker = remember { mutableStateOf(false) }
+    val datePickerState = rememberDatePickerState()
 
     Scaffold(
         topBar = {
@@ -85,6 +92,31 @@ fun CreateLoadAdScreen(
             }
         }
     ) { innerPadding ->
+
+        if (openDatePicker.value) {
+            DatePickerDialog(
+                onDismissRequest = { openDatePicker.value = false },
+                confirmButton = {
+                    TextButton(onClick = {
+                        openDatePicker.value = false
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(millis))
+                            date = TextFieldValue(formattedDate)
+                        }
+                    }) {
+                        Text("Tamam")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { openDatePicker.value = false }) {
+                        Text("İptal")
+                    }
+                }
+            ) {
+                DatePicker(state = datePickerState)
+            }
+        }
+
         Column(
             modifier = modifier
                 .padding(innerPadding)
@@ -97,7 +129,21 @@ fun CreateLoadAdScreen(
             OutlinedTextField(value = origin, onValueChange = { origin = it }, label = { Text("Yükleme Noktası") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = destination, onValueChange = { destination = it }, label = { Text("Varış Noktası") }, modifier = Modifier.fillMaxWidth())
             OutlinedTextField(value = price, onValueChange = { price = it }, label = { Text("Fiyat (₺)") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = date, onValueChange = { date = it }, label = { Text("Yükleme Tarihi (GG/AA/YYYY)") }, modifier = Modifier.fillMaxWidth())
+
+            OutlinedTextField(
+                value = date,
+                onValueChange = {},
+                label = { Text("Yükleme Tarihi") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { openDatePicker.value = true },
+                colors = OutlinedTextFieldDefaults.colors(
+                    disabledTextColor = Color.Black,
+                    disabledContainerColor = Color.Transparent, disabledBorderColor = Color.Black,
+                    disabledLabelColor = Color.Black
+                ),
+                enabled = false
+            )
         }
     }
 }
