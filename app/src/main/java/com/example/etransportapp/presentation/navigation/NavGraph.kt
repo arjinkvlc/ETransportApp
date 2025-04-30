@@ -48,11 +48,11 @@ fun NavGraph(
         composable(NavRoutes.LOGIN) { LoginScreen(LoginViewModel(), modifier, navController) }
         composable(NavRoutes.REGISTER) {
             RegisterScreen(
-                RegisterViewModel(),
-                modifier,
-                navController
+                viewModel = RegisterViewModel(),
+                navController = navController
             )
         }
+
         composable(NavRoutes.LOAD_ADS) { LoadAdsScreen(modifier, navController, loadAdViewModel) }
         composable(NavRoutes.VEHICLE_ADS) {
             VehicleAdsScreen(

@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.R
+import com.example.etransportapp.presentation.navigation.NavRoutes
 import com.example.etransportapp.ui.theme.DarkGray
 
 @Composable
@@ -72,7 +73,7 @@ fun IntroScreen(
                 .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = DarkGray),
             onClick = {
-                navController.navigate("register")
+                navController.navigate(NavRoutes.REGISTER)
             }
         ) {
             Text(text = "Kayıt Ol")

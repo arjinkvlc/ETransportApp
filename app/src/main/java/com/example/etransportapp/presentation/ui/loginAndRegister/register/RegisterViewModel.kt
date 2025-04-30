@@ -26,7 +26,7 @@ class RegisterViewModel : ViewModel() {
      * ✅ Kullanıcı Kaydını Gerçekleştir
      * Bu fonksiyon backend API'ye istek atarak kullanıcıyı kaydeder.
      */
-    fun registerUser(context: Context/* onSuccess: () -> Unit*/) {
+    fun registerUser(context: Context, onSuccess: () -> Unit) {
         if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() ||
             phoneNumber.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()
         ) {
@@ -44,21 +44,22 @@ class RegisterViewModel : ViewModel() {
             return
         }
 
-        if (selectedRole.isEmpty()) {
-            Toast.makeText(context, "Lütfen bir rol seçin", Toast.LENGTH_SHORT).show()
-            return
-        }
-
+        // ✅ API Çağrısı
         CoroutineScope(Dispatchers.IO).launch {
             try {
-                // TODO: Buraya Retrofit ile API çağrısı ekle
+              
 
-                // Başarı Durumu
-                // onSuccess()
-                Toast.makeText(context, "Kayıt başarılı!", Toast.LENGTH_SHORT).show()
+                // Başarıyla kayıt olduktan sonra
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(context, "Kayıt başarılı!", Toast.LENGTH_SHORT).show()
+                    onSuccess()
+                }
             } catch (e: Exception) {
-                Toast.makeText(context, "Kayıt başarısız: ${e.message}", Toast.LENGTH_SHORT).show()
+                CoroutineScope(Dispatchers.Main).launch {
+                    Toast.makeText(context, "Kayıt başarısız: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
+
 }

@@ -4,7 +4,8 @@ object NavRoutes {
     const val ONBOARDING = "onboarding"
     const val INTRO = "intro"
     const val LOGIN = "login"
-    const val REGISTER = "register"
+    const val REGISTER = "register_part1"   // Güncellendi
+    const val REGISTER_PART2 = "register_part2" // ✅ Yeni rota
     const val LOAD_ADS = "load_ads"
     const val VEHICLE_ADS = "vehicle_ads"
     const val MY_ADS = "my_ads"
