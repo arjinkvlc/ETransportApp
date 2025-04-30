@@ -32,6 +32,7 @@ fun CreateLoadAdScreen(
     var destination by remember { mutableStateOf(TextFieldValue("")) }
     var price by remember { mutableStateOf(TextFieldValue("")) }
     var date by remember { mutableStateOf(TextFieldValue("")) }
+    var weight by remember { mutableStateOf(TextFieldValue("")) }
 
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -42,7 +43,11 @@ fun CreateLoadAdScreen(
                 title = { Text("Yeni Yük İlanı Oluştur", textAlign = TextAlign.Center) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri", tint = Color.White)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Geri",
+                            tint = Color.White
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -76,7 +81,8 @@ fun CreateLoadAdScreen(
                                     destination = destination.text,
                                     price = price.text,
                                     date = date.text,
-                                    userId = "username"
+                                    userId = "username",
+                                    weight = weight.text,
                                 )
                             )
                             navController.popBackStack()
@@ -100,7 +106,10 @@ fun CreateLoadAdScreen(
                     TextButton(onClick = {
                         openDatePicker.value = false
                         datePickerState.selectedDateMillis?.let { millis ->
-                            val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(millis))
+                            val formattedDate =
+                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                                    Date(millis)
+                                )
                             date = TextFieldValue(formattedDate)
                         }
                     }) {
@@ -124,11 +133,42 @@ fun CreateLoadAdScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Başlık") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = description, onValueChange = { description = it }, label = { Text("Açıklama") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = origin, onValueChange = { origin = it }, label = { Text("Yükleme Noktası") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = destination, onValueChange = { destination = it }, label = { Text("Varış Noktası") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = price, onValueChange = { price = it }, label = { Text("Fiyat (₺)") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(
+                value = title,
+                onValueChange = { title = it },
+                label = { Text("Başlık") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = description,
+                onValueChange = { description = it },
+                label = { Text("Açıklama") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = origin,
+                onValueChange = { origin = it },
+                label = { Text("Yükleme Noktası") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = destination,
+                onValueChange = { destination = it },
+                label = { Text("Varış Noktası") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = weight,
+                onValueChange = { weight = it },
+                label = { Text("Yük Ağırlığı (ton)") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = price,
+                onValueChange = { price = it },
+                label = { Text("Fiyat (₺)") },
+                modifier = Modifier.fillMaxWidth()
+            )
 
             OutlinedTextField(
                 value = date,

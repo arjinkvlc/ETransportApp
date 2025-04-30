@@ -28,7 +28,17 @@ fun CreateVehicleAdScreen(
     var title by remember { mutableStateOf(TextFieldValue("")) }
     var description by remember { mutableStateOf(TextFieldValue("")) }
     var location by remember { mutableStateOf(TextFieldValue("")) }
-    var date by remember { mutableStateOf(TextFieldValue(SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date()))) }
+    var date by remember {
+        mutableStateOf(
+            TextFieldValue(
+                SimpleDateFormat(
+                    "dd/MM/yyyy",
+                    Locale.getDefault()
+                ).format(Date())
+            )
+        )
+    }
+    var capacity by remember { mutableStateOf(TextFieldValue("")) }
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
 
@@ -72,6 +82,7 @@ fun CreateVehicleAdScreen(
                                     description = description.text,
                                     location = location.text,
                                     date = date.text,
+                                    capacity = capacity.text,
                                     userId = "username"
                                 )
                             )
@@ -96,7 +107,10 @@ fun CreateVehicleAdScreen(
                     TextButton(onClick = {
                         openDatePicker.value = false
                         datePickerState.selectedDateMillis?.let { millis ->
-                            val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(millis))
+                            val formattedDate =
+                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                                    Date(millis)
+                                )
                             date = TextFieldValue(formattedDate)
                         }
                     }) {
@@ -120,9 +134,31 @@ fun CreateVehicleAdScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Başlık") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = description, onValueChange = { description = it }, label = { Text("Açıklama") }, modifier = Modifier.fillMaxWidth())
-            OutlinedTextField(value = location, onValueChange = { location = it }, label = { Text("Konum") }, modifier = Modifier.fillMaxWidth())
+            OutlinedTextField(
+                value = title,
+                onValueChange = { title = it },
+                label = { Text("Başlık") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = description,
+                onValueChange = { description = it },
+                label = { Text("Açıklama") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = capacity,
+                onValueChange = { capacity = it },
+                label = { Text("Taşıma Kapasitesi (ton)") },
+                modifier = Modifier.fillMaxWidth()
+            )
+            OutlinedTextField(
+                value = location,
+                onValueChange = { location = it },
+                label = { Text("Konum") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
 
             OutlinedTextField(
                 value = date,

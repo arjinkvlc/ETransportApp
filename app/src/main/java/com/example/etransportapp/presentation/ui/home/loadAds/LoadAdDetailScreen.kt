@@ -36,6 +36,7 @@ fun LoadAdDetailScreen(
     var destination by remember { mutableStateOf(loadAd.destination) }
     var price by remember { mutableStateOf(loadAd.price) }
     var date by remember { mutableStateOf(loadAd.date) }
+    var weight by remember { mutableStateOf(loadAd.weight) }
 
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -64,7 +65,8 @@ fun LoadAdDetailScreen(
                                         origin = origin,
                                         destination = destination,
                                         price = price,
-                                        date = date
+                                        date = date,
+                                        weight = weight
                                     )
                                 )
                                 isEditing = false
@@ -153,6 +155,12 @@ fun LoadAdDetailScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
                 OutlinedTextField(
+                    value = weight,
+                    onValueChange = { weight = it },
+                    label = { Text("Yük Ağırlığı (ton)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
                     value = price,
                     onValueChange = { price = it },
                     label = { Text("Fiyat") },
@@ -185,6 +193,7 @@ fun LoadAdDetailScreen(
                 InfoText("Başlık", title)
                 InfoText("Yükleme Noktası", origin)
                 InfoText("Varış Noktası", destination)
+                InfoText("Yük Ağırlığı ", "$weight ton")
                 InfoText("Fiyat", "$price ₺")
                 InfoText("Tarih", date)
                 InfoText("Açıklama", description)

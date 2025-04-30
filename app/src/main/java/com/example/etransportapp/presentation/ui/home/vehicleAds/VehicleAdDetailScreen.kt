@@ -34,6 +34,7 @@ fun VehicleAdDetailScreen(
     var description by remember { mutableStateOf(vehicleAd.description) }
     var location by remember { mutableStateOf(vehicleAd.location) }
     var date by remember { mutableStateOf(vehicleAd.date) }
+    var capacity by remember { mutableStateOf(vehicleAd.capacity) }
 
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -60,20 +61,33 @@ fun VehicleAdDetailScreen(
                                         title = title,
                                         description = description,
                                         location = location,
-                                        date = date
+                                        date = date,
+                                        capacity = capacity
                                     )
                                 )
                                 isEditing = false
                             }) {
-                                Icon(Icons.Default.Check, contentDescription = "Kaydet", tint = Color.White)
+                                Icon(
+                                    Icons.Default.Check,
+                                    contentDescription = "Kaydet",
+                                    tint = Color.White
+                                )
                             }
                         } else {
                             IconButton(onClick = { isEditing = true }) {
-                                Icon(Icons.Default.Edit, contentDescription = "Düzenle", tint = Color.White)
+                                Icon(
+                                    Icons.Default.Edit,
+                                    contentDescription = "Düzenle",
+                                    tint = Color.White
+                                )
                             }
                         }
                         IconButton(onClick = { onDeleteClick?.invoke() }) {
-                            Icon(Icons.Default.Delete, contentDescription = "Sil", tint = Color.White)
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "Sil",
+                                tint = Color.White
+                            )
                         }
                     }
                 },
@@ -91,9 +105,30 @@ fun VehicleAdDetailScreen(
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             if (isEditing) {
-                OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Başlık") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = description, onValueChange = { description = it }, label = { Text("Açıklama") }, modifier = Modifier.fillMaxWidth())
-                OutlinedTextField(value = location, onValueChange = { location = it }, label = { Text("Konum") }, modifier = Modifier.fillMaxWidth())
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Başlık") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = description,
+                    onValueChange = { description = it },
+                    label = { Text("Açıklama") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = capacity,
+                    onValueChange = { capacity = it },
+                    label = { Text("Taşıma Kapasitesi (ton)") },
+                    modifier = Modifier.fillMaxWidth()
+                )
+                OutlinedTextField(
+                    value = location,
+                    onValueChange = { location = it },
+                    label = { Text("Konum") },
+                    modifier = Modifier.fillMaxWidth()
+                )
 
                 // 🔹 Date Picker Field
                 OutlinedTextField(
@@ -120,7 +155,10 @@ fun VehicleAdDetailScreen(
                             TextButton(onClick = {
                                 openDatePicker.value = false
                                 datePickerState.selectedDateMillis?.let { millis ->
-                                    val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(millis))
+                                    val formattedDate =
+                                        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                                            Date(millis)
+                                        )
                                     date = formattedDate
                                 }
                             }) {
@@ -140,6 +178,7 @@ fun VehicleAdDetailScreen(
             } else {
                 InfoText("Başlık", title)
                 InfoText("Açıklama", description)
+                InfoText("Taşıma Kapasitesi", "$capacity ton")
                 InfoText("Konum", location)
                 InfoText("Tarih", date)
             }
