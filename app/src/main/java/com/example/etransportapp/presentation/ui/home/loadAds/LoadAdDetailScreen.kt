@@ -2,6 +2,8 @@ package com.example.etransportapp.presentation.ui.home.loadAds
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -15,9 +17,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.presentation.components.InfoText
+import com.example.etransportapp.presentation.viewModels.GeoNamesViewModel
 import com.example.etransportapp.ui.theme.DarkGray
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.etransportapp.presentation.components.CountryCitySelector
+import com.example.etransportapp.util.Constants
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +47,7 @@ fun LoadAdDetailScreen(
 
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
+    val geoNamesViewModel: GeoNamesViewModel = viewModel()
 
     Scaffold(
         topBar = {
@@ -132,7 +140,8 @@ fun LoadAdDetailScreen(
             modifier = Modifier
                 .padding(padding)
                 .padding(horizontal = 20.dp, vertical = 24.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             if (isEditing) {
@@ -142,17 +151,24 @@ fun LoadAdDetailScreen(
                     label = { Text("Başlık") },
                     modifier = Modifier.fillMaxWidth()
                 )
-                OutlinedTextField(
-                    value = origin,
-                    onValueChange = { origin = it },
-                    label = { Text("Yükleme Noktası") },
-                    modifier = Modifier.fillMaxWidth()
+                CountryCitySelector(
+                    labelPrefix = "Yükleme Noktası",
+                    username = Constants.GEO_NAMES_USERNAME,
+                    geoViewModel = geoNamesViewModel,
+                    onSelected = { countryCode, cityName ->
+                        val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
+                        origin = "$cityName, $countryName"
+                    }
                 )
-                OutlinedTextField(
-                    value = destination,
-                    onValueChange = { destination = it },
-                    label = { Text("Varış Noktası") },
-                    modifier = Modifier.fillMaxWidth()
+
+                CountryCitySelector(
+                    labelPrefix = "Varış Noktası",
+                    username = Constants.GEO_NAMES_USERNAME,
+                    geoViewModel = geoNamesViewModel,
+                    onSelected = { countryCode, cityName ->
+                        val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
+                        destination = "$cityName, $countryName"
+                    }
                 )
                 OutlinedTextField(
                     value = weight,

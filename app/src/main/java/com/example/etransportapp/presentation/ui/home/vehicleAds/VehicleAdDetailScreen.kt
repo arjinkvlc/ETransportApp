@@ -2,6 +2,8 @@ package com.example.etransportapp.presentation.ui.home.vehicleAds
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -15,9 +17,13 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.VehicleAd
 import com.example.etransportapp.presentation.components.InfoText
+import com.example.etransportapp.presentation.viewModels.GeoNamesViewModel
 import com.example.etransportapp.ui.theme.DarkGray
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.etransportapp.presentation.components.CountryCitySelector
+import com.example.etransportapp.util.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -38,6 +44,7 @@ fun VehicleAdDetailScreen(
 
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
+    val geoNamesViewModel: GeoNamesViewModel = viewModel()
 
     Scaffold(
         topBar = {
@@ -101,7 +108,8 @@ fun VehicleAdDetailScreen(
             modifier = Modifier
                 .padding(padding)
                 .padding(horizontal = 20.dp, vertical = 24.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(20.dp)
         ) {
             if (isEditing) {
@@ -123,14 +131,17 @@ fun VehicleAdDetailScreen(
                     label = { Text("Taşıma Kapasitesi (ton)") },
                     modifier = Modifier.fillMaxWidth()
                 )
-                OutlinedTextField(
-                    value = location,
-                    onValueChange = { location = it },
-                    label = { Text("Konum") },
-                    modifier = Modifier.fillMaxWidth()
+
+                CountryCitySelector(
+                    labelPrefix = "Konum",
+                    username = Constants.GEO_NAMES_USERNAME,
+                    geoViewModel = geoNamesViewModel,
+                    onSelected = { countryCode, cityName ->
+                        val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
+                        location = "$cityName, $countryName"
+                    }
                 )
 
-                // 🔹 Date Picker Field
                 OutlinedTextField(
                     value = date,
                     onValueChange = {},
