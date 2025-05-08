@@ -2,6 +2,8 @@ package com.example.etransportapp.presentation.ui.home.vehicleAds
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -14,9 +16,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.VehicleAd
+import com.example.etransportapp.presentation.viewModels.GeoNamesViewModel
 import com.example.etransportapp.ui.theme.DarkGray
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.etransportapp.presentation.components.CountryCitySelector
+import com.example.etransportapp.util.Constants
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,20 +34,19 @@ fun CreateVehicleAdScreen(
 ) {
     var title by remember { mutableStateOf(TextFieldValue("")) }
     var description by remember { mutableStateOf(TextFieldValue("")) }
-    var location by remember { mutableStateOf(TextFieldValue("")) }
     var date by remember {
         mutableStateOf(
             TextFieldValue(
-                SimpleDateFormat(
-                    "dd/MM/yyyy",
-                    Locale.getDefault()
-                ).format(Date())
+                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
             )
         )
     }
     var capacity by remember { mutableStateOf(TextFieldValue("")) }
+    var location by remember { mutableStateOf("") }
+
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
+    val geoNamesViewModel: GeoNamesViewModel = viewModel()
 
     Scaffold(
         topBar = {
@@ -73,14 +79,14 @@ fun CreateVehicleAdScreen(
                         if (
                             title.text.isNotBlank() &&
                             description.text.isNotBlank() &&
-                            location.text.isNotBlank() &&
+                            location.isNotBlank() &&
                             date.text.isNotBlank()
                         ) {
                             viewModel.addVehicleAd(
                                 VehicleAd(
                                     title = title.text,
                                     description = description.text,
-                                    location = location.text,
+                                    location = location,
                                     date = date.text,
                                     capacity = capacity.text,
                                     userId = "username"
@@ -107,10 +113,7 @@ fun CreateVehicleAdScreen(
                     TextButton(onClick = {
                         openDatePicker.value = false
                         datePickerState.selectedDateMillis?.let { millis ->
-                            val formattedDate =
-                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
-                                    Date(millis)
-                                )
+                            val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(millis))
                             date = TextFieldValue(formattedDate)
                         }
                     }) {
@@ -131,7 +134,8 @@ fun CreateVehicleAdScreen(
             modifier = modifier
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             OutlinedTextField(
@@ -140,25 +144,31 @@ fun CreateVehicleAdScreen(
                 label = { Text("Başlık") },
                 modifier = Modifier.fillMaxWidth()
             )
+
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
                 label = { Text("Açıklama") },
                 modifier = Modifier.fillMaxWidth()
             )
+
             OutlinedTextField(
                 value = capacity,
                 onValueChange = { capacity = it },
                 label = { Text("Taşıma Kapasitesi (ton)") },
                 modifier = Modifier.fillMaxWidth()
             )
-            OutlinedTextField(
-                value = location,
-                onValueChange = { location = it },
-                label = { Text("Konum") },
-                modifier = Modifier.fillMaxWidth()
-            )
 
+            CountryCitySelector(
+                labelPrefix = "Konum",
+                username = Constants.GEO_NAMES_USERNAME,
+                geoViewModel = geoNamesViewModel,
+                onSelected = { countryCode, cityName ->
+                    val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
+                    location = "$cityName, $countryName"
+                }
+
+            )
 
             OutlinedTextField(
                 value = date,

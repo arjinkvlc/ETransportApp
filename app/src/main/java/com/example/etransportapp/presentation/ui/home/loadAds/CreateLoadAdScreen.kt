@@ -2,6 +2,8 @@ package com.example.etransportapp.presentation.ui.home.loadAds
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -14,10 +16,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.LoadAd
+import com.example.etransportapp.presentation.components.CountryCitySelector
+import com.example.etransportapp.presentation.viewModels.GeoNamesViewModel
 import com.example.etransportapp.ui.theme.DarkGray
-
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.etransportapp.util.Constants
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -28,14 +34,18 @@ fun CreateLoadAdScreen(
 ) {
     var title by remember { mutableStateOf(TextFieldValue("")) }
     var description by remember { mutableStateOf(TextFieldValue("")) }
-    var origin by remember { mutableStateOf(TextFieldValue("")) }
-    var destination by remember { mutableStateOf(TextFieldValue("")) }
     var price by remember { mutableStateOf(TextFieldValue("")) }
     var date by remember { mutableStateOf(TextFieldValue("")) }
     var weight by remember { mutableStateOf(TextFieldValue("")) }
 
+    // Yeni alanlar
+    var origin by remember { mutableStateOf("") }
+    var destination by remember { mutableStateOf("") }
+
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
+
+    val geoNamesViewModel: GeoNamesViewModel = viewModel()
 
     Scaffold(
         topBar = {
@@ -68,8 +78,8 @@ fun CreateLoadAdScreen(
                         if (
                             title.text.isNotBlank() &&
                             description.text.isNotBlank() &&
-                            origin.text.isNotBlank() &&
-                            destination.text.isNotBlank() &&
+                            origin.isNotBlank() &&
+                            destination.isNotBlank() &&
                             price.text.isNotBlank() &&
                             date.text.isNotBlank()
                         ) {
@@ -77,8 +87,8 @@ fun CreateLoadAdScreen(
                                 LoadAd(
                                     title = title.text,
                                     description = description.text,
-                                    origin = origin.text,
-                                    destination = destination.text,
+                                    origin = origin,
+                                    destination = destination,
                                     price = price.text,
                                     date = date.text,
                                     userId = "username",
@@ -106,10 +116,7 @@ fun CreateLoadAdScreen(
                     TextButton(onClick = {
                         openDatePicker.value = false
                         datePickerState.selectedDateMillis?.let { millis ->
-                            val formattedDate =
-                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
-                                    Date(millis)
-                                )
+                            val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(millis))
                             date = TextFieldValue(formattedDate)
                         }
                     }) {
@@ -130,7 +137,8 @@ fun CreateLoadAdScreen(
             modifier = modifier
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             OutlinedTextField(
@@ -139,30 +147,42 @@ fun CreateLoadAdScreen(
                 label = { Text("Başlık") },
                 modifier = Modifier.fillMaxWidth()
             )
+
             OutlinedTextField(
                 value = description,
                 onValueChange = { description = it },
                 label = { Text("Açıklama") },
                 modifier = Modifier.fillMaxWidth()
             )
-            OutlinedTextField(
-                value = origin,
-                onValueChange = { origin = it },
-                label = { Text("Yükleme Noktası") },
-                modifier = Modifier.fillMaxWidth()
+
+            CountryCitySelector(
+                labelPrefix = "Yükleme Noktası",
+                username = Constants.GEO_NAMES_USERNAME,
+                geoViewModel = geoNamesViewModel,
+                onSelected = { countryCode, cityName ->
+                    val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
+                    origin = "$cityName, $countryName"
+                }
             )
-            OutlinedTextField(
-                value = destination,
-                onValueChange = { destination = it },
-                label = { Text("Varış Noktası") },
-                modifier = Modifier.fillMaxWidth()
+
+            CountryCitySelector(
+                labelPrefix = "Varış Noktası",
+                username = Constants.GEO_NAMES_USERNAME,
+                geoViewModel = geoNamesViewModel,
+                onSelected = { countryCode, cityName ->
+                    val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
+                    destination = "$cityName, $countryName"
+                }
             )
+
+
             OutlinedTextField(
                 value = weight,
                 onValueChange = { weight = it },
                 label = { Text("Yük Ağırlığı (ton)") },
                 modifier = Modifier.fillMaxWidth()
             )
+
             OutlinedTextField(
                 value = price,
                 onValueChange = { price = it },
@@ -179,7 +199,8 @@ fun CreateLoadAdScreen(
                     .clickable { openDatePicker.value = true },
                 colors = OutlinedTextFieldDefaults.colors(
                     disabledTextColor = Color.Black,
-                    disabledContainerColor = Color.Transparent, disabledBorderColor = Color.Black,
+                    disabledContainerColor = Color.Transparent,
+                    disabledBorderColor = Color.Black,
                     disabledLabelColor = Color.Black
                 ),
                 enabled = false
