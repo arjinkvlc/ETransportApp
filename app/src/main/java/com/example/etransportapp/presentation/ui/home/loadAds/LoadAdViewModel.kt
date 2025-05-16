@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.data.remote.api.GeoPlace
+import com.example.etransportapp.data.remote.service.CurrencyService
 import com.example.etransportapp.data.remote.service.HereService
 import com.example.etransportapp.util.Constants
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,6 +20,8 @@ class LoadAdViewModel : ViewModel() {
     val myLoadAds: StateFlow<List<LoadAd>> = _myLoadAds
 
     private val hereApi = HereService.create()
+    val currencyApi = CurrencyService.create()
+
     private val _suggestedCostText = MutableStateFlow<String?>(null)
     val suggestedCostText: StateFlow<String?> = _suggestedCostText
 
@@ -59,38 +62,35 @@ class LoadAdViewModel : ViewModel() {
                 val route = response.response.route.firstOrNull()
                 val distanceKm = route?.summary?.distance?.div(1000.0) ?: 0.0
                 val tollCost = route?.cost?.details?.tollCost?.toDoubleOrNull() ?: 0.0
+                val tollCurrency = route?.cost?.currency ?: "EUR"
 
-
-                // ML modeline istek at
-                /*val prediction = backendApi.predictCost(
-                    CostPredictionRequest(
-                        originLat = origin.lat.toDouble(),
-                        originLng = origin.lng.toDouble(),
-                        destLat = destination.lat.toDouble(),
-                        destLng = destination.lng.toDouble(),
-                        distance = distanceKm,
-                        tollCost = tollCost,
-                        weight = weightKg,
-                        cargoType = cargoType
-                    )
-                )
-
-                _suggestedCostText.value =
-                    "Önerilen fiyat: ₺${prediction.minCost} – ₺${prediction.maxCost}"*/
-
-                // Test amaçlı log ve ekranda gösterim:
-                _suggestedCostText.value = """
+                convertToTry(tollCost, tollCurrency) { convertedToll ->
+                    _suggestedCostText.value = """
                  HERE API Çıktısı:
                 • Mesafe: %.1f km
                 • Geçiş Ücreti: ₺%.2f
-            """.trimIndent().format(distanceKm, tollCost)
+                """.trimIndent().format(distanceKm, convertedToll)
 
-                // Konsola da yaz:
-                println("HERE Mesafe: $distanceKm km, Geçiş Ücreti: $tollCost ")
+                    println("HERE Mesafe: $distanceKm km, Geçiş Ücreti: ₺$convertedToll (orijinal $tollCost $tollCurrency)")
+                }
 
             } catch (e: Exception) {
                 _suggestedCostText.value = "Tahmin alınamadı: ${e.message}"
                 e.printStackTrace()
+            }
+        }
+    }
+
+    private fun convertToTry(amount: Double, fromCurrency: String, onResult: (Double) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val response = currencyApi.getRates(fromCurrency)
+                val tryRate = response.rates["TRY"] ?: 1.0
+                val converted = amount * tryRate
+                onResult(converted)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                onResult(amount)
             }
         }
     }
