@@ -20,8 +20,12 @@ interface GeoNamesApi {
 }
 
 data class GeoNamesResponse(val geonames: List<GeoPlace>)
-data class GeoPlace(val name: String, val countryName: String)
-
+data class GeoPlace(
+    val name: String,
+    val countryName: String,
+    val lat: String,
+    val lng: String
+)
 data class CountryResponse(val geonames: List<Country>)
 data class Country(
     val countryName: String,

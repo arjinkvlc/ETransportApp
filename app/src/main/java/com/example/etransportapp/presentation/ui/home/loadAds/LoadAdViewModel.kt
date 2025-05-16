@@ -1,9 +1,14 @@
 package com.example.etransportapp.presentation.ui.home.loadAds
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.ad.LoadAd
+import com.example.etransportapp.data.remote.api.GeoPlace
+import com.example.etransportapp.data.remote.service.HereService
+import com.example.etransportapp.util.Constants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class LoadAdViewModel : ViewModel() {
     private val _loadAds = MutableStateFlow<List<LoadAd>>(emptyList())
@@ -12,6 +17,10 @@ class LoadAdViewModel : ViewModel() {
 
     private val _myLoadAds = MutableStateFlow<List<LoadAd>>(emptyList())
     val myLoadAds: StateFlow<List<LoadAd>> = _myLoadAds
+
+    private val hereApi = HereService.create()
+    private val _suggestedCostText = MutableStateFlow<String?>(null)
+    val suggestedCostText: StateFlow<String?> = _suggestedCostText
 
     fun addLoadAd(ad: LoadAd) {
         _loadAds.value = _loadAds.value + ad
@@ -29,5 +38,60 @@ class LoadAdViewModel : ViewModel() {
         _loadAds.value = _loadAds.value.map { if (it == selectedAd) updatedAd else it }
         _myLoadAds.value = _myLoadAds.value.map { if (it == selectedAd) updatedAd else it }
         selectedAd = updatedAd
+    }
+
+    fun calculateRouteAndPredictCost(
+        origin: GeoPlace,
+        destination: GeoPlace,
+        weightKg: Int,
+        cargoType: String
+    ) {
+        viewModelScope.launch {
+            try {
+                val response = hereApi.calculateRoute(
+                    apiKey = Constants.HERE_API_KEY,
+                    waypoint0 = "${origin.lat},${origin.lng}",
+                    waypoint1 = "${destination.lat},${destination.lng}",
+                    weight = weightKg
+                )
+
+
+                val route = response.response.route.firstOrNull()
+                val distanceKm = route?.summary?.distance?.div(1000.0) ?: 0.0
+                val tollCost = route?.cost?.details?.tollCost?.toDoubleOrNull() ?: 0.0
+
+
+                // ML modeline istek at
+                /*val prediction = backendApi.predictCost(
+                    CostPredictionRequest(
+                        originLat = origin.lat.toDouble(),
+                        originLng = origin.lng.toDouble(),
+                        destLat = destination.lat.toDouble(),
+                        destLng = destination.lng.toDouble(),
+                        distance = distanceKm,
+                        tollCost = tollCost,
+                        weight = weightKg,
+                        cargoType = cargoType
+                    )
+                )
+
+                _suggestedCostText.value =
+                    "Önerilen fiyat: ₺${prediction.minCost} – ₺${prediction.maxCost}"*/
+
+                // Test amaçlı log ve ekranda gösterim:
+                _suggestedCostText.value = """
+                 HERE API Çıktısı:
+                • Mesafe: %.1f km
+                • Geçiş Ücreti: ₺%.2f
+            """.trimIndent().format(distanceKm, tollCost)
+
+                // Konsola da yaz:
+                println("HERE Mesafe: $distanceKm km, Geçiş Ücreti: $tollCost ")
+
+            } catch (e: Exception) {
+                _suggestedCostText.value = "Tahmin alınamadı: ${e.message}"
+                e.printStackTrace()
+            }
+        }
     }
 }
