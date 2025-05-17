@@ -3,6 +3,8 @@ package com.example.etransportapp.presentation.ui.home.loadAds
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -10,7 +12,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -43,7 +49,6 @@ fun CreateLoadAdScreen(
     var origin by remember { mutableStateOf("") }
     var selectedOriginPlace by remember { mutableStateOf<GeoPlace?>(null) }
     var selectedDestinationPlace by remember { mutableStateOf<GeoPlace?>(null) }
-
     var destination by remember { mutableStateOf("") }
 
     val openDatePicker = remember { mutableStateOf(false) }
@@ -51,6 +56,8 @@ fun CreateLoadAdScreen(
     var selectedCargoType by remember { mutableStateOf("Açık Kasa") }
     val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
     var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+
 
     val currencies = listOf("TRY", "USD", "EUR")
     var selectedCurrency by remember { mutableStateOf("TRY") }
@@ -90,6 +97,9 @@ fun CreateLoadAdScreen(
             ) {
                 Button(
                     onClick = {
+                        if(weight.text.contains(",")){
+                            weight = weight.copy(text = weight.text.replace(",", "."))
+                        }
                         if (
                             title.text.isNotBlank() &&
                             description.text.isNotBlank() &&
@@ -249,9 +259,41 @@ fun CreateLoadAdScreen(
 
             OutlinedTextField(
                 value = weight,
-                onValueChange = { weight = it },
+                onValueChange = {
+                    weight = it },
                 label = { Text("Yük Ağırlığı (ton)") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .onFocusChanged { focusState ->
+                        weight = weight.copy(text = weight.text.replace(",", "."))
+                        if (!focusState.isFocused) {
+                            if (selectedOriginPlace != null && selectedDestinationPlace != null && weight.text.isNotBlank()) {
+                                viewModel.calculateRouteAndPredictCost(
+                                    selectedOriginPlace!!,
+                                    selectedDestinationPlace!!,
+                                    weight.text.toDoubleOrNull()?.times(1000)?.toInt() ?: 1000,
+                                    cargoType = selectedCargoType
+                                )
+                            }
+                        }
+                    },
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                        if (selectedOriginPlace != null && selectedDestinationPlace != null && weight.text.isNotBlank()) {
+                            viewModel.calculateRouteAndPredictCost(
+                                selectedOriginPlace!!,
+                                selectedDestinationPlace!!,
+                                weight.text.toDoubleOrNull()?.times(1000)?.toInt() ?: 1000,
+                                cargoType = selectedCargoType
+                            )
+                        }
+                    }
+                )
             )
 
             if (!suggestedCostText.isNullOrBlank()) {
@@ -270,7 +312,20 @@ fun CreateLoadAdScreen(
                     value = price,
                     onValueChange = { price = it },
                     label = { Text("Fiyat") },
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier
+                        .weight(1f)
+                        .onFocusChanged {
+                            if (!it.isFocused) focusManager.clearFocus()
+                        },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus()
+                        }
+                    )
                 )
 
                 Spacer(modifier = Modifier.width(12.dp))
