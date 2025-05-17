@@ -52,6 +52,10 @@ fun CreateLoadAdScreen(
     val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
     var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
 
+    val currencies = listOf("TRY", "USD", "EUR")
+    var selectedCurrency by remember { mutableStateOf("TRY") }
+    var isCurrencyMenuExpanded by remember { mutableStateOf(false) }
+
 
     val geoNamesViewModel: GeoNamesViewModel = viewModel()
 
@@ -101,6 +105,7 @@ fun CreateLoadAdScreen(
                                     origin = origin,
                                     destination = destination,
                                     price = price.text,
+                                    currency = selectedCurrency,
                                     date = date.text,
                                     userId = "username",
                                     weight = weight.text,
@@ -257,12 +262,53 @@ fun CreateLoadAdScreen(
                 )
             }
 
-            OutlinedTextField(
-                value = price,
-                onValueChange = { price = it },
-                label = { Text("Fiyat (₺)") },
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
-            )
+            ) {
+                OutlinedTextField(
+                    value = price,
+                    onValueChange = { price = it },
+                    label = { Text("Fiyat") },
+                    modifier = Modifier.weight(1f)
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                ExposedDropdownMenuBox(
+                    expanded = isCurrencyMenuExpanded,
+                    onExpandedChange = { isCurrencyMenuExpanded = !isCurrencyMenuExpanded }
+                ) {
+                    OutlinedTextField(
+                        value = selectedCurrency,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Birim") },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCurrencyMenuExpanded)
+                        },
+                        modifier = Modifier
+                            .menuAnchor()
+                            .widthIn(min = 96.dp)
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = isCurrencyMenuExpanded,
+                        onDismissRequest = { isCurrencyMenuExpanded = false }
+                    ) {
+                        currencies.forEach { currency ->
+                            DropdownMenuItem(
+                                text = { Text(currency) },
+                                onClick = {
+                                    selectedCurrency = currency
+                                    isCurrencyMenuExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
 
             OutlinedTextField(
                 value = date,

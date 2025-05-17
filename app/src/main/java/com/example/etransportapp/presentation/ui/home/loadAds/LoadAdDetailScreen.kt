@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -44,6 +45,10 @@ fun LoadAdDetailScreen(
     var price by remember { mutableStateOf(loadAd.price) }
     var date by remember { mutableStateOf(loadAd.date) }
     var weight by remember { mutableStateOf(loadAd.weight) }
+    var currency by remember { mutableStateOf(loadAd.currency) }
+    val currencies = listOf("TRY", "USD", "EUR")
+    var isCurrencyMenuExpanded by remember { mutableStateOf(false) }
+
 
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -73,6 +78,7 @@ fun LoadAdDetailScreen(
                                         origin = origin,
                                         destination = destination,
                                         price = price,
+                                        currency=currency,
                                         date = date,
                                         weight = weight
                                     )
@@ -176,12 +182,50 @@ fun LoadAdDetailScreen(
                     label = { Text("Yük Ağırlığı (ton)") },
                     modifier = Modifier.fillMaxWidth()
                 )
-                OutlinedTextField(
-                    value = price,
-                    onValueChange = { price = it },
-                    label = { Text("Fiyat") },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        value = price,
+                        onValueChange = { price = it },
+                        label = { Text("Fiyat") },
+                        modifier = Modifier.weight(1f)
+                    )
+
+                    Box(modifier = Modifier.padding(start = 8.dp)) {
+                        ExposedDropdownMenuBox(
+                            expanded = isCurrencyMenuExpanded,
+                            onExpandedChange = { isCurrencyMenuExpanded = !isCurrencyMenuExpanded }
+                        ) {
+                            OutlinedTextField(
+                                value = currency,
+                                onValueChange = {},
+                                readOnly = true,
+                                label = { Text("Birim") },
+                                trailingIcon = {
+                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCurrencyMenuExpanded)
+                                },
+                                modifier = Modifier
+                                    .menuAnchor()
+                                    .widthIn(min = 96.dp)
+                            )
+
+                            ExposedDropdownMenu(
+                                expanded = isCurrencyMenuExpanded,
+                                onDismissRequest = { isCurrencyMenuExpanded = false }
+                            ) {
+                                currencies.forEach { curr ->
+                                    DropdownMenuItem(
+                                        text = { Text(curr) },
+                                        onClick = {
+                                            currency = curr
+                                            isCurrencyMenuExpanded = false
+                                        }
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+
 
                 OutlinedTextField(
                     value = date,
@@ -210,7 +254,7 @@ fun LoadAdDetailScreen(
                 InfoText("Yükleme Noktası", origin)
                 InfoText("Varış Noktası", destination)
                 InfoText("Yük Ağırlığı ", "$weight ton")
-                InfoText("Fiyat", "$price ₺")
+                InfoText("Fiyat", "$price $currency")
                 InfoText("Tarih", date)
                 InfoText("Açıklama", description)
             }
