@@ -50,7 +50,7 @@ fun LoadAdCard(item: LoadAd, onClick: () -> Unit) {
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(text = "${item.origin} → ${item.destination}")
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = "Fiyat: ${item.price} ₺", fontWeight = FontWeight.SemiBold)
+                Text(text = "Fiyat: ${item.price} ${item.currency}", fontWeight = FontWeight.SemiBold)
             }
 
             Column(horizontalAlignment = Alignment.End) {

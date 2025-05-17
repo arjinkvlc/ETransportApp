@@ -65,7 +65,7 @@ fun MyAdsScreen(
 fun LoadAdsList(loadAds: List<LoadAd>, onAdClick: (LoadAd) -> Unit) {
     //TODO : MOCK ÖRNEK İLAN DAHA SONRA KALDIRILACAK
     val mockLoadAdItem =
-        LoadAd("Örnek Yük İlanı", "Örnek Açıklama", "Mersin", "Istanbul", "5000", "05/03/2001", weight = "20")
+        LoadAd("Örnek Yük İlanı", "Örnek Açıklama", "Mersin", "Istanbul", "5000", currency = "USD","05/03/2001", weight = "20")
     LoadAdCard(item = mockLoadAdItem) {
         onAdClick(mockLoadAdItem)
     }

@@ -22,6 +22,7 @@ import com.example.etransportapp.ui.theme.DarkGray
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.etransportapp.data.remote.api.GeoPlace
 import com.example.etransportapp.util.Constants
 
 
@@ -40,12 +41,26 @@ fun CreateLoadAdScreen(
 
     // Yeni alanlar
     var origin by remember { mutableStateOf("") }
+    var selectedOriginPlace by remember { mutableStateOf<GeoPlace?>(null) }
+    var selectedDestinationPlace by remember { mutableStateOf<GeoPlace?>(null) }
+
     var destination by remember { mutableStateOf("") }
 
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
+    var selectedCargoType by remember { mutableStateOf("Açık Kasa") }
+    val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
+    var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
+
+    val currencies = listOf("TRY", "USD", "EUR")
+    var selectedCurrency by remember { mutableStateOf("TRY") }
+    var isCurrencyMenuExpanded by remember { mutableStateOf(false) }
+
 
     val geoNamesViewModel: GeoNamesViewModel = viewModel()
+
+    val suggestedCostText by viewModel.suggestedCostText.collectAsState()
+
 
     Scaffold(
         topBar = {
@@ -90,6 +105,7 @@ fun CreateLoadAdScreen(
                                     origin = origin,
                                     destination = destination,
                                     price = price.text,
+                                    currency = selectedCurrency,
                                     date = date.text,
                                     userId = "username",
                                     weight = weight.text,
@@ -160,21 +176,76 @@ fun CreateLoadAdScreen(
                 username = Constants.GEO_NAMES_USERNAME,
                 geoViewModel = geoNamesViewModel,
                 onSelected = { countryCode, cityName ->
+                    val place = geoNamesViewModel.cities.value.find { it.name == cityName }
+                    selectedOriginPlace = place
                     val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
                     origin = "$cityName, $countryName"
+
+                    if (selectedOriginPlace != null && selectedDestinationPlace != null && weight.text.isNotBlank()) {
+                        viewModel.calculateRouteAndPredictCost(
+                            selectedOriginPlace!!,
+                            selectedDestinationPlace!!,
+                            weight.text.toDoubleOrNull()?.times(1000)?.toInt() ?: 1000,
+                            cargoType = selectedCargoType
+                        )
+                    }
                 }
             )
+
 
             CountryCitySelector(
                 labelPrefix = "Varış Noktası",
                 username = Constants.GEO_NAMES_USERNAME,
                 geoViewModel = geoNamesViewModel,
                 onSelected = { countryCode, cityName ->
+                    val place = geoNamesViewModel.cities.value.find { it.name == cityName }
+                    selectedDestinationPlace = place
                     val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
                     destination = "$cityName, $countryName"
+
+                    if (selectedOriginPlace != null && selectedDestinationPlace != null && weight.text.isNotBlank()) {
+                        viewModel.calculateRouteAndPredictCost(
+                            selectedOriginPlace!!,
+                            selectedDestinationPlace!!,
+                            weight.text.toDoubleOrNull()?.times(1000)?.toInt() ?: 1000,
+                            cargoType = selectedCargoType
+                        )
+                    }
                 }
             )
 
+            ExposedDropdownMenuBox(
+                expanded = isCargoTypeMenuExpanded,
+                onExpandedChange = { isCargoTypeMenuExpanded = !isCargoTypeMenuExpanded }
+            ) {
+                OutlinedTextField(
+                    value = selectedCargoType,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Yük Tipi") },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCargoTypeMenuExpanded)
+                    },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = isCargoTypeMenuExpanded,
+                    onDismissRequest = { isCargoTypeMenuExpanded = false }
+                ) {
+                    cargoTypes.forEach { type ->
+                        DropdownMenuItem(
+                            text = { Text(type) },
+                            onClick = {
+                                selectedCargoType = type
+                                isCargoTypeMenuExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
 
             OutlinedTextField(
                 value = weight,
@@ -183,12 +254,61 @@ fun CreateLoadAdScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            OutlinedTextField(
-                value = price,
-                onValueChange = { price = it },
-                label = { Text("Fiyat (₺)") },
+            if (!suggestedCostText.isNullOrBlank()) {
+                Text(
+                    text = suggestedCostText ?: "",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.Gray
+                )
+            }
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
-            )
+            ) {
+                OutlinedTextField(
+                    value = price,
+                    onValueChange = { price = it },
+                    label = { Text("Fiyat") },
+                    modifier = Modifier.weight(1f)
+                )
+
+                Spacer(modifier = Modifier.width(12.dp))
+
+                ExposedDropdownMenuBox(
+                    expanded = isCurrencyMenuExpanded,
+                    onExpandedChange = { isCurrencyMenuExpanded = !isCurrencyMenuExpanded }
+                ) {
+                    OutlinedTextField(
+                        value = selectedCurrency,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Birim") },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCurrencyMenuExpanded)
+                        },
+                        modifier = Modifier
+                            .menuAnchor()
+                            .widthIn(min = 96.dp)
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = isCurrencyMenuExpanded,
+                        onDismissRequest = { isCurrencyMenuExpanded = false }
+                    ) {
+                        currencies.forEach { currency ->
+                            DropdownMenuItem(
+                                text = { Text(currency) },
+                                onClick = {
+                                    selectedCurrency = currency
+                                    isCurrencyMenuExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+
 
             OutlinedTextField(
                 value = date,
