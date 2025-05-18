@@ -3,6 +3,8 @@ package com.example.etransportapp.presentation.ui.home.loadAds
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -13,7 +15,11 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.LoadAd
@@ -48,6 +54,10 @@ fun LoadAdDetailScreen(
     var currency by remember { mutableStateOf(loadAd.currency) }
     val currencies = listOf("TRY", "USD", "EUR")
     var isCurrencyMenuExpanded by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
+    var selectedCargoType by remember { mutableStateOf("Açık Kasa") }
+    val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
+    var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
 
 
     val openDatePicker = remember { mutableStateOf(false) }
@@ -71,6 +81,9 @@ fun LoadAdDetailScreen(
                     if (isMyAd) {
                         if (isEditing) {
                             IconButton(onClick = {
+                                if(weight.contains(",")){
+                                    weight = weight.replace(",", ".")
+                                }
                                 onUpdateClick?.invoke(
                                     loadAd.copy(
                                         title = title,
@@ -176,51 +189,111 @@ fun LoadAdDetailScreen(
                         destination = "$cityName, $countryName"
                     }
                 )
+                ExposedDropdownMenuBox(
+                    expanded = isCargoTypeMenuExpanded,
+                    onExpandedChange = { isCargoTypeMenuExpanded = !isCargoTypeMenuExpanded }
+                ) {
+                    OutlinedTextField(
+                        value = selectedCargoType,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Yük Tipi") },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCargoTypeMenuExpanded)
+                        },
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = isCargoTypeMenuExpanded,
+                        onDismissRequest = { isCargoTypeMenuExpanded = false }
+                    ) {
+                        cargoTypes.forEach { type ->
+                            DropdownMenuItem(
+                                text = { Text(type) },
+                                onClick = {
+                                    selectedCargoType = type
+                                    isCargoTypeMenuExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
                 OutlinedTextField(
                     value = weight,
                     onValueChange = { weight = it },
                     label = { Text("Yük Ağırlığı (ton)") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .onFocusChanged {
+                            weight = weight.replace(",", ".")
+                            if (!it.isFocused) focusManager.clearFocus()
+                        },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus()
+                        }
+                    )
                 )
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     OutlinedTextField(
                         value = price,
                         onValueChange = { price = it },
                         label = { Text("Fiyat") },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
+                            .onFocusChanged {
+                                if (!it.isFocused) focusManager.clearFocus()
+                            },
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onDone = {
+                                focusManager.clearFocus()
+                            }
+                        )
                     )
 
-                    Box(modifier = Modifier.padding(start = 8.dp)) {
-                        ExposedDropdownMenuBox(
-                            expanded = isCurrencyMenuExpanded,
-                            onExpandedChange = { isCurrencyMenuExpanded = !isCurrencyMenuExpanded }
-                        ) {
-                            OutlinedTextField(
-                                value = currency,
-                                onValueChange = {},
-                                readOnly = true,
-                                label = { Text("Birim") },
-                                trailingIcon = {
-                                    ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCurrencyMenuExpanded)
-                                },
-                                modifier = Modifier
-                                    .menuAnchor()
-                                    .widthIn(min = 96.dp)
-                            )
+                    Spacer(modifier = Modifier.width(12.dp))
 
-                            ExposedDropdownMenu(
-                                expanded = isCurrencyMenuExpanded,
-                                onDismissRequest = { isCurrencyMenuExpanded = false }
-                            ) {
-                                currencies.forEach { curr ->
-                                    DropdownMenuItem(
-                                        text = { Text(curr) },
-                                        onClick = {
-                                            currency = curr
-                                            isCurrencyMenuExpanded = false
-                                        }
-                                    )
-                                }
+                    ExposedDropdownMenuBox(
+                        expanded = isCurrencyMenuExpanded,
+                        onExpandedChange = { isCurrencyMenuExpanded = !isCurrencyMenuExpanded }
+                    ) {
+                        OutlinedTextField(
+                            value = currency,
+                            onValueChange = {},
+                            readOnly = true,
+                            label = { Text("Birim") },
+                            trailingIcon = {
+                                ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCurrencyMenuExpanded)
+                            },
+                            modifier = Modifier
+                                .menuAnchor()
+                                .widthIn(min = 96.dp)
+                        )
+
+                        ExposedDropdownMenu(
+                            expanded = isCurrencyMenuExpanded,
+                            onDismissRequest = { isCurrencyMenuExpanded = false }
+                        ) {
+                            currencies.forEach { curr ->
+                                DropdownMenuItem(
+                                    text = { Text(curr) },
+                                    onClick = {
+                                        currency = curr
+                                        isCurrencyMenuExpanded = false
+                                    }
+                                )
                             }
                         }
                     }

@@ -68,10 +68,10 @@ class LoadAdViewModel : ViewModel() {
                     _suggestedCostText.value = """
                  HERE API Çıktısı:
                 • Mesafe: %.1f km
-                • Geçiş Ücreti: ₺%.2f
+                • Geçiş Ücreti: %.2f $tollCurrency
                 """.trimIndent().format(distanceKm, convertedToll)
 
-                    println("HERE Mesafe: $distanceKm km, Geçiş Ücreti: ₺$convertedToll (orijinal $tollCost $tollCurrency)")
+                    println("HERE Mesafe: $distanceKm km, Geçiş Ücreti: $convertedToll (orijinal $tollCost $tollCurrency)")
                 }
 
             } catch (e: Exception) {
@@ -85,7 +85,7 @@ class LoadAdViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val response = currencyApi.getRates(fromCurrency)
-                val tryRate = response.rates["TRY"] ?: 1.0
+                val tryRate = response.rates["USD"] ?: 1.0
                 val converted = amount * tryRate
                 onResult(converted)
             } catch (e: Exception) {
