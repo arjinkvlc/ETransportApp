@@ -2,61 +2,86 @@ package com.example.etransportapp.presentation.ui.loginAndRegister.register
 
 import android.content.Context
 import android.widget.Toast
-import androidx.lifecycle.ViewModel
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import kotlinx.coroutines.CoroutineScope
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.etransportapp.data.model.auth.RegisterRequest
+import com.example.etransportapp.data.remote.RetrofitInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class RegisterViewModel : ViewModel() {
 
-    var companyName by mutableStateOf("")
     var firstName by mutableStateOf("")
     var lastName by mutableStateOf("")
+    var birthYear by mutableStateOf("")
     var email by mutableStateOf("")
     var phoneNumber by mutableStateOf("")
+    var userName by mutableStateOf("")
     var password by mutableStateOf("")
     var confirmPassword by mutableStateOf("")
+    var verificationCode by mutableStateOf("")
 
-    var selectedRole by mutableStateOf("")
+    var registeredUserId: String? = null
 
-    /**
-     * ✅ Kullanıcı Kaydını Gerçekleştir
-     * Bu fonksiyon backend API'ye istek atarak kullanıcıyı kaydeder.
-     */
-    fun registerUser(context: Context, onSuccess: () -> Unit) {
-        if (firstName.isEmpty() || lastName.isEmpty() || email.isEmpty() ||
-            phoneNumber.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()
-        ) {
-            Toast.makeText(context, "Lütfen tüm alanları doldurun", Toast.LENGTH_SHORT).show()
-            return
-        }
+    fun registerUser(context: Context, onRegistered: () -> Unit) {
+        val birthYearInt = birthYear.toIntOrNull() ?: 0
 
-        if (password.length < 6) {
-            Toast.makeText(context, "Şifre en az 6 karakter olmalıdır", Toast.LENGTH_SHORT).show()
-            return
-        }
+        val request = RegisterRequest(
+            firstName = firstName,
+            lastName = lastName,
+            birthYear = birthYearInt,
+            email = email,
+            phoneNumber = phoneNumber,
+            userName = userName,
+            password = password,
+            confirmPassword = confirmPassword
+        )
 
-        if (password != confirmPassword) {
-            Toast.makeText(context, "Şifreler eşleşmiyor", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        // ✅ API Çağrısı
-        CoroutineScope(Dispatchers.IO).launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
-              
-
-                // Başarıyla kayıt olduktan sonra
-                CoroutineScope(Dispatchers.Main).launch {
-                    Toast.makeText(context, "Kayıt başarılı!", Toast.LENGTH_SHORT).show()
-                    onSuccess()
+                val response = RetrofitInstance.userApi.register(request)
+                if (response.isSuccessful) {
+                    val body = response.body()
+                    registeredUserId = body?.userId // ✅ response'dan gelen userId
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Kayıt başarılı, mailinizi kontrol edin!", Toast.LENGTH_SHORT).show()
+                        onRegistered()
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Kayıt başarısız!", Toast.LENGTH_SHORT).show()
+                    }
                 }
             } catch (e: Exception) {
-                CoroutineScope(Dispatchers.Main).launch {
-                    Toast.makeText(context, "Kayıt başarısız: ${e.message}", Toast.LENGTH_SHORT).show()
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Hata: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+
+    fun confirmEmail(email: String, token: String, context: Context, onSuccess: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitInstance.userApi.confirmEmail(email, token)
+                if (response.isSuccessful) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Email doğrulandı", Toast.LENGTH_SHORT).show()
+                        onSuccess()
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Kod yanlış veya süresi dolmuş", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Doğrulama Hatası: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
