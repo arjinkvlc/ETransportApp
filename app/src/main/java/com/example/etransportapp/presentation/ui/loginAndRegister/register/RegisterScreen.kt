@@ -165,23 +165,33 @@ fun RegisterScreen(
                         label = { Text("Doğrulama Kodu") },
                         modifier = Modifier.fillMaxWidth()
                     )
+
+                    // ✅ Kod gönderme butonu
+                    Text(
+                        text = "Kod gelmedi mi? Tekrar Gönder",
+                        color = Color.Blue,
+                        modifier = Modifier
+                            .clickable { viewModel.resendConfirmationCode(context) }
+                            .align(Alignment.End)
+                    )
+
                     Button(
                         onClick = {
                             viewModel.confirmEmail(
-                                email = viewModel.email,
-                                token = verificationCode,
                                 context = context
                             ) {
-                                navController.navigate("home") {
+                                navController.navigate("login") {
                                     popUpTo("register") { inclusive = true }
                                 }
                             }
+
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("Kayıt Ol")
                     }
                 }
+
             }
         }
     }

@@ -2,6 +2,7 @@ package com.example.etransportapp.data.remote.api
 
 import com.example.etransportapp.data.model.auth.RegisterRequest
 import com.example.etransportapp.data.model.auth.RegisterResponse
+import com.example.etransportapp.data.model.auth.ResendEmailConfirmCodeResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST
@@ -16,4 +17,8 @@ interface UserApi {
         @Query("email") email: String,
         @Query("token") token: String
     ): Response<Unit>
+
+    @POST("ResendEmailConfirmCode")
+    suspend fun resendConfirmationCode(@Query("email") email: String): Response<ResendEmailConfirmCodeResponse>
+
 }

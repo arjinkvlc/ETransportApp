@@ -1,6 +1,7 @@
 package com.example.etransportapp.presentation.ui.loginAndRegister.register
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -65,7 +66,9 @@ class RegisterViewModel : ViewModel() {
     }
 
 
-    fun confirmEmail(email: String, token: String, context: Context, onSuccess: () -> Unit) {
+    fun confirmEmail(context: Context, onSuccess: () -> Unit) {
+        val token = verificationCode
+        val email = email
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = RetrofitInstance.userApi.confirmEmail(email, token)
@@ -82,6 +85,28 @@ class RegisterViewModel : ViewModel() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(context, "Doğrulama Hatası: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    fun resendConfirmationCode(context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitInstance.userApi.resendConfirmationCode(email)
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful) {
+                        val newCode = response.body()?.message
+                        verificationCode = newCode.orEmpty() // Test amaçlı direkt göster
+                        Toast.makeText(context, "Kod tekrar gönderildi", Toast.LENGTH_SHORT).show()
+                        Log.d("ConfirmCode", "Yeni kod: $newCode")
+                    } else {
+                        Toast.makeText(context, "Kod gönderilemedi!", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Hata: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
