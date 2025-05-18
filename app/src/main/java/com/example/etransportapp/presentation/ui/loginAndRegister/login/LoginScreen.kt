@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.etransportapp.R
+import com.example.etransportapp.presentation.navigation.NavRoutes
 import com.example.etransportapp.ui.theme.DarkGray
 
 
@@ -140,19 +141,19 @@ fun LoginScreen(
         Button(
             onClick = {
                 if (viewModel.email.isNotEmpty() && viewModel.password.isNotEmpty()) {
-                    Toast.makeText(context, "Giriş başarılı", Toast.LENGTH_SHORT).show()
+                    viewModel.login(context) {
+                        navController.navigate(NavRoutes.LOAD_ADS) {
+                            popUpTo(NavRoutes.LOGIN) { inclusive = true }
+                        }
+                    }
                 } else {
                     Toast.makeText(context, "E-posta ve şifre boş olamaz", Toast.LENGTH_SHORT).show()
                 }
             },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
-                .clip(RoundedCornerShape(10.dp)),
-            colors = ButtonDefaults.buttonColors(containerColor = DarkGray)
         ) {
-            Text("Giriş Yap", fontSize = 18.sp)
-        }
+        Text("Giriş Yap", fontSize = 18.sp)
+    }
+
 
         Spacer(modifier = Modifier.height(16.dp))
 
