@@ -22,43 +22,38 @@ fun VehicleAdCard(item: VehicleAd, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp)
+            .padding(8.dp)
             .clickable { onClick() },
         shape = RoundedCornerShape(20.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
-        Row(
-            modifier = Modifier
-                .padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = item.title,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
-                )
-                Spacer(modifier = Modifier.height(4.dp))
+        Column(modifier = Modifier.padding(16.dp)) {
 
-                Text(
-                    text = item.description,
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Text(
-                    text = "Konum: ${item.location}",
-                    fontWeight = FontWeight.Medium
-                )
+            // Başlık ve tarih
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Text(item.title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(item.date, style = MaterialTheme.typography.labelSmall)
             }
 
-            Column(horizontalAlignment = Alignment.End) {
-                Text(
-                    text = item.date,
-                    style = MaterialTheme.typography.labelSmall
-                )
-                Spacer(modifier = Modifier.height(16.dp))
+            Spacer(Modifier.height(4.dp))
+            HorizontalDivider(Modifier.height(1.dp))
+            Spacer(Modifier.height(8.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(modifier = Modifier.weight(1f)) {
+                    InfoRow("Konum:", item.location)
+                    InfoRow("Araç Türü:", "Tenteli")
+                    InfoRow("Kapasite:", "${item.capacity} Ton")
+                }
+
+                Spacer(modifier = Modifier.width(12.dp))
 
                 Surface(
                     shape = CircleShape,
@@ -74,5 +69,19 @@ fun VehicleAdCard(item: VehicleAd, onClick: () -> Unit) {
                 }
             }
         }
+    }
+}
+
+
+@Composable
+fun InfoRow(label: String, value: String) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 2.dp)
+    ) {
+        Text(text = label, fontWeight = FontWeight.Medium)
+        Spacer(modifier = Modifier.width(4.dp))
+        Text(text = value)
     }
 }
