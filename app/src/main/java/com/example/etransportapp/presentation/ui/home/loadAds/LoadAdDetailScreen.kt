@@ -55,6 +55,9 @@ fun LoadAdDetailScreen(
     val currencies = listOf("TRY", "USD", "EUR")
     var isCurrencyMenuExpanded by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
+    var selectedCargoType by remember { mutableStateOf("Açık Kasa") }
+    val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
+    var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
 
 
     val openDatePicker = remember { mutableStateOf(false) }
@@ -186,6 +189,39 @@ fun LoadAdDetailScreen(
                         destination = "$cityName, $countryName"
                     }
                 )
+                ExposedDropdownMenuBox(
+                    expanded = isCargoTypeMenuExpanded,
+                    onExpandedChange = { isCargoTypeMenuExpanded = !isCargoTypeMenuExpanded }
+                ) {
+                    OutlinedTextField(
+                        value = selectedCargoType,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Yük Tipi") },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCargoTypeMenuExpanded)
+                        },
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = isCargoTypeMenuExpanded,
+                        onDismissRequest = { isCargoTypeMenuExpanded = false }
+                    ) {
+                        cargoTypes.forEach { type ->
+                            DropdownMenuItem(
+                                text = { Text(type) },
+                                onClick = {
+                                    selectedCargoType = type
+                                    isCargoTypeMenuExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
+
                 OutlinedTextField(
                     value = weight,
                     onValueChange = { weight = it },

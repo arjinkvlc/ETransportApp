@@ -259,8 +259,7 @@ fun CreateLoadAdScreen(
 
             OutlinedTextField(
                 value = weight,
-                onValueChange = {
-                    weight = it },
+                onValueChange = { weight = it },
                 label = { Text("Yük Ağırlığı (ton)") },
                 modifier = Modifier
                     .fillMaxWidth()
@@ -363,7 +362,6 @@ fun CreateLoadAdScreen(
                     }
                 }
             }
-
 
             OutlinedTextField(
                 value = date,
