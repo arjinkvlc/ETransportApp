@@ -80,12 +80,17 @@ fun LoadAdCard(item: LoadAd, onClick: () -> Unit) {
                         color = DarkGray,
                         modifier = Modifier.size(40.dp)
                     ) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_loadads),
-                            contentDescription = null,
-                            tint = Color.White,
-                            modifier = Modifier.padding(8.dp)
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "A",
+                                color = Color.White,
+                                fontSize = 20.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
                     }
 
                     Spacer(modifier = Modifier.height(12.dp))
