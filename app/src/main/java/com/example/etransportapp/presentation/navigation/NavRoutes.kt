@@ -14,4 +14,6 @@ object NavRoutes {
     const val CREATE_VEHICLE_AD = "create_vehicle_ad"
     const val LOAD_AD_DETAIL = "load_ad_detail"
     const val VEHICLE_AD_DETAIL = "vehicle_ad_detail"
+    const val MY_VEHICLES = "my_vehicles"
+
 }

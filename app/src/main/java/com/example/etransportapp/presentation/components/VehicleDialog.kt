@@ -1,0 +1,68 @@
+package com.example.etransportapp.presentation.components
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.text.input.KeyboardType
+import com.example.etransportapp.data.model.Vehicle
+
+@Composable
+fun VehicleDialog(
+    initialVehicle: Vehicle? = null,
+    onDismiss: () -> Unit,
+    onSave: (Vehicle) -> Unit
+) {
+    var name by remember { mutableStateOf(initialVehicle?.name.orEmpty()) }
+    var type by remember { mutableStateOf(initialVehicle?.vehicleType.orEmpty()) }
+    var capacity by remember { mutableStateOf(initialVehicle?.capacity?.toString().orEmpty()) }
+    var plate by remember { mutableStateOf(initialVehicle?.plate.orEmpty()) }
+    var model by remember { mutableStateOf(initialVehicle?.model.orEmpty()) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        confirmButton = {
+            Button(onClick = {
+                if (name.isNotBlank() && type.isNotBlank() && capacity.isNotBlank() && plate.isNotBlank() && model.isNotBlank()) {
+                    val vehicle = initialVehicle?.copy(
+                        name = name,
+                        vehicleType = type,
+                        capacity = capacity.toIntOrNull() ?: 0,
+                        plate = plate,
+                        model = model
+                    ) ?: Vehicle(
+                        name = name,
+                        vehicleType = type,
+                        capacity = capacity.toIntOrNull() ?: 0,
+                        plate = plate,
+                        model = model
+                    )
+                    onSave(vehicle)
+                }
+            }) {
+                Text("Kaydet")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) { Text("İptal") }
+        },
+        title = { Text(if (initialVehicle == null) "Araç Ekle" else "Araç Düzenle") },
+        text = {
+            Column {
+                OutlinedTextField(value = name, onValueChange = { name = it }, label = { Text("Başlık") })
+                OutlinedTextField(value = type, onValueChange = { type = it }, label = { Text("Tür") })
+                OutlinedTextField(value = capacity, onValueChange = { capacity = it }, label = { Text("Kapasite (kg)") }, keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number))
+                OutlinedTextField(value = plate, onValueChange = { plate = it }, label = { Text("Plaka") })
+                OutlinedTextField(value = model, onValueChange = { model = it }, label = { Text("Model") })
+            }
+        }
+    )
+}

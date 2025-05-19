@@ -90,13 +90,21 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavHostControlle
             ProfileMenuItem(text = "Yardım Merkezi", onClick = { })
             ProfileMenuItem(text = "Kullanım Koşulları", onClick = { })
             ProfileMenuItem(text = "Gizlilik Politikası", onClick = { })
+            Spacer(Modifier.height(8.dp))
+            Text("Hesap", fontWeight = FontWeight.SemiBold)
+            Spacer(Modifier.height(8.dp))
+
+            ProfileMenuItem(text = "Araçlarım", onClick = {
+                navController.navigate(NavRoutes.MY_VEHICLES)
+            })
         }
+
 
         OutlinedButton(
             onClick = {
                 PreferenceHelper.logout(navController.context)
                 navController.navigate(NavRoutes.INTRO) {
-                    popUpTo(0) { inclusive = true } // Tüm backstack temizlensin
+                    popUpTo(0) { inclusive = true }
                 }
             },
             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red),

@@ -13,6 +13,7 @@ import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdViewModel
 import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdsScreen
 import com.example.etransportapp.presentation.ui.home.myAds.MyAdsScreen
 import com.example.etransportapp.presentation.ui.home.profile.ProfileScreen
+import com.example.etransportapp.presentation.ui.home.profile.myVehicles.MyVehiclesScreen
 import com.example.etransportapp.presentation.ui.home.vehicleAds.CreateVehicleAdScreen
 import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdDetailScreen
 import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdViewModel
@@ -23,6 +24,7 @@ import com.example.etransportapp.presentation.ui.loginAndRegister.login.LoginVie
 import com.example.etransportapp.presentation.ui.loginAndRegister.onboarding.OnboardingScreen
 import com.example.etransportapp.presentation.ui.loginAndRegister.register.RegisterScreen
 import com.example.etransportapp.presentation.ui.loginAndRegister.register.RegisterViewModel
+import com.example.etransportapp.presentation.viewModels.VehicleViewModel
 import com.example.etransportapp.util.PreferenceHelper
 
 @Composable
@@ -38,6 +40,8 @@ fun NavGraph(
     }
     val loadAdViewModel: LoadAdViewModel = viewModel()
     val vehicleAdViewModel: VehicleAdViewModel = viewModel()
+    val vehicleViewModel: VehicleViewModel = viewModel()
+
 
     NavHost(
         navController = navController,
@@ -70,6 +74,10 @@ fun NavGraph(
             )
         }
         composable(NavRoutes.PROFILE) { ProfileScreen(modifier, navController) }
+        composable(NavRoutes.MY_VEHICLES) {
+            MyVehiclesScreen(navController = navController, vehicleViewModel = vehicleViewModel)
+        }
+
         composable(NavRoutes.CREATE_LOAD_AD) {
             CreateLoadAdScreen(
                 modifier,
@@ -117,9 +125,4 @@ fun NavGraph(
             }
         }
     }
-}
-
-fun isUserLoggedIn(context: Context): Boolean {
-    val prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
-    return prefs.getBoolean("is_logged_in", false)
 }

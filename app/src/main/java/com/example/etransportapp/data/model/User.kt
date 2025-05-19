@@ -9,7 +9,7 @@ data class User(
     val surname: String,
     val email: String,
     val phone: String,
-    val ownedTrucks: List<Vehicle>,
-    val vehicleAds: List<VehicleAd>,
-    val loadAds: List<LoadAd>,
+    val ownedVehicles: List<Vehicle> = emptyList(),
+    val vehicleAds: List<VehicleAd> = emptyList(),
+    val loadAds: List<LoadAd> = emptyList()
 )
