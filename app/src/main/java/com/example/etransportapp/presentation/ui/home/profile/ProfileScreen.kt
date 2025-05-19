@@ -2,6 +2,7 @@ package com.example.etransportapp.presentation.ui.home.profile
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -43,11 +44,6 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavHostControlle
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            Text(
-                text = "eTransport",
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
 
             Spacer(Modifier.height(24.dp))
 
@@ -57,13 +53,17 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavHostControlle
                     color = DarkGray,
                     modifier = Modifier.size(64.dp)
                 ) {
-                    Icon(
-                        painter = painterResource(R.drawable.baseline_person_24),
-                        contentDescription = "Profil Resmi",
-                        tint = Color.White,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "A",
+                            color = Color.White,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }                }
                 Spacer(Modifier.width(16.dp))
                 Column {
                     Text("Arjin Kavalcı", fontWeight = FontWeight.Bold, fontSize = 20.sp)
@@ -90,13 +90,21 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavHostControlle
             ProfileMenuItem(text = "Yardım Merkezi", onClick = { })
             ProfileMenuItem(text = "Kullanım Koşulları", onClick = { })
             ProfileMenuItem(text = "Gizlilik Politikası", onClick = { })
+            Spacer(Modifier.height(8.dp))
+            Text("Hesap", fontWeight = FontWeight.SemiBold)
+            Spacer(Modifier.height(8.dp))
+
+            ProfileMenuItem(text = "Araçlarım", onClick = {
+                navController.navigate(NavRoutes.MY_VEHICLES)
+            })
         }
+
 
         OutlinedButton(
             onClick = {
                 PreferenceHelper.logout(navController.context)
                 navController.navigate(NavRoutes.INTRO) {
-                    popUpTo(0) { inclusive = true } // Tüm backstack temizlensin
+                    popUpTo(0) { inclusive = true }
                 }
             },
             colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.Red),
