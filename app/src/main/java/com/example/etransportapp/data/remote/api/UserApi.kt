@@ -1,5 +1,6 @@
 package com.example.etransportapp.data.remote.api
 
+import com.example.etransportapp.data.model.auth.BasicResponse
 import com.example.etransportapp.data.model.auth.LoginRequest
 import com.example.etransportapp.data.model.auth.LoginResponse
 import com.example.etransportapp.data.model.auth.RegisterRequest
@@ -25,6 +26,12 @@ interface UserApi {
 
     @POST("Login")
     suspend fun login(@Body request: LoginRequest): Response<LoginResponse>
+
+    @POST("GenerateForgotPasswordToken")
+    suspend fun generateForgotPasswordToken(@Body emailBody: Map<String, String>): Response<BasicResponse>
+
+    @POST("ForgotPassword")
+    suspend fun forgotPassword(@Body request: Map<String, String>): Response<BasicResponse>
 
 
 }

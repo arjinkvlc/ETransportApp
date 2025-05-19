@@ -5,7 +5,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -32,60 +37,43 @@ fun LoginScreen(
     modifier: Modifier,
     navController: NavHostController
 ) {
-    var passwordVisible by remember { mutableStateOf(false) }
-    var rememberMe by remember { mutableStateOf(false) }
     val context = LocalContext.current
+    var passwordVisible by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(Color.White)
+            .verticalScroll(rememberScrollState())
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(50.dp))
         Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 24.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_logo),
-                contentDescription = "App Logo",
-                modifier = Modifier.height(50.dp),
-                contentScale = ContentScale.FillHeight
-            )
-            Spacer(modifier = Modifier.width(10.dp))
-            Image(
-                painter = painterResource(id = R.drawable.text_etasimacilik),
-                contentDescription = "App text",
-                modifier = Modifier.height(50.dp),
-                contentScale = ContentScale.FillHeight
+            Icon(
+                imageVector = Icons.Default.Close,
+                contentDescription = "Kapat",
+                modifier = Modifier
+                    .size(32.dp)
+                    .clickable {
+                        navController.popBackStack()
+                    }
             )
         }
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(50.dp))
 
-        Text(
-            text = "Hoş Geldiniz",
-            fontSize = 24.sp,
-            color = Color.White
-        )
-
+        Text("Giriş Yap", fontSize = 24.sp, fontWeight = FontWeight.Bold)
         Spacer(modifier = Modifier.height(32.dp))
 
         OutlinedTextField(
             value = viewModel.email,
             onValueChange = { viewModel.email = it },
-            label = { Text("E-posta", color = Color.White) },
-            modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.White,
-                unfocusedIndicatorColor = Color.Gray,
-                cursorColor = Color.White,
-                disabledTextColor = Color.White
-            )
-
+            label = { Text("E-posta") },
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -93,48 +81,15 @@ fun LoginScreen(
         OutlinedTextField(
             value = viewModel.password,
             onValueChange = { viewModel.password = it },
-            label = { Text("Şifre", color = Color.White) },
+            label = { Text("Şifre") },
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    //val icon = if (passwordVisible) R.drawable.ic_visibility else R.drawable.ic_visibility_off
-                    //Image(painter = painterResource(id = icon), contentDescription = "Toggle Password")
+                    Text(if (passwordVisible) "👁️" else "🔒")
                 }
             },
-            modifier = Modifier.fillMaxWidth(),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                focusedIndicatorColor = Color.White,
-                unfocusedIndicatorColor = Color.Gray,
-                cursorColor = Color.White,
-                disabledTextColor = Color.White
-            )
-
+            modifier = Modifier.fillMaxWidth()
         )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Checkbox(
-                    checked = rememberMe,
-                    onCheckedChange = { rememberMe = it },
-                    colors = CheckboxDefaults.colors(checkmarkColor = Color.White)
-                )
-                Text("Beni Hatırla", color = Color.White)
-            }
-
-            Text(
-                text = "Şifremi Unuttum?",
-                color = DarkGray,
-                modifier = Modifier.clickable { /* Şifremi unuttum işlemi */ }
-            )
-        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
@@ -142,26 +97,42 @@ fun LoginScreen(
             onClick = {
                 if (viewModel.email.isNotEmpty() && viewModel.password.isNotEmpty()) {
                     viewModel.login(context) {
-                        navController.navigate(NavRoutes.LOAD_ADS) {
-                            popUpTo(NavRoutes.LOGIN) { inclusive = true }
+                        navController.navigate("load_ads") {
+                            popUpTo("login") { inclusive = true }
                         }
                     }
                 } else {
                     Toast.makeText(context, "E-posta ve şifre boş olamaz", Toast.LENGTH_SHORT).show()
                 }
             },
+            modifier = Modifier.fillMaxWidth()
         ) {
-        Text("Giriş Yap", fontSize = 18.sp)
-    }
+            Text("Giriş Yap", fontSize = 18.sp)
+        }
 
+        Spacer(modifier = Modifier.height(12.dp))
 
-        Spacer(modifier = Modifier.height(16.dp))
+        // ✅ Şifremi Unuttum
+        Text(
+            text = "Şifremi unuttum?",
+            color = Color.Blue,
+            modifier = Modifier.clickable {
+                navController.navigate("forgot_password")
+                //Toast.makeText(context, "Şifremi unuttum tıklandı", Toast.LENGTH_SHORT).show()
+            }
+        )
 
+        Spacer(modifier = Modifier.weight(1f)) // alttaki butonu en alta iter
+
+        // ✅ Hesabın yok mu?
         Text(
             text = "Hesabın yok mu? Kayıt Ol",
-            color = DarkGray,
-            modifier = Modifier.clickable { }
+            color = Color.Blue,
+            modifier = Modifier
+                .clickable {
+                    navController.navigate(NavRoutes.REGISTER)
+                }
+                .padding(vertical = 16.dp)
         )
     }
 }
-
