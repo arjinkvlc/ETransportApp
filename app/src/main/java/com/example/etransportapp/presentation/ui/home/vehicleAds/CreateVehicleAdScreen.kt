@@ -89,7 +89,7 @@ fun CreateVehicleAdScreen(
                                     location = location,
                                     date = date.text,
                                     capacity = capacity.text,
-                                    userId = "username"
+                                    userId = "username",
                                 )
                             )
                             navController.popBackStack()
