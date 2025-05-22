@@ -89,7 +89,8 @@ fun NavGraph(
             CreateVehicleAdScreen(
                 modifier,
                 navController,
-                vehicleAdViewModel
+                vehicleAdViewModel,
+                vehicleViewModel
             )
         }
         composable(NavRoutes.LOAD_AD_DETAIL) {

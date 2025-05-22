@@ -1,5 +1,6 @@
 package com.example.etransportapp.presentation.ui.home.vehicleAds
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -13,7 +14,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -26,7 +30,10 @@ import com.example.etransportapp.ui.theme.DarkGray
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.etransportapp.R
 import com.example.etransportapp.presentation.components.CountryCitySelector
+import com.example.etransportapp.presentation.viewModels.VehicleViewModel
+import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
 
 
@@ -35,7 +42,9 @@ import com.example.etransportapp.util.Constants
 fun CreateVehicleAdScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: VehicleAdViewModel
+    viewModel: VehicleAdViewModel,
+    vehicleViewModel: VehicleViewModel
+
 ) {
     var title by remember { mutableStateOf(TextFieldValue("")) }
     var description by remember { mutableStateOf(TextFieldValue("")) }
@@ -53,12 +62,11 @@ fun CreateVehicleAdScreen(
     val datePickerState = rememberDatePickerState()
     val geoNamesViewModel: GeoNamesViewModel = viewModel()
     val focusManager = LocalFocusManager.current
-
+    var showVehiclePicker by remember { mutableStateOf(false) }
 
     val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
     var selectedCargoType by remember { mutableStateOf("Açık Kasa") }
     var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
-
 
     Scaffold(
         topBar = {
@@ -111,7 +119,7 @@ fun CreateVehicleAdScreen(
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
                         .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = DarkGray)
+                    colors = ButtonDefaults.buttonColors(containerColor = RoseRed)
                 ) {
                     Text("İlanı Oluştur")
                 }
@@ -126,7 +134,10 @@ fun CreateVehicleAdScreen(
                     TextButton(onClick = {
                         openDatePicker.value = false
                         datePickerState.selectedDateMillis?.let { millis ->
-                            val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(millis))
+                            val formattedDate =
+                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                                    Date(millis)
+                                )
                             date = TextFieldValue(formattedDate)
                         }
                     }) {
@@ -164,6 +175,15 @@ fun CreateVehicleAdScreen(
                 label = { Text("Açıklama") },
                 modifier = Modifier.fillMaxWidth()
             )
+            if (vehicleViewModel.myVehicles.value.isNotEmpty()) {
+                    Text(
+                        text = "Araçlarım (${vehicleViewModel.myVehicles.value.size})",
+                        color = RoseRed,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.align(Alignment.End).clickable { showVehiclePicker=true }
+                    )
+                }
+
 
             OutlinedTextField(
                 value = capacity,
@@ -220,7 +240,8 @@ fun CreateVehicleAdScreen(
                 username = Constants.GEO_NAMES_USERNAME,
                 geoViewModel = geoNamesViewModel,
                 onSelected = { countryCode, cityName ->
-                    val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
+                    val countryName =
+                        geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
                     location = "$cityName, $countryName"
                 }
 
@@ -241,6 +262,31 @@ fun CreateVehicleAdScreen(
                 ),
                 enabled = false
             )
+
+            if (showVehiclePicker) {
+                AlertDialog(
+                    onDismissRequest = { showVehiclePicker = false },
+                    confirmButton = {},
+                    title = { Text("Araç Seç") },
+                    text = {
+                        Column {
+                            vehicleViewModel.myVehicles.collectAsState().value.forEach { vehicle ->
+                                Text(
+                                    text = "${vehicle.name} - ${vehicle.plate}",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            selectedCargoType = vehicle.vehicleType
+                                            capacity = TextFieldValue(vehicle.capacity.toString())
+                                            showVehiclePicker = false
+                                        }
+                                        .padding(8.dp)
+                                )
+                            }
+                        }
+                    }
+                )
+            }
         }
     }
 }
