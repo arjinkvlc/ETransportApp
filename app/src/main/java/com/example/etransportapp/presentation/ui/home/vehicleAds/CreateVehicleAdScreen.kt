@@ -3,6 +3,8 @@ package com.example.etransportapp.presentation.ui.home.vehicleAds
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -11,6 +13,9 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -47,6 +52,13 @@ fun CreateVehicleAdScreen(
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
     val geoNamesViewModel: GeoNamesViewModel = viewModel()
+    val focusManager = LocalFocusManager.current
+
+
+    val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
+    var selectedCargoType by remember { mutableStateOf("Açık Kasa") }
+    var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
+
 
     Scaffold(
         topBar = {
@@ -89,6 +101,7 @@ fun CreateVehicleAdScreen(
                                     location = location,
                                     date = date.text,
                                     capacity = capacity.text,
+                                    cargoType = selectedCargoType,
                                     userId = "username",
                                 )
                             )
@@ -156,8 +169,51 @@ fun CreateVehicleAdScreen(
                 value = capacity,
                 onValueChange = { capacity = it },
                 label = { Text("Taşıma Kapasitesi (ton)") },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                keyboardActions = KeyboardActions(
+                    onDone = {
+                        focusManager.clearFocus()
+                    }
+                )
             )
+
+            ExposedDropdownMenuBox(
+                expanded = isCargoTypeMenuExpanded,
+                onExpandedChange = { isCargoTypeMenuExpanded = !isCargoTypeMenuExpanded }
+            ) {
+                OutlinedTextField(
+                    value = selectedCargoType,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Yük Tipi") },
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCargoTypeMenuExpanded)
+                    },
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                )
+
+                ExposedDropdownMenu(
+                    expanded = isCargoTypeMenuExpanded,
+                    onDismissRequest = { isCargoTypeMenuExpanded = false }
+                ) {
+                    cargoTypes.forEach { type ->
+                        DropdownMenuItem(
+                            text = { Text(type) },
+                            onClick = {
+                                selectedCargoType = type
+                                isCargoTypeMenuExpanded = false
+                            }
+                        )
+                    }
+                }
+            }
+
 
             CountryCitySelector(
                 labelPrefix = "Konum",

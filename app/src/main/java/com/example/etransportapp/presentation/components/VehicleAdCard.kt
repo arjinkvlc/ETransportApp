@@ -49,7 +49,7 @@ fun VehicleAdCard(item: VehicleAd, onClick: () -> Unit) {
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     InfoRow("Konum:", item.location)
-                    InfoRow("Araç Türü:", "Tenteli")
+                    InfoRow("Araç Türü:", item.cargoType)
                     InfoRow("Kapasite:", "${item.capacity} Ton")
                 }
 

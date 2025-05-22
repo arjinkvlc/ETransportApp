@@ -114,6 +114,7 @@ fun CreateLoadAdScreen(
                                     description = description.text,
                                     origin = origin,
                                     destination = destination,
+                                    cargoType = selectedCargoType,
                                     price = price.text,
                                     currency = selectedCurrency,
                                     date = date.text,
