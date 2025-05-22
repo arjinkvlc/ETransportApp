@@ -176,13 +176,15 @@ fun CreateVehicleAdScreen(
                 modifier = Modifier.fillMaxWidth()
             )
             if (vehicleViewModel.myVehicles.value.isNotEmpty()) {
-                    Text(
-                        text = "Araçlarım (${vehicleViewModel.myVehicles.value.size})",
-                        color = RoseRed,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.align(Alignment.End).clickable { showVehiclePicker=true }
-                    )
-                }
+                Text(
+                    text = "Araçlarım (${vehicleViewModel.myVehicles.value.size})",
+                    color = RoseRed,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .align(Alignment.End)
+                        .clickable { showVehiclePicker = true }
+                )
+            }
 
 
             OutlinedTextField(

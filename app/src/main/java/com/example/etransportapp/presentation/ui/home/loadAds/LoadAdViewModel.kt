@@ -1,5 +1,9 @@
 package com.example.etransportapp.presentation.ui.home.loadAds
 
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.ad.LoadAd
@@ -24,6 +28,26 @@ class LoadAdViewModel : ViewModel() {
 
     private val _suggestedCostText = MutableStateFlow<String?>(null)
     val suggestedCostText: StateFlow<String?> = _suggestedCostText
+
+    var selectedSort by mutableStateOf("Tümü")
+    var selectedFilter by mutableStateOf("Tümü")
+
+    val sortedLoadAds = derivedStateOf {
+        when (selectedSort) {
+            "En Yeni" -> loadAds.value.sortedBy {it.date }
+            "Ucuzdan Pahalı" -> loadAds.value.sortedBy { it.price }
+            "Pahalıdan Ucuza" -> loadAds.value.sortedByDescending { it.price }
+            else -> loadAds.value
+        }
+    }
+
+    val filteredLoadAds = derivedStateOf {
+        when (selectedFilter) {
+            "Yurtiçi" -> loadAds.value.filter { /* örnek filtreleme */ true }
+            "Uluslararası" -> loadAds.value.filter { /* örnek filtreleme */ true }
+            else -> loadAds.value
+        }
+    }
 
     fun addLoadAd(ad: LoadAd) {
         _loadAds.value = _loadAds.value + ad
