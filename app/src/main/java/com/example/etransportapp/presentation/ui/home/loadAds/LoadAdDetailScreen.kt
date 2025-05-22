@@ -90,6 +90,7 @@ fun LoadAdDetailScreen(
                                         description = description,
                                         origin = origin,
                                         destination = destination,
+                                        cargoType = selectedCargoType,
                                         price = price,
                                         currency=currency,
                                         date = date,

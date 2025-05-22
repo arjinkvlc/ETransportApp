@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -14,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.text.input.KeyboardType
 import com.example.etransportapp.data.model.Vehicle
+import com.example.etransportapp.ui.theme.RoseRed
 
 @Composable
 fun VehicleDialog(
@@ -47,12 +49,13 @@ fun VehicleDialog(
                     )
                     onSave(vehicle)
                 }
-            }) {
+            },
+                colors = ButtonDefaults.buttonColors(containerColor = RoseRed),) {
                 Text("Kaydet")
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) { Text("İptal") }
+            TextButton(onClick = onDismiss) { Text("İptal", color = RoseRed) }
         },
         title = { Text(if (initialVehicle == null) "Araç Ekle" else "Araç Düzenle") },
         text = {

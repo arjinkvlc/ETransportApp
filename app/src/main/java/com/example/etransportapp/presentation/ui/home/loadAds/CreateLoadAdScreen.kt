@@ -29,6 +29,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.etransportapp.data.remote.api.GeoPlace
+import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
 
 
@@ -114,6 +115,7 @@ fun CreateLoadAdScreen(
                                     description = description.text,
                                     origin = origin,
                                     destination = destination,
+                                    cargoType = selectedCargoType,
                                     price = price.text,
                                     currency = selectedCurrency,
                                     date = date.text,
@@ -127,7 +129,7 @@ fun CreateLoadAdScreen(
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
                         .height(50.dp),
-                    colors = ButtonDefaults.buttonColors(containerColor = DarkGray)
+                    colors = ButtonDefaults.buttonColors(containerColor = RoseRed)
                 ) {
                     Text("İlanı Oluştur")
                 }

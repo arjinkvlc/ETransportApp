@@ -5,6 +5,7 @@ data class LoadAd(
     val description: String,
     val origin: String,
     val destination: String,
+    val cargoType: String,
     val price: String,
     val currency: String = "TRY",
     val date: String,
