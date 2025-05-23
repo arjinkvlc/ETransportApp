@@ -57,10 +57,7 @@ fun IntroScreen(
                 .fillMaxWidth(),
             colors = ButtonDefaults.buttonColors(containerColor = DarkGray),
             onClick = {
-                viewModel.saveLoginState(context,true)
-                navController.navigate("load_ads") {
-                    popUpTo("intro") { inclusive = true }
-                }
+                navController.navigate(NavRoutes.LOGIN)
             }
         ) {
             Text(text = "Giriş Yap")

@@ -19,6 +19,7 @@ import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdDetail
 import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdViewModel
 import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdsScreen
 import com.example.etransportapp.presentation.ui.loginAndRegister.intro.IntroScreen
+import com.example.etransportapp.presentation.ui.loginAndRegister.login.ForgotPasswordScreen
 import com.example.etransportapp.presentation.ui.loginAndRegister.login.LoginScreen
 import com.example.etransportapp.presentation.ui.loginAndRegister.login.LoginViewModel
 import com.example.etransportapp.presentation.ui.loginAndRegister.onboarding.OnboardingScreen
@@ -125,5 +126,9 @@ fun NavGraph(
                 )
             }
         }
+        composable(NavRoutes.FORGOT_PASSWORD) {
+            ForgotPasswordScreen(navController)
+        }
+
     }
 }

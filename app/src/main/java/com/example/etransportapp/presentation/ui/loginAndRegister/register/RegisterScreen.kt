@@ -35,7 +35,6 @@ import com.example.etransportapp.R
 import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.ui.theme.RoseRed
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     navController: NavHostController,
@@ -51,18 +50,12 @@ fun RegisterScreen(
         modifier = Modifier
             .fillMaxSize()
             .verticalScroll(rememberScrollState())
-            .imePadding()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        // 🔹 TopBar
         Row(modifier = Modifier.fillMaxWidth()) {
             Icon(
-                imageVector = when (step) {
-                    1 -> Icons.Default.Close
-                    else -> Icons.AutoMirrored.Filled.ArrowBack
-                },
+                imageVector = if (step == 1) Icons.Default.Close else Icons.AutoMirrored.Filled.ArrowBack,
                 contentDescription = null,
                 modifier = Modifier
                     .size(32.dp)
@@ -72,13 +65,10 @@ fun RegisterScreen(
             )
         }
 
-        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.height(16.dp))
         Text("Kayıt Ol", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-
         Spacer(modifier = Modifier.height(32.dp))
-
         StepIndicator(currentStep = step)
-
         Spacer(modifier = Modifier.height(32.dp))
 
         AnimatedContent(
@@ -87,15 +77,9 @@ fun RegisterScreen(
                 slideInHorizontally { it } togetherWith slideOutHorizontally { -it }
             },
             label = ""
-        ) { screen ->
-            when (screen) {
+        ) { currentStep ->
+            when (currentStep) {
                 1 -> Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-                    OutlinedTextField(
-                        value = viewModel.companyName,
-                        onValueChange = { viewModel.companyName = it },
-                        label = { Text("Firma Adı") },
-                        modifier = Modifier.fillMaxWidth()
-                    )
                     OutlinedTextField(
                         value = viewModel.firstName,
                         onValueChange = { viewModel.firstName = it },
@@ -108,10 +92,13 @@ fun RegisterScreen(
                         label = { Text("Soyad") },
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Button(
-                        onClick = { step = 2 },
+                    OutlinedTextField(
+                        value = viewModel.birthYear,
+                        onValueChange = { viewModel.birthYear = it },
+                        label = { Text("Doğum Yılı") },
                         modifier = Modifier.fillMaxWidth()
-                    ) {
+                    )
+                    Button(onClick = { step = 2 }, modifier = Modifier.fillMaxWidth()) {
                         Text("Devam Et")
                     }
                 }
@@ -126,7 +113,13 @@ fun RegisterScreen(
                     OutlinedTextField(
                         value = viewModel.phoneNumber,
                         onValueChange = { viewModel.phoneNumber = it },
-                        label = { Text("Telefon Numarası") },
+                        label = { Text("Telefon") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    OutlinedTextField(
+                        value = viewModel.userName,
+                        onValueChange = { viewModel.userName = it },
+                        label = { Text("Kullanıcı Adı") },
                         modifier = Modifier.fillMaxWidth()
                     )
                     OutlinedTextField(
@@ -155,10 +148,8 @@ fun RegisterScreen(
                     )
                     Button(
                         onClick = {
-                            if (viewModel.email.isNotEmpty() && viewModel.password == viewModel.confirmPassword) {
-                                step = 3
-                            } else {
-                                Toast.makeText(context, "Lütfen bilgileri doğru girin", Toast.LENGTH_SHORT).show()
+                            viewModel.registerUser(context) {
+                                step = 3 // ✅ Doğrulama kodu ekranına geç
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -174,24 +165,39 @@ fun RegisterScreen(
                         label = { Text("Doğrulama Kodu") },
                         modifier = Modifier.fillMaxWidth()
                     )
+
+                    // ✅ Kod gönderme butonu
+                    Text(
+                        text = "Kod gelmedi mi? Tekrar Gönder",
+                        color = Color.Blue,
+                        modifier = Modifier
+                            .clickable { viewModel.resendConfirmationCode(context) }
+                            .align(Alignment.End)
+                    )
+
                     Button(
                         onClick = {
-                            viewModel.registerUser(context) {
-                                navController.navigate("home") {
+                            viewModel.confirmEmail(
+                                context = context
+                            ) {
+                                navController.navigate("login") {
                                     popUpTo("register") { inclusive = true }
                                 }
                             }
+
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text("Kayıt Ol")
                     }
                 }
+
             }
         }
-        Spacer(modifier = Modifier.weight(1f))
     }
 }
+
+
 
 @Composable
 fun StepIndicator(currentStep: Int) {
@@ -205,7 +211,7 @@ fun StepIndicator(currentStep: Int) {
                     .size(16.dp)
                     .padding(4.dp)
                     .background(
-                        color = if (it <= currentStep) RoseRed else Color.LightGray,
+                        color = if (it <= currentStep) DarkGray else Color.LightGray,
                         shape = CircleShape
                     )
             )
