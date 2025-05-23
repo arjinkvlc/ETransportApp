@@ -44,7 +44,7 @@ class RegisterViewModel : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = RetrofitInstance.userApi.register(request)
+                val response = RetrofitInstance.getUserApi(context).register(request)
                 if (response.isSuccessful) {
                     val body = response.body()
                     registeredUserId = body?.userId // ✅ response'dan gelen userId
@@ -71,7 +71,7 @@ class RegisterViewModel : ViewModel() {
         val email = email
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = RetrofitInstance.userApi.confirmEmail(email, token)
+                val response = RetrofitInstance.getUserApi(context).confirmEmail(email, token)
                 val result = response.body()
 
                 withContext(Dispatchers.Main) {
@@ -98,7 +98,7 @@ class RegisterViewModel : ViewModel() {
     fun resendConfirmationCode(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = RetrofitInstance.userApi.resendConfirmationCode(email)
+                val response = RetrofitInstance.getUserApi(context).resendConfirmationCode(email)
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         val newCode = response.body()?.message
