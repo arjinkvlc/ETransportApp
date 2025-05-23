@@ -1,6 +1,7 @@
 package com.example.etransportapp.data.remote.api
 
 import com.example.etransportapp.data.model.auth.BasicResponse
+import com.example.etransportapp.data.model.auth.ConfirmEmailResponse
 import com.example.etransportapp.data.model.auth.LoginRequest
 import com.example.etransportapp.data.model.auth.LoginResponse
 import com.example.etransportapp.data.model.auth.RegisterRequest
@@ -19,7 +20,7 @@ interface UserApi {
     suspend fun confirmEmail(
         @Query("email") email: String,
         @Query("token") token: String
-    ): Response<Unit>
+    ): Response<ConfirmEmailResponse>
 
     @POST("ResendEmailConfirmCode")
     suspend fun resendConfirmationCode(@Query("email") email: String): Response<ResendEmailConfirmCodeResponse>
