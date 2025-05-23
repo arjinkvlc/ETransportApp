@@ -18,9 +18,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.presentation.components.InfoText
@@ -30,6 +32,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.etransportapp.presentation.components.CountryCitySelector
+import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
 
 
@@ -63,6 +66,9 @@ fun LoadAdDetailScreen(
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
     val geoNamesViewModel: GeoNamesViewModel = viewModel()
+    var showOfferDialog by remember { mutableStateOf(false) }
+    var offerPrice by remember { mutableStateOf("") }
+
 
     Scaffold(
         topBar = {
@@ -81,7 +87,7 @@ fun LoadAdDetailScreen(
                     if (isMyAd) {
                         if (isEditing) {
                             IconButton(onClick = {
-                                if(weight.contains(",")){
+                                if (weight.contains(",")) {
                                     weight = weight.replace(",", ".")
                                 }
                                 onUpdateClick?.invoke(
@@ -92,7 +98,7 @@ fun LoadAdDetailScreen(
                                         destination = destination,
                                         cargoType = selectedCargoType,
                                         price = price,
-                                        currency=currency,
+                                        currency = currency,
                                         date = date,
                                         weight = weight
                                     )
@@ -176,7 +182,8 @@ fun LoadAdDetailScreen(
                     username = Constants.GEO_NAMES_USERNAME,
                     geoViewModel = geoNamesViewModel,
                     onSelected = { countryCode, cityName ->
-                        val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
+                        val countryName =
+                            geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
                         origin = "$cityName, $countryName"
                     }
                 )
@@ -186,7 +193,8 @@ fun LoadAdDetailScreen(
                     username = Constants.GEO_NAMES_USERNAME,
                     geoViewModel = geoNamesViewModel,
                     onSelected = { countryCode, cityName ->
-                        val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
+                        val countryName =
+                            geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
                         destination = "$cityName, $countryName"
                     }
                 )
@@ -331,6 +339,69 @@ fun LoadAdDetailScreen(
                 InfoText("Fiyat", "$price $currency")
                 InfoText("Tarih", date)
                 InfoText("Açıklama", description)
+
+                Spacer(Modifier.weight(1f))
+                if (isMyAd) {
+                    Button(
+                        onClick = { showOfferDialog = true },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = RoseRed,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Teklif Ver")
+                    }
+                }
+            }
+            if (showOfferDialog) {
+                AlertDialog(
+                    onDismissRequest = {
+                        showOfferDialog = false
+                        offerPrice = ""
+                    }, containerColor = Color.White,
+                    confirmButton = {
+                        TextButton(
+                            onClick = {
+                                // TODO: Teklif gönderme işlemi burada yapılabilir
+                                showOfferDialog = false
+                                offerPrice = ""
+                            },
+                        ) {
+                            Text("Gönder", color = RoseRed, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = {
+                            showOfferDialog = false
+                            offerPrice = ""
+                        }) {
+                            Text("İptal", color = RoseRed, fontWeight = FontWeight.Bold, fontSize = 16.sp)
+                        }
+                    },
+                    title = { Text("Teklif Ver", fontWeight = FontWeight.Bold) },
+                    text = {
+                        Row {
+                            OutlinedTextField(
+                                value = offerPrice,
+                                onValueChange = { offerPrice = it },
+                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                                singleLine = true,
+                                modifier = Modifier.width(200.dp)
+                            )
+                            Spacer(modifier = Modifier.width(8.dp))
+                            Text(
+                                currency,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(top = 16.dp),
+                                fontWeight = FontWeight.Bold,
+                                color = DarkGray
+                            )
+                        }
+                    }
+                )
             }
         }
     }

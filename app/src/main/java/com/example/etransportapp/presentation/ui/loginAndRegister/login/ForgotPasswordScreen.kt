@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.etransportapp.ui.theme.DarkGray
+import com.example.etransportapp.ui.theme.RoseRed
 
 @Composable
 fun ForgotPasswordScreen(navController: NavHostController) {
@@ -62,7 +63,8 @@ fun ForgotPasswordScreen(navController: NavHostController) {
                 onClick = {
                     viewModel.generateToken(context) { step = 2 }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(RoseRed)
             ) {
                 Text("Kod Gönder", fontSize = 16.sp)
             }

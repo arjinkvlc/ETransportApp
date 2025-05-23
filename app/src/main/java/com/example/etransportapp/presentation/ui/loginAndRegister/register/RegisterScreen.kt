@@ -98,7 +98,11 @@ fun RegisterScreen(
                         label = { Text("Doğum Yılı") },
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Button(onClick = { step = 2 }, modifier = Modifier.fillMaxWidth()) {
+                    Button(
+                        onClick = { step = 2 },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(RoseRed)
+                    ) {
                         Text("Devam Et")
                     }
                 }
@@ -129,7 +133,11 @@ fun RegisterScreen(
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         trailingIcon = {
                             IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                                Text(if (passwordVisible) "👁️" else "🔒")
+                                Icon(
+                                    painter = painterResource(id = if (passwordVisible) R.drawable.baseline_visibility_24 else R.drawable.baseline_visibility_off_24),
+                                    tint = Color.Gray,
+                                    contentDescription = "Toggle password visibility"
+                                )
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -140,8 +148,14 @@ fun RegisterScreen(
                         label = { Text("Şifreyi Onayla") },
                         visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         trailingIcon = {
-                            IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
-                                Text(if (confirmPasswordVisible) "👁️" else "🔒")
+                            IconButton(onClick = {
+                                confirmPasswordVisible = !confirmPasswordVisible
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = if (passwordVisible) R.drawable.baseline_visibility_24 else R.drawable.baseline_visibility_off_24),
+                                    tint = Color.Gray,
+                                    contentDescription = "Toggle password visibility"
+                                )
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -149,10 +163,11 @@ fun RegisterScreen(
                     Button(
                         onClick = {
                             viewModel.registerUser(context) {
-                                step = 3 // ✅ Doğrulama kodu ekranına geç
+                                step = 3
                             }
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(RoseRed)
                     ) {
                         Text("Devam Et")
                     }
@@ -169,14 +184,16 @@ fun RegisterScreen(
                     // ✅ Kod gönderme butonu
                     Text(
                         text = "Kod gelmedi mi? Tekrar Gönder",
-                        color = Color.Blue,
+                        color = DarkGray,
                         modifier = Modifier
                             .clickable { viewModel.resendConfirmationCode(context) }
-                            .align(Alignment.End)
+                            .align(Alignment.End),
+                        fontWeight = FontWeight.Bold,
                     )
 
                     Button(
                         onClick = {
+                            viewModel.verificationCode = verificationCode
                             viewModel.confirmEmail(
                                 context = context
                             ) {
@@ -186,7 +203,8 @@ fun RegisterScreen(
                             }
 
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(RoseRed)
                     ) {
                         Text("Kayıt Ol")
                     }
@@ -196,7 +214,6 @@ fun RegisterScreen(
         }
     }
 }
-
 
 
 @Composable
@@ -211,7 +228,7 @@ fun StepIndicator(currentStep: Int) {
                     .size(16.dp)
                     .padding(4.dp)
                     .background(
-                        color = if (it <= currentStep) DarkGray else Color.LightGray,
+                        color = if (it <= currentStep) RoseRed else Color.LightGray,
                         shape = CircleShape
                     )
             )

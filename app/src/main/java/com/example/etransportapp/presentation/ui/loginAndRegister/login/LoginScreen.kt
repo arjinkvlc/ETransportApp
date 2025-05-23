@@ -29,6 +29,7 @@ import androidx.navigation.NavHostController
 import com.example.etransportapp.R
 import com.example.etransportapp.presentation.navigation.NavRoutes
 import com.example.etransportapp.ui.theme.DarkGray
+import com.example.etransportapp.ui.theme.RoseRed
 
 
 @Composable
@@ -85,7 +86,10 @@ fun LoginScreen(
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Text(if (passwordVisible) "👁️" else "🔒")
+                    Icon(
+                        painter = painterResource(id = if (passwordVisible) R.drawable.baseline_visibility_24 else R.drawable.baseline_visibility_off_24),
+                        tint = Color.Gray,
+                        contentDescription = "Toggle password visibility")
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -102,37 +106,38 @@ fun LoginScreen(
                         }
                     }
                 } else {
-                    Toast.makeText(context, "E-posta ve şifre boş olamaz", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "E-posta ve şifre boş olamaz", Toast.LENGTH_SHORT)
+                        .show()
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(RoseRed)
         ) {
             Text("Giriş Yap", fontSize = 18.sp)
         }
 
         Spacer(modifier = Modifier.height(12.dp))
 
-        // ✅ Şifremi Unuttum
         Text(
             text = "Şifremi unuttum?",
-            color = Color.Blue,
+            color = DarkGray,
             modifier = Modifier.clickable {
                 navController.navigate("forgot_password")
-                //Toast.makeText(context, "Şifremi unuttum tıklandı", Toast.LENGTH_SHORT).show()
-            }
+            },
+            fontWeight = FontWeight.Bold
         )
 
-        Spacer(modifier = Modifier.weight(1f)) // alttaki butonu en alta iter
+        Spacer(modifier = Modifier.weight(1f))
 
-        // ✅ Hesabın yok mu?
         Text(
             text = "Hesabın yok mu? Kayıt Ol",
-            color = Color.Blue,
+            color = DarkGray,
             modifier = Modifier
                 .clickable {
                     navController.navigate(NavRoutes.REGISTER)
                 }
-                .padding(vertical = 16.dp)
+                .padding(vertical = 16.dp),
+            fontWeight = FontWeight.Bold
         )
     }
 }
