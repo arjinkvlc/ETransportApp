@@ -98,7 +98,7 @@ fun RegisterScreen(
                         label = { Text("Doğum Yılı") },
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Button(onClick = { step = 2 }, modifier = Modifier.fillMaxWidth()) {
+                    Button(onClick = { step = 2 }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(RoseRed)) {
                         Text("Devam Et")
                     }
                 }
@@ -149,10 +149,11 @@ fun RegisterScreen(
                     Button(
                         onClick = {
                             viewModel.registerUser(context) {
-                                step = 3 // ✅ Doğrulama kodu ekranına geç
+                                step = 3
                             }
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(RoseRed)
                     ) {
                         Text("Devam Et")
                     }
@@ -169,10 +170,11 @@ fun RegisterScreen(
                     // ✅ Kod gönderme butonu
                     Text(
                         text = "Kod gelmedi mi? Tekrar Gönder",
-                        color = Color.Blue,
+                        color = DarkGray,
                         modifier = Modifier
                             .clickable { viewModel.resendConfirmationCode(context) }
-                            .align(Alignment.End)
+                            .align(Alignment.End),
+                        fontWeight = FontWeight.Bold,
                     )
 
                     Button(
@@ -187,7 +189,8 @@ fun RegisterScreen(
                             }
 
                         },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(RoseRed)
                     ) {
                         Text("Kayıt Ol")
                     }
@@ -212,7 +215,7 @@ fun StepIndicator(currentStep: Int) {
                     .size(16.dp)
                     .padding(4.dp)
                     .background(
-                        color = if (it <= currentStep) DarkGray else Color.LightGray,
+                        color = if (it <= currentStep) RoseRed else Color.LightGray,
                         shape = CircleShape
                     )
             )
