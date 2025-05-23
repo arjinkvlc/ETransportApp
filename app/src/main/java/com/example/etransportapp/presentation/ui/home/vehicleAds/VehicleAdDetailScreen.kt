@@ -28,6 +28,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.etransportapp.presentation.components.CountryCitySelector
+import com.example.etransportapp.presentation.components.VehicleOfferDialog
+import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,6 +57,9 @@ fun VehicleAdDetailScreen(
     var selectedCargoType by remember { mutableStateOf(vehicleAd.cargoType.ifBlank { "Açık Kasa" }) }
     val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
     var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
+    var showVehicleOfferDialog by remember { mutableStateOf(false) }
+    var offerMessage by remember { mutableStateOf("") }
+
 
 
     Scaffold(
@@ -191,7 +196,8 @@ fun VehicleAdDetailScreen(
                     username = Constants.GEO_NAMES_USERNAME,
                     geoViewModel = geoNamesViewModel,
                     onSelected = { countryCode, cityName ->
-                        val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
+                        val countryName =
+                            geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
                         location = "$cityName, $countryName"
                     }
                 )
@@ -246,7 +252,55 @@ fun VehicleAdDetailScreen(
                 InfoText("Taşıma Kapasitesi", "$capacity ton")
                 InfoText("Konum", location)
                 InfoText("Tarih", date)
+
+                Spacer(Modifier.weight(1f))
+                if (isMyAd) {
+                    Button(
+                        onClick = {
+                            navController.navigate("vehicleAdOffers/${vehicleAd.id}")
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = RoseRed,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Gelen Teklifleri Gör")
+                    }
+                } else {
+                    Button(
+                        onClick = { showVehicleOfferDialog = true },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = RoseRed,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Teklif Gönder")
+                    }
+                }
+
             }
+            if (showVehicleOfferDialog) {
+                VehicleOfferDialog(
+                    message = offerMessage,
+                    onMessageChange = { offerMessage = it },
+                    onDismiss = {
+                        showVehicleOfferDialog = false
+                        offerMessage = ""
+                    },
+                    onConfirm = {
+                        // TODO: Teklifi backend'e gönder
+                        showVehicleOfferDialog = false
+                        offerMessage = ""
+                    }
+                )
+            }
+
         }
     }
 }

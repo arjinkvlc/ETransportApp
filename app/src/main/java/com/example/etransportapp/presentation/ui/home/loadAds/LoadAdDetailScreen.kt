@@ -18,11 +18,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.presentation.components.InfoText
@@ -32,6 +30,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.etransportapp.presentation.components.CountryCitySelector
+import com.example.etransportapp.presentation.components.LoadOfferDialog
 import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
 
@@ -308,7 +307,6 @@ fun LoadAdDetailScreen(
                     }
                 }
 
-
                 OutlinedTextField(
                     value = date,
                     onValueChange = {},
@@ -343,6 +341,21 @@ fun LoadAdDetailScreen(
                 Spacer(Modifier.weight(1f))
                 if (isMyAd) {
                     Button(
+                        onClick = {
+                            navController.navigate("loadAdOffers/${loadAd.id}")
+                        },
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = RoseRed,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Gelen Teklifleri Gör")
+                    }
+                } else {
+                    Button(
                         onClick = { showOfferDialog = true },
                         modifier = Modifier
                             .fillMaxWidth()
@@ -357,52 +370,23 @@ fun LoadAdDetailScreen(
                 }
             }
             if (showOfferDialog) {
-                AlertDialog(
-                    onDismissRequest = {
+                LoadOfferDialog(
+                    currency = currency,
+                    offerPrice = offerPrice,
+                    onPriceChange = { offerPrice = it },
+                    onDismiss = {
                         showOfferDialog = false
                         offerPrice = ""
-                    }, containerColor = Color.White,
-                    confirmButton = {
-                        TextButton(
-                            onClick = {
-                                // TODO: Teklif gönderme işlemi burada yapılabilir
-                                showOfferDialog = false
-                                offerPrice = ""
-                            },
-                        ) {
-                            Text("Gönder", color = RoseRed, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                        }
                     },
-                    dismissButton = {
-                        TextButton(onClick = {
-                            showOfferDialog = false
-                            offerPrice = ""
-                        }) {
-                            Text("İptal", color = RoseRed, fontWeight = FontWeight.Bold, fontSize = 16.sp)
-                        }
-                    },
-                    title = { Text("Teklif Ver", fontWeight = FontWeight.Bold) },
-                    text = {
-                        Row {
-                            OutlinedTextField(
-                                value = offerPrice,
-                                onValueChange = { offerPrice = it },
-                                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                                singleLine = true,
-                                modifier = Modifier.width(200.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                currency,
-                                style = MaterialTheme.typography.bodyLarge,
-                                modifier = Modifier.padding(top = 16.dp),
-                                fontWeight = FontWeight.Bold,
-                                color = DarkGray
-                            )
-                        }
+                    onConfirm = {
+                        // TODO: Teklif gönderme işlemi
+                        showOfferDialog = false
+                        offerPrice = ""
                     }
                 )
             }
+
+
         }
     }
 }
