@@ -86,7 +86,10 @@ fun LoginScreen(
             visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
             trailingIcon = {
                 IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Text(if (passwordVisible) "👁️" else "🔒")
+                    Icon(
+                        painter = painterResource(id = if (passwordVisible) R.drawable.baseline_visibility_24 else R.drawable.baseline_visibility_off_24),
+                        tint = Color.Gray,
+                        contentDescription = "Toggle password visibility")
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -103,7 +106,8 @@ fun LoginScreen(
                         }
                     }
                 } else {
-                    Toast.makeText(context, "E-posta ve şifre boş olamaz", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "E-posta ve şifre boş olamaz", Toast.LENGTH_SHORT)
+                        .show()
                 }
             },
             modifier = Modifier.fillMaxWidth(),

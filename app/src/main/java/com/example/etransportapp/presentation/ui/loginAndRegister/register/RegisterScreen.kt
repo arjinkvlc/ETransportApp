@@ -98,7 +98,11 @@ fun RegisterScreen(
                         label = { Text("Doğum Yılı") },
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Button(onClick = { step = 2 }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.buttonColors(RoseRed)) {
+                    Button(
+                        onClick = { step = 2 },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = ButtonDefaults.buttonColors(RoseRed)
+                    ) {
                         Text("Devam Et")
                     }
                 }
@@ -129,7 +133,11 @@ fun RegisterScreen(
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         trailingIcon = {
                             IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                                Text(if (passwordVisible) "👁️" else "🔒")
+                                Icon(
+                                    painter = painterResource(id = if (passwordVisible) R.drawable.baseline_visibility_24 else R.drawable.baseline_visibility_off_24),
+                                    tint = Color.Gray,
+                                    contentDescription = "Toggle password visibility"
+                                )
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -140,8 +148,14 @@ fun RegisterScreen(
                         label = { Text("Şifreyi Onayla") },
                         visualTransformation = if (confirmPasswordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         trailingIcon = {
-                            IconButton(onClick = { confirmPasswordVisible = !confirmPasswordVisible }) {
-                                Text(if (confirmPasswordVisible) "👁️" else "🔒")
+                            IconButton(onClick = {
+                                confirmPasswordVisible = !confirmPasswordVisible
+                            }) {
+                                Icon(
+                                    painter = painterResource(id = if (passwordVisible) R.drawable.baseline_visibility_24 else R.drawable.baseline_visibility_off_24),
+                                    tint = Color.Gray,
+                                    contentDescription = "Toggle password visibility"
+                                )
                             }
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -200,7 +214,6 @@ fun RegisterScreen(
         }
     }
 }
-
 
 
 @Composable
