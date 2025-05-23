@@ -30,6 +30,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.etransportapp.presentation.components.CountryCitySelector
+import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
 
 
@@ -331,6 +332,20 @@ fun LoadAdDetailScreen(
                 InfoText("Fiyat", "$price $currency")
                 InfoText("Tarih", date)
                 InfoText("Açıklama", description)
+
+                Spacer(Modifier.weight(1f))
+                if (!isMyAd){
+                    Button(
+                        onClick = { /* TODO: Handle offer */ },
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = RoseRed,
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text("Teklif Ver")
+                    }
+                }
             }
         }
     }

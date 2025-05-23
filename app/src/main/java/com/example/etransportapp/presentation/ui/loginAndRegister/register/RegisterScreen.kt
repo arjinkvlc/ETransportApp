@@ -177,6 +177,7 @@ fun RegisterScreen(
 
                     Button(
                         onClick = {
+                            viewModel.verificationCode = verificationCode
                             viewModel.confirmEmail(
                                 context = context
                             ) {
