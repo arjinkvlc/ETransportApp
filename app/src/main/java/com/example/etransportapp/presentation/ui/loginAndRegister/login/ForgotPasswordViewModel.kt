@@ -18,7 +18,7 @@ class ForgotPasswordViewModel : ViewModel() {
     fun generateToken(context: Context, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = RetrofitInstance.userApi.generateForgotPasswordToken(
+                val response = RetrofitInstance.getUserApi(context).generateForgotPasswordToken(
                     mapOf("email" to email)
                 )
                 withContext(Dispatchers.Main) {
@@ -53,7 +53,7 @@ class ForgotPasswordViewModel : ViewModel() {
                     "newPassword" to newPassword,
                     "confirmNewPassword" to confirmPassword
                 )
-                val response = RetrofitInstance.userApi.forgotPassword(body)
+                val response = RetrofitInstance.getUserApi(context).forgotPassword(body)
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         Toast.makeText(context, "Şifre başarıyla değiştirildi", Toast.LENGTH_SHORT).show()

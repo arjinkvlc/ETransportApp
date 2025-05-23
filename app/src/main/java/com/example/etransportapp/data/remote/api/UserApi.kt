@@ -7,9 +7,12 @@ import com.example.etransportapp.data.model.auth.LoginResponse
 import com.example.etransportapp.data.model.auth.RegisterRequest
 import com.example.etransportapp.data.model.auth.RegisterResponse
 import com.example.etransportapp.data.model.auth.ResendEmailConfirmCodeResponse
+import com.example.etransportapp.data.model.auth.UserProfileResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface UserApi {
@@ -33,6 +36,10 @@ interface UserApi {
 
     @POST("ForgotPassword")
     suspend fun forgotPassword(@Body request: Map<String, String>): Response<BasicResponse>
+
+    @GET("{id}")
+    suspend fun getUserProfile(@Path("id") userId: String): Response<UserProfileResponse>
+
 
 
 }

@@ -24,7 +24,7 @@ class LoginViewModel : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = RetrofitInstance.userApi.login(request)
+                val response = RetrofitInstance.getUserApi(context).login(request)
                 if (response.isSuccessful) {
                     val body = response.body()
                     if (body?.emailValid == true) {

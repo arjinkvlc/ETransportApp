@@ -20,13 +20,18 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.etransportapp.R
 import com.example.etransportapp.presentation.components.ProfileInfoRow
@@ -36,7 +41,18 @@ import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.util.PreferenceHelper
 
 @Composable
-fun ProfileScreen(modifier: Modifier = Modifier, navController: NavHostController) {
+fun ProfileScreen(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    viewModel: ProfileViewModel = viewModel()
+) {
+    val context = LocalContext.current
+    val profile by viewModel.userProfile.collectAsState()
+
+    LaunchedEffect(true) {
+        viewModel.fetchUserProfile(context)
+    }
+
     Column(
         modifier = modifier
             .padding(16.dp)
@@ -44,62 +60,62 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavHostControlle
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-
             Spacer(Modifier.height(24.dp))
 
+            // 🔹 Kullanıcı Üst Bilgi
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Surface(
                     shape = CircleShape,
                     color = DarkGray,
                     modifier = Modifier.size(64.dp)
                 ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                         Text(
-                            text = "A",
+                            text = profile?.name?.firstOrNull()?.toString() ?: "?",
                             color = Color.White,
                             fontSize = 28.sp,
                             fontWeight = FontWeight.Bold
                         )
-                    }                }
+                    }
+                }
                 Spacer(Modifier.width(16.dp))
                 Column {
-                    Text("Arjin Kavalcı", fontWeight = FontWeight.Bold, fontSize = 20.sp)
-                    Text("Araç Sahibi", color = Color.Gray, fontSize = 14.sp)
+                    Text(
+                        text = "${profile?.name ?: "..."} ${profile?.surname ?: ""}",
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 20.sp
+                    )
                 }
             }
 
             Spacer(Modifier.height(32.dp))
 
-            // TODO: Premium Uyelik
-            // PremiumCard()
-
-            Spacer(Modifier.height(32.dp))
-
+            // 🔹 İletişim Bilgileri
             Text("İletişim Bilgileri", fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(8.dp))
-            ProfileInfoRow(icon = R.drawable.baseline_phone_24, text = "905459404326")
-            ProfileInfoRow(icon = R.drawable.baseline_email_24, text = "arjin.33@outlook.com")
+            ProfileInfoRow(icon = R.drawable.baseline_phone_24, text = profile?.phoneNumber ?: "-")
+            ProfileInfoRow(icon = R.drawable.baseline_email_24, text = profile?.email ?: "-")
 
             Spacer(Modifier.height(32.dp))
 
+            // 🔹 Destek Menüsü
             Text("Destek", fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(8.dp))
             ProfileMenuItem(text = "Yardım Merkezi", onClick = { })
             ProfileMenuItem(text = "Kullanım Koşulları", onClick = { })
             ProfileMenuItem(text = "Gizlilik Politikası", onClick = { })
-            Spacer(Modifier.height(8.dp))
+
+            Spacer(Modifier.height(32.dp))
+
+            // 🔹 Hesap Menüsü
             Text("Hesap", fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(8.dp))
-
-            ProfileMenuItem(text = "Araçlarım", onClick = {
+            ProfileMenuItem(text = "Araçlarım") {
                 navController.navigate(NavRoutes.MY_VEHICLES)
-            })
+            }
         }
 
-
+        // 🔹 Çıkış Yap
         OutlinedButton(
             onClick = {
                 PreferenceHelper.logout(navController.context)
@@ -114,10 +130,12 @@ fun ProfileScreen(modifier: Modifier = Modifier, navController: NavHostControlle
             Icon(
                 painter = painterResource(id = R.drawable.baseline_logout_24),
                 contentDescription = "logout icon",
-                tint = Color.Red, modifier = Modifier.padding(end = 8.dp)
+                tint = Color.Red,
+                modifier = Modifier.padding(end = 8.dp)
             )
             Text("Çıkış Yap")
         }
     }
 }
+
 
