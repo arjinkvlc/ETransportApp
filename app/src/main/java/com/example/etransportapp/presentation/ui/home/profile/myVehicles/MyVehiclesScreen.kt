@@ -13,12 +13,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.etransportapp.R
-import com.example.etransportapp.data.model.Vehicle
+import com.example.etransportapp.data.model.vehicle.FetchUserVehiclesResponse
+import com.example.etransportapp.data.model.vehicle.VehicleRequest
+import com.example.etransportapp.data.model.vehicle.VehicleResponse
 import com.example.etransportapp.presentation.components.VehicleDialog
 import com.example.etransportapp.presentation.viewModels.VehicleViewModel
 import com.example.etransportapp.ui.theme.DarkGray
@@ -30,9 +33,14 @@ fun MyVehiclesScreen(
     navController: NavHostController,
     vehicleViewModel: VehicleViewModel = viewModel()
 ) {
+    val context = LocalContext.current
     val vehicles by vehicleViewModel.myVehicles.collectAsState()
     var showDialog by remember { mutableStateOf(false) }
-    var vehicleToEdit by remember { mutableStateOf<Vehicle?>(null) }
+    var vehicleToEdit by remember { mutableStateOf<FetchUserVehiclesResponse?>(null) }
+
+    LaunchedEffect(Unit) {
+        vehicleViewModel.fetchVehiclesByUser(context)
+    }
 
     Scaffold(
         topBar = {
@@ -40,14 +48,15 @@ fun MyVehiclesScreen(
                 title = { Text("Araçlarım", style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri", tint = Color.White)
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri", tint = MaterialTheme.colorScheme.onPrimary)
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = DarkGray,
                     titleContentColor = Color.White,
                     actionIconContentColor = Color.White
-            ))
+                )
+            )
         },
         floatingActionButton = {
             FloatingActionButton(
@@ -63,6 +72,7 @@ fun MyVehiclesScreen(
             }
         }
     ) { innerPadding ->
+
         Column(
             modifier = Modifier
                 .padding(innerPadding)
@@ -83,18 +93,9 @@ fun MyVehiclesScreen(
                         modifier = Modifier.size(96.dp),
                         colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant)
                     )
-
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(
-                        "Henüz eklenmiş araç yok",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    Text(
-                        "Yeni bir araç eklemek için '+' butonuna basın.",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                    Text("Henüz eklenmiş araç yok", style = MaterialTheme.typography.titleMedium)
+                    Text("Yeni bir araç eklemek için '+' butonuna basın.", style = MaterialTheme.typography.bodyMedium)
                 }
             } else {
                 vehicles.forEach { vehicle ->
@@ -111,31 +112,40 @@ fun MyVehiclesScreen(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Column(
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text(vehicle.name, style = MaterialTheme.typography.titleMedium)
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(vehicle.title, style = MaterialTheme.typography.titleMedium)
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text("Tür: ${vehicle.vehicleType}", style = MaterialTheme.typography.bodyMedium)
                                 Text("Kapasite: ${vehicle.capacity} kg", style = MaterialTheme.typography.bodyMedium)
-                                Text("Plaka: ${vehicle.plate}", style = MaterialTheme.typography.bodyMedium)
+                                Text("Plaka: ${vehicle.licensePlate}", style = MaterialTheme.typography.bodyMedium)
                                 Text("Model: ${vehicle.model}", style = MaterialTheme.typography.bodyMedium)
                             }
 
                             Row {
-                                IconButton(
-                                    onClick = {
-                                        vehicleToEdit = vehicle
-                                        showDialog = true
-                                    }
-                                ) {
+                                IconButton(onClick = {
+                                    vehicleToEdit = vehicle
+                                    showDialog = true
+                                }) {
                                     Icon(Icons.Default.Edit, contentDescription = "Düzenle")
                                 }
-                                IconButton(
-                                    onClick = {
-                                        vehicleViewModel.deleteVehicle(vehicle)
-                                    }
-                                ) {
+                                IconButton(onClick = {
+                                    val dummyVehicle = VehicleResponse(
+                                        id = vehicle.id,
+                                        title = vehicle.title,
+                                        vehicleType = vehicle.vehicleType,
+                                        capacity = vehicle.capacity,
+                                        licensePlate = vehicle.licensePlate,
+                                        model = vehicle.model,
+                                        userId = vehicle.carrierId,
+                                        active = true,
+                                        addedBy = vehicle.carrierId,
+                                        carrier = Any(),
+                                        createdDate = "",
+                                        updatedBy = Any(),
+                                        updatedDate = ""
+                                    )
+                                    vehicleViewModel.deleteVehicle(context, dummyVehicle)
+                                }) {
                                     Icon(Icons.Default.Delete, contentDescription = "Sil")
                                 }
                             }
@@ -146,20 +156,35 @@ fun MyVehiclesScreen(
         }
 
         if (showDialog) {
+            val initialRequest = vehicleToEdit?.let {
+                VehicleRequest(
+                    title = it.title,
+                    vehicleType = it.vehicleType,
+                    capacity = it.capacity,
+                    licensePlate = it.licensePlate,
+                    model = it.model,
+                    carrierId = it.carrierId
+                )
+            }
+
             VehicleDialog(
-                initialVehicle = vehicleToEdit,
+                initialVehicle = initialRequest,
                 onDismiss = {
                     showDialog = false
                     vehicleToEdit = null
                 },
-                onSave = { vehicle ->
+                onSave = { request ->
                     if (vehicleToEdit == null) {
-                        vehicleViewModel.addVehicle(vehicle)
+                        vehicleViewModel.addVehicle(context, request) {
+                            showDialog = false
+                            vehicleToEdit = null
+                        }
                     } else {
-                        vehicleViewModel.updateVehicle(vehicle)
+                        vehicleViewModel.updateVehicle(context, vehicleToEdit!!.id, request) {
+                            showDialog = false
+                            vehicleToEdit = null
+                        }
                     }
-                    showDialog = false
-                    vehicleToEdit = null
                 }
             )
         }

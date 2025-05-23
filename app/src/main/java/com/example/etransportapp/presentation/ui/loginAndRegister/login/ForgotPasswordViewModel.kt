@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.etransportapp.data.remote.RetrofitInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -18,7 +17,7 @@ class ForgotPasswordViewModel : ViewModel() {
     fun generateToken(context: Context, onSuccess: () -> Unit) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = RetrofitInstance.getUserApi(context).generateForgotPasswordToken(
+                val response = RetrofitInstance.userApi.generateForgotPasswordToken(
                     mapOf("email" to email)
                 )
                 withContext(Dispatchers.Main) {
@@ -53,7 +52,7 @@ class ForgotPasswordViewModel : ViewModel() {
                     "newPassword" to newPassword,
                     "confirmNewPassword" to confirmPassword
                 )
-                val response = RetrofitInstance.getUserApi(context).forgotPassword(body)
+                val response = RetrofitInstance.userApi.forgotPassword(body)
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         Toast.makeText(context, "Şifre başarıyla değiştirildi", Toast.LENGTH_SHORT).show()
