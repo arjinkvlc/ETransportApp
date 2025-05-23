@@ -72,13 +72,17 @@ class RegisterViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val response = RetrofitInstance.userApi.confirmEmail(email, token)
-                if (response.isSuccessful) {
-                    withContext(Dispatchers.Main) {
-                        Toast.makeText(context, "Email doğrulandı", Toast.LENGTH_SHORT).show()
-                        onSuccess()
-                    }
-                } else {
-                    withContext(Dispatchers.Main) {
+                val result = response.body()
+
+                withContext(Dispatchers.Main) {
+                    if (response.isSuccessful && result != null) {
+                        if (result.message.contains("Confirmed", ignoreCase = true)) {
+                            Toast.makeText(context, "Doğrulama tamamlandı", Toast.LENGTH_SHORT).show()
+                            onSuccess()
+                        } else {
+                            Toast.makeText(context, "Yanıt: ${result.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    } else {
                         Toast.makeText(context, "Kod yanlış veya süresi dolmuş", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -89,6 +93,7 @@ class RegisterViewModel : ViewModel() {
             }
         }
     }
+
 
     fun resendConfirmationCode(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
