@@ -1,6 +1,7 @@
 package com.example.etransportapp.data.model.ad
 
 data class LoadAd(
+    val id: String = "",
     val title: String,
     val description: String,
     val origin: String,

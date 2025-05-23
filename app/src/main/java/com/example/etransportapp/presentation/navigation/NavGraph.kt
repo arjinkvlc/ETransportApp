@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.etransportapp.presentation.ui.home.loadAds.CreateLoadAdScreen
 import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdDetailScreen
+import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdOffersScreen
 import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdViewModel
 import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdsScreen
 import com.example.etransportapp.presentation.ui.home.myAds.MyAdsScreen
@@ -16,6 +17,7 @@ import com.example.etransportapp.presentation.ui.home.profile.ProfileScreen
 import com.example.etransportapp.presentation.ui.home.profile.myVehicles.MyVehiclesScreen
 import com.example.etransportapp.presentation.ui.home.vehicleAds.CreateVehicleAdScreen
 import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdDetailScreen
+import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdOffersScreen
 import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdViewModel
 import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdsScreen
 import com.example.etransportapp.presentation.ui.loginAndRegister.intro.IntroScreen
@@ -110,6 +112,12 @@ fun NavGraph(
                 )
             }
         }
+
+        composable("loadAdOffers/{loadAdId}") { backStackEntry ->
+            val loadAdId = backStackEntry.arguments?.getString("loadAdId") ?: ""
+            LoadAdOffersScreen(loadAdId = loadAdId, navController = navController)
+        }
+
         composable(NavRoutes.VEHICLE_AD_DETAIL) {
             val selectedAd = vehicleAdViewModel.selectedAd
             selectedAd?.let {
@@ -125,6 +133,10 @@ fun NavGraph(
                     }
                 )
             }
+        }
+        composable("vehicleAdOffers/{vehicleAdId}") { backStackEntry ->
+            val vehicleAdId = backStackEntry.arguments?.getString("vehicleAdId") ?: ""
+            VehicleAdOffersScreen(vehicleAdId = vehicleAdId, navController = navController)
         }
         composable(NavRoutes.FORGOT_PASSWORD) {
             ForgotPasswordScreen(navController)
