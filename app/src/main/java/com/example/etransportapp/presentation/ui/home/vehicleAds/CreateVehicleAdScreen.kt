@@ -272,7 +272,7 @@ fun CreateVehicleAdScreen(
                     title = { Text("Araç Seç") },
                     text = {
                         Column {
-                            vehicleViewModel.myVehicles.collectAsState().value.forEach { vehicle ->
+                            vehicleViewModel.myVehicles2.collectAsState().value.forEach { vehicle ->
                                 Text(
                                     text = "${vehicle.name} - ${vehicle.plate}",
                                     modifier = Modifier

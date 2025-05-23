@@ -8,7 +8,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.auth.LoginRequest
-import com.example.etransportapp.data.remote.RetrofitInstance
 import com.example.etransportapp.util.PreferenceHelper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +23,7 @@ class LoginViewModel : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = RetrofitInstance.getUserApi(context).login(request)
+                val response = RetrofitInstance.userApi.login(request)
                 if (response.isSuccessful) {
                     val body = response.body()
                     if (body?.emailValid == true) {

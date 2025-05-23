@@ -10,6 +10,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        RetrofitInstance.init(applicationContext)
         setContent {
             val navController = rememberNavController()
             HomeScreen(navController)

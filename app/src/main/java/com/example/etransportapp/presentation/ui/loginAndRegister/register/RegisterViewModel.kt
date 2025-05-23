@@ -9,7 +9,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.auth.RegisterRequest
-import com.example.etransportapp.data.remote.RetrofitInstance
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -44,7 +43,7 @@ class RegisterViewModel : ViewModel() {
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = RetrofitInstance.getUserApi(context).register(request)
+                val response = RetrofitInstance.userApi.register(request)
                 if (response.isSuccessful) {
                     val body = response.body()
                     registeredUserId = body?.userId // ✅ response'dan gelen userId
@@ -71,7 +70,7 @@ class RegisterViewModel : ViewModel() {
         val email = email
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = RetrofitInstance.getUserApi(context).confirmEmail(email, token)
+                val response = RetrofitInstance.userApi.confirmEmail(email, token)
                 val result = response.body()
 
                 withContext(Dispatchers.Main) {
@@ -98,7 +97,7 @@ class RegisterViewModel : ViewModel() {
     fun resendConfirmationCode(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val response = RetrofitInstance.getUserApi(context).resendConfirmationCode(email)
+                val response = RetrofitInstance.userApi.resendConfirmationCode(email)
                 withContext(Dispatchers.Main) {
                     if (response.isSuccessful) {
                         val newCode = response.body()?.message
