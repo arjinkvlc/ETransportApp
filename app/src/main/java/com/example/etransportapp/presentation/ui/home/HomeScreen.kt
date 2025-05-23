@@ -1,5 +1,6 @@
 package com.example.etransportapp.presentation.ui.home
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -136,7 +137,7 @@ fun HomeScreen(navController: NavHostController) {
             }
         }
     ) { innerPadding ->
-        Box(modifier = Modifier.padding(innerPadding)) {
+        Box(modifier = Modifier.padding(innerPadding).background(Color(0xFFEEEEEE))) {
             NavGraph(navController = navController, modifier = Modifier, context = context)
 
             FloatingActionMenu(

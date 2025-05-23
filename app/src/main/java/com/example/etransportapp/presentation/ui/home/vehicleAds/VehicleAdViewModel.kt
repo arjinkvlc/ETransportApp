@@ -1,5 +1,9 @@
 package com.example.etransportapp.presentation.ui.home.vehicleAds
 
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.example.etransportapp.data.model.ad.VehicleAd
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,6 +17,25 @@ class VehicleAdViewModel : ViewModel() {
     val myVehicleAds: StateFlow<List<VehicleAd>> = _myVehicleAds
 
     var selectedAd: VehicleAd? = null
+    var selectedSort by mutableStateOf("Tümü")
+    var selectedFilter by mutableStateOf("Tümü")
+    val sortedLoadAds = derivedStateOf {
+        when (selectedSort) {
+            "En Yeni" -> vehicleAds.value.sortedBy {it.date }
+            "En Eski" -> vehicleAds.value.sortedByDescending { it.date }
+            "Taşıma Kapasitesi" -> vehicleAds.value.sortedBy{ it.capacity }
+            else -> vehicleAds.value
+        }
+    }
+    val filteredLoadAds = derivedStateOf {
+        when (selectedFilter) {
+            "Açık Kasa" -> vehicleAds.value.filter { it.cargoType == "Açık Kasa" }
+            "Tenteli" -> vehicleAds.value.filter { it.cargoType == "Tenteli"  }
+            "Frigofirik" -> vehicleAds.value.filter { it.cargoType == "Frigofirik"  }
+            "Tanker" -> vehicleAds.value.filter { it.cargoType == "Tanker"  }
+            else -> vehicleAds.value
+        }
+    }
 
     fun addVehicleAd(item: VehicleAd) {
         _vehicleAds.value = _vehicleAds.value + item

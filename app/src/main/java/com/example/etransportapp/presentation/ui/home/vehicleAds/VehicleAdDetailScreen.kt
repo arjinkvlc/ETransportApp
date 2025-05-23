@@ -3,6 +3,8 @@ package com.example.etransportapp.presentation.ui.home.vehicleAds
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -13,6 +15,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.VehicleAd
@@ -35,6 +40,7 @@ fun VehicleAdDetailScreen(
     onUpdateClick: ((VehicleAd) -> Unit)? = null
 ) {
     var isEditing by remember { mutableStateOf(false) }
+    val focusManager = LocalFocusManager.current
 
     var title by remember { mutableStateOf(vehicleAd.title) }
     var description by remember { mutableStateOf(vehicleAd.description) }
@@ -45,6 +51,11 @@ fun VehicleAdDetailScreen(
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
     val geoNamesViewModel: GeoNamesViewModel = viewModel()
+
+    var selectedCargoType by remember { mutableStateOf(vehicleAd.cargoType.ifBlank { "Açık Kasa" }) }
+    val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
+    var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
+
 
     Scaffold(
         topBar = {
@@ -69,7 +80,8 @@ fun VehicleAdDetailScreen(
                                         description = description,
                                         location = location,
                                         date = date,
-                                        capacity = capacity
+                                        capacity = capacity,
+                                        cargoType = selectedCargoType,
                                     )
                                 )
                                 isEditing = false
@@ -129,8 +141,50 @@ fun VehicleAdDetailScreen(
                     value = capacity,
                     onValueChange = { capacity = it },
                     label = { Text("Taşıma Kapasitesi (ton)") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            focusManager.clearFocus()
+                        }
+                    )
                 )
+
+                ExposedDropdownMenuBox(
+                    expanded = isCargoTypeMenuExpanded,
+                    onExpandedChange = { isCargoTypeMenuExpanded = !isCargoTypeMenuExpanded }
+                ) {
+                    OutlinedTextField(
+                        value = selectedCargoType,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Yük Tipi") },
+                        trailingIcon = {
+                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCargoTypeMenuExpanded)
+                        },
+                        modifier = Modifier
+                            .menuAnchor()
+                            .fillMaxWidth()
+                    )
+
+                    ExposedDropdownMenu(
+                        expanded = isCargoTypeMenuExpanded,
+                        onDismissRequest = { isCargoTypeMenuExpanded = false }
+                    ) {
+                        cargoTypes.forEach { type ->
+                            DropdownMenuItem(
+                                text = { Text(type) },
+                                onClick = {
+                                    selectedCargoType = type
+                                    isCargoTypeMenuExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
 
                 CountryCitySelector(
                     labelPrefix = "Konum",
