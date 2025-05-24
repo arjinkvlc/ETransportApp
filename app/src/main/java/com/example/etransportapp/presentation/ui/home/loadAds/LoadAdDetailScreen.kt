@@ -167,7 +167,7 @@ fun LoadAdDetailScreen(
                 .padding(horizontal = 20.dp, vertical = 24.dp)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             if (isEditing) {
                 OutlinedTextField(
@@ -177,7 +177,6 @@ fun LoadAdDetailScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
                 CountryCitySelector(
-                    labelPrefix = "Yükleme Noktası",
                     username = Constants.GEO_NAMES_USERNAME,
                     geoViewModel = geoNamesViewModel,
                     onSelected = { countryCode, cityName ->
@@ -188,7 +187,6 @@ fun LoadAdDetailScreen(
                 )
 
                 CountryCitySelector(
-                    labelPrefix = "Varış Noktası",
                     username = Constants.GEO_NAMES_USERNAME,
                     geoViewModel = geoNamesViewModel,
                     onSelected = { countryCode, cityName ->

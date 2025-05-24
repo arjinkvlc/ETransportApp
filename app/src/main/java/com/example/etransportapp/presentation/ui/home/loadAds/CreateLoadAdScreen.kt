@@ -164,10 +164,10 @@ fun CreateLoadAdScreen(
         Column(
             modifier = modifier
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .padding(horizontal = 16.dp,)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             OutlinedTextField(
                 value = title,
@@ -183,8 +183,8 @@ fun CreateLoadAdScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
+            Text(text = "Yükleme Noktası", color = DarkGray, style = MaterialTheme.typography.titleSmall)
             CountryCitySelector(
-                labelPrefix = "Yükleme Noktası",
                 username = Constants.GEO_NAMES_USERNAME,
                 geoViewModel = geoNamesViewModel,
                 onSelected = { countryCode, cityName ->
@@ -203,10 +203,8 @@ fun CreateLoadAdScreen(
                     }
                 }
             )
-
-
+            Text(text = "Varış Noktası", color = DarkGray, style = MaterialTheme.typography.titleSmall)
             CountryCitySelector(
-                labelPrefix = "Varış Noktası",
                 username = Constants.GEO_NAMES_USERNAME,
                 geoViewModel = geoNamesViewModel,
                 onSelected = { countryCode, cityName ->
@@ -272,7 +270,10 @@ fun CreateLoadAdScreen(
                                 viewModel.calculateRouteAndPredictCost(
                                     selectedOriginPlace!!,
                                     selectedDestinationPlace!!,
-                                    weight.text.toDoubleOrNull()?.times(1000)?.toInt() ?: 1000,
+                                    weight.text
+                                        .toDoubleOrNull()
+                                        ?.times(1000)
+                                        ?.toInt() ?: 1000,
                                     cargoType = selectedCargoType
                                 )
                             }

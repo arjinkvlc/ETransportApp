@@ -237,7 +237,6 @@ fun CreateVehicleAdScreen(
             }
 
             CountryCitySelector(
-                labelPrefix = "Konum",
                 username = Constants.GEO_NAMES_USERNAME,
                 geoViewModel = geoNamesViewModel,
                 onSelected = { countryCode, cityName ->

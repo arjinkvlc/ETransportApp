@@ -1,6 +1,8 @@
 package com.example.etransportapp.presentation.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,12 +27,12 @@ import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CountryCitySelector(
-    labelPrefix: String,
     username: String,
     geoViewModel: GeoNamesViewModel,
     onSelected: (countryCode: String, cityName: String) -> Unit
@@ -50,22 +52,16 @@ fun CountryCitySelector(
     val cityFocusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    LaunchedEffect(countries) {
-        if (showCountryDropdown) countryFocusRequester.requestFocus()
-    }
-
-    LaunchedEffect(cities) {
-        if (showCityDropdown) cityFocusRequester.requestFocus()
-    }
-
     LaunchedEffect(Unit) {
         geoViewModel.fetchCountries(username)
     }
 
-    Column {
+    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        // ÜLKE
         ExposedDropdownMenuBox(
             expanded = showCountryDropdown,
-            onExpandedChange = { showCountryDropdown = it }
+            onExpandedChange = { showCountryDropdown = it },
+            modifier = Modifier.weight(1f)
         ) {
             OutlinedTextField(
                 value = countryQuery,
@@ -73,14 +69,13 @@ fun CountryCitySelector(
                     countryQuery = it
                     showCountryDropdown = true
                 },
-                label = { Text("$labelPrefix Ülke") },
+                label = { Text("Ülke") },
                 modifier = Modifier
                     .menuAnchor()
-                    .fillMaxWidth()
                     .focusRequester(countryFocusRequester),
                 singleLine = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = showCountryDropdown) },
-                colors = ExposedDropdownMenuDefaults.textFieldColors()
+                colors = ExposedDropdownMenuDefaults.textFieldColors(focusedContainerColor = Color.Transparent, disabledContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent)
             )
 
             ExposedDropdownMenu(
@@ -104,11 +99,11 @@ fun CountryCitySelector(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
+        // ŞEHİR
         ExposedDropdownMenuBox(
             expanded = showCityDropdown,
-            onExpandedChange = { showCityDropdown = it }
+            onExpandedChange = { showCityDropdown = it },
+            modifier = Modifier.weight(1f)
         ) {
             OutlinedTextField(
                 value = cityQuery,
@@ -119,15 +114,14 @@ fun CountryCitySelector(
                         geoViewModel.searchCities(query = cityQuery, countryCode = country.countryCode, username = username)
                     }
                 },
-                label = { Text("$labelPrefix Şehir") },
+                label = { Text("Şehir") },
                 modifier = Modifier
                     .menuAnchor()
-                    .fillMaxWidth()
                     .focusRequester(cityFocusRequester),
                 singleLine = true,
                 enabled = selectedCountry != null,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = showCityDropdown) },
-                colors = ExposedDropdownMenuDefaults.textFieldColors()
+                colors = ExposedDropdownMenuDefaults.textFieldColors(focusedContainerColor = Color.Transparent, disabledContainerColor = Color.Transparent, unfocusedContainerColor = Color.Transparent)
             )
 
             ExposedDropdownMenu(
