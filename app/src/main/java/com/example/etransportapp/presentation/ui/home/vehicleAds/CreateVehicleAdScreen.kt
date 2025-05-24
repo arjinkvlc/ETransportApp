@@ -32,6 +32,8 @@ import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
 import java.text.SimpleDateFormat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.etransportapp.data.model.ad.VehicleAdRequest
+import com.example.etransportapp.util.PreferenceHelper
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -66,6 +68,9 @@ fun CreateVehicleAdScreen(
     val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
     var selectedCargoType by remember { mutableStateOf("Açık Kasa") }
     var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
+
+    var selectedCity by remember { mutableStateOf("") }
+    var selectedCountry by remember { mutableStateOf("") }
 
     val selectedVehicle by vehicleViewModel.selectedVehicleById.collectAsState()
 
@@ -104,26 +109,34 @@ fun CreateVehicleAdScreen(
             ) {
                 Button(
                     onClick = {
+                        val userId = PreferenceHelper.getUserId(context)
                         if (
                             title.text.isNotBlank() &&
                             description.text.isNotBlank() &&
-                            location.isNotBlank() &&
-                            date.text.isNotBlank()
+                            selectedCity.isNotBlank() &&
+                            selectedCountry.isNotBlank() &&
+                            userId != null
                         ) {
-                            viewModel.addVehicleAd(
-                                VehicleAd(
-                                    title = title.text,
-                                    description = description.text,
-                                    location = location,
-                                    date = date.text,
-                                    capacity = capacity.text,
-                                    cargoType = selectedCargoType,
-                                    userId = "username",
-                                )
+                            val request = VehicleAdRequest(
+                                title = title.text,
+                                description = description.text,
+                                city = selectedCity,
+                                country = selectedCountry,
+                                carrierId = userId,
+                                vehicleType = selectedCargoType,
+                                capacity = capacity.text.toIntOrNull() ?: 0
                             )
-                            navController.popBackStack()
+
+                            viewModel.createVehicleAd(
+                                context = context,
+                                request = request,
+                                onSuccess = { navController.popBackStack() },
+                                onError = { errorMsg ->
+                                    Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
+                                }
+                            )
                         } else {
-                            Toast.makeText(context, "Lütfen tüm gerekli alanları doldurun.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(context, "Lütfen tüm alanları doldurun", Toast.LENGTH_SHORT).show()
                         }
                     },
                     modifier = Modifier.fillMaxWidth(0.9f).height(50.dp),
@@ -240,10 +253,12 @@ fun CreateVehicleAdScreen(
                 username = Constants.GEO_NAMES_USERNAME,
                 geoViewModel = geoNamesViewModel,
                 onSelected = { countryCode, cityName ->
-                    val countryName =
-                        geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
-                    location = "$cityName, $countryName"
+                    selectedCity = cityName
+                    selectedCountry = geoNamesViewModel.countries.value
+                        .find { it.countryCode == countryCode }?.countryName.orEmpty()
+                    location = "$cityName, $selectedCountry"
                 }
+
             )
 
             OutlinedTextField(

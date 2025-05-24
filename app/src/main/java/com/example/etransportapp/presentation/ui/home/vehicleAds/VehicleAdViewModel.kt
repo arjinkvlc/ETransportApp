@@ -1,13 +1,20 @@
 package com.example.etransportapp.presentation.ui.home.vehicleAds
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.ad.VehicleAd
+import com.example.etransportapp.data.model.ad.VehicleAdRequest
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class VehicleAdViewModel : ViewModel() {
     private val _vehicleAds = MutableStateFlow<List<VehicleAd>>(emptyList())
@@ -34,6 +41,33 @@ class VehicleAdViewModel : ViewModel() {
             "Frigofirik" -> vehicleAds.value.filter { it.cargoType == "Frigofirik"  }
             "Tanker" -> vehicleAds.value.filter { it.cargoType == "Tanker"  }
             else -> vehicleAds.value
+        }
+    }
+
+    fun createVehicleAd(
+        context: Context,
+        request: VehicleAdRequest,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitInstance.vehicleAdApi.createVehicleAd(request)
+                if (response.isSuccessful) {
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "İlan oluşturuldu", Toast.LENGTH_SHORT).show()
+                        onSuccess()
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        onError("Hata: ${response.code()}")
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    onError("Sunucu hatası: ${e.message}")
+                }
+            }
         }
     }
 
