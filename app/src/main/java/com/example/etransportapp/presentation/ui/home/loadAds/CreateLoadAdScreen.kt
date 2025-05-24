@@ -67,9 +67,6 @@ fun CreateLoadAdScreen(
 
     val geoNamesViewModel: GeoNamesViewModel = viewModel()
 
-    val suggestedCostText by viewModel.suggestedCostText.collectAsState()
-
-
     Scaffold(
         topBar = {
             TopAppBar(
@@ -192,15 +189,6 @@ fun CreateLoadAdScreen(
                     selectedOriginPlace = place
                     val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
                     origin = "$cityName, $countryName"
-
-                    if (selectedOriginPlace != null && selectedDestinationPlace != null && weight.text.isNotBlank()) {
-                        viewModel.calculateRouteAndPredictCost(
-                            selectedOriginPlace!!,
-                            selectedDestinationPlace!!,
-                            weight.text.toDoubleOrNull()?.times(1000)?.toInt() ?: 1000,
-                            cargoType = selectedCargoType
-                        )
-                    }
                 }
             )
             Text(text = "Varış Noktası", color = DarkGray, style = MaterialTheme.typography.titleSmall)
@@ -212,15 +200,6 @@ fun CreateLoadAdScreen(
                     selectedDestinationPlace = place
                     val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
                     destination = "$cityName, $countryName"
-
-                    if (selectedOriginPlace != null && selectedDestinationPlace != null && weight.text.isNotBlank()) {
-                        viewModel.calculateRouteAndPredictCost(
-                            selectedOriginPlace!!,
-                            selectedDestinationPlace!!,
-                            weight.text.toDoubleOrNull()?.times(1000)?.toInt() ?: 1000,
-                            cargoType = selectedCargoType
-                        )
-                    }
                 }
             )
 
@@ -265,19 +244,6 @@ fun CreateLoadAdScreen(
                     .fillMaxWidth()
                     .onFocusChanged { focusState ->
                         weight = weight.copy(text = weight.text.replace(",", "."))
-                        if (!focusState.isFocused) {
-                            if (selectedOriginPlace != null && selectedDestinationPlace != null && weight.text.isNotBlank()) {
-                                viewModel.calculateRouteAndPredictCost(
-                                    selectedOriginPlace!!,
-                                    selectedDestinationPlace!!,
-                                    weight.text
-                                        .toDoubleOrNull()
-                                        ?.times(1000)
-                                        ?.toInt() ?: 1000,
-                                    cargoType = selectedCargoType
-                                )
-                            }
-                        }
                     },
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -286,25 +252,9 @@ fun CreateLoadAdScreen(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         focusManager.clearFocus()
-                        if (selectedOriginPlace != null && selectedDestinationPlace != null && weight.text.isNotBlank()) {
-                            viewModel.calculateRouteAndPredictCost(
-                                selectedOriginPlace!!,
-                                selectedDestinationPlace!!,
-                                weight.text.toDoubleOrNull()?.times(1000)?.toInt() ?: 1000,
-                                cargoType = selectedCargoType
-                            )
-                        }
                     }
                 )
             )
-
-            if (!suggestedCostText.isNullOrBlank()) {
-                Text(
-                    text = suggestedCostText ?: "",
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = Color.Gray
-                )
-            }
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,

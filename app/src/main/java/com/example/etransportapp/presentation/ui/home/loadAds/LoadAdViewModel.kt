@@ -23,11 +23,6 @@ class LoadAdViewModel : ViewModel() {
     private val _myLoadAds = MutableStateFlow<List<LoadAd>>(emptyList())
     val myLoadAds: StateFlow<List<LoadAd>> = _myLoadAds
 
-    private val hereApi = HereService.create()
-    val currencyApi = CurrencyService.create()
-
-    private val _suggestedCostText = MutableStateFlow<String?>(null)
-    val suggestedCostText: StateFlow<String?> = _suggestedCostText
 
     var selectedSort by mutableStateOf("Tümü")
     var selectedFilter by mutableStateOf("Tümü")
@@ -65,57 +60,5 @@ class LoadAdViewModel : ViewModel() {
         _loadAds.value = _loadAds.value.map { if (it == selectedAd) updatedAd else it }
         _myLoadAds.value = _myLoadAds.value.map { if (it == selectedAd) updatedAd else it }
         selectedAd = updatedAd
-    }
-
-    fun calculateRouteAndPredictCost(
-        origin: GeoPlace,
-        destination: GeoPlace,
-        weightKg: Int,
-        cargoType: String
-    ) {
-        viewModelScope.launch {
-            try {
-                val response = hereApi.calculateRoute(
-                    apiKey = Constants.HERE_API_KEY,
-                    waypoint0 = "${origin.lat},${origin.lng}",
-                    waypoint1 = "${destination.lat},${destination.lng}",
-                    weight = weightKg
-                )
-
-
-                val route = response.response.route.firstOrNull()
-                val distanceKm = route?.summary?.distance?.div(1000.0) ?: 0.0
-                val tollCost = route?.cost?.details?.tollCost?.toDoubleOrNull() ?: 0.0
-                val tollCurrency = route?.cost?.currency ?: "EUR"
-
-                convertToTry(tollCost, tollCurrency) { convertedToll ->
-                    _suggestedCostText.value = """
-                 HERE API Çıktısı:
-                • Mesafe: %.1f km
-                • Geçiş Ücreti: %.2f $tollCurrency
-                """.trimIndent().format(distanceKm, convertedToll)
-
-                    println("HERE Mesafe: $distanceKm km, Geçiş Ücreti: $convertedToll (orijinal $tollCost $tollCurrency)")
-                }
-
-            } catch (e: Exception) {
-                _suggestedCostText.value = "Tahmin alınamadı: ${e.message}"
-                e.printStackTrace()
-            }
-        }
-    }
-
-    private fun convertToTry(amount: Double, fromCurrency: String, onResult: (Double) -> Unit) {
-        viewModelScope.launch {
-            try {
-                val response = currencyApi.getRates(fromCurrency)
-                val tryRate = response.rates["USD"] ?: 1.0
-                val converted = amount * tryRate
-                onResult(converted)
-            } catch (e: Exception) {
-                e.printStackTrace()
-                onResult(amount)
-            }
-        }
     }
 }
