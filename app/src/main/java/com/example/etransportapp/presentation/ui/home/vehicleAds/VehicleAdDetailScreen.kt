@@ -21,17 +21,18 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.VehicleAd
-import com.example.etransportapp.presentation.components.InfoText
 import com.example.etransportapp.presentation.viewModels.GeoNamesViewModel
 import com.example.etransportapp.ui.theme.DarkGray
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.etransportapp.presentation.components.AdDetailTabRow
+import com.example.etransportapp.presentation.components.AdOwnerInfoSection
 import com.example.etransportapp.presentation.components.CountryCitySelector
+import com.example.etransportapp.presentation.components.VehicleAdDetailSection
 import com.example.etransportapp.presentation.components.VehicleOfferDialog
 import com.example.etransportapp.presentation.viewModels.VehicleViewModel
 import com.example.etransportapp.ui.theme.RoseRed
@@ -61,6 +62,7 @@ fun VehicleAdDetailScreen(
     var location by remember { mutableStateOf(vehicleAd.location) }
     var date by remember { mutableStateOf(vehicleAd.date) }
     var capacity by remember { mutableStateOf(vehicleAd.capacity) }
+    val cargoType = vehicleAd.cargoType.ifBlank { "Açık Kasa" }
 
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -74,6 +76,9 @@ fun VehicleAdDetailScreen(
     var showVehiclePicker by remember { mutableStateOf(false) }
 
     val selectedVehicle by vehicleViewModel.selectedVehicleById.collectAsState()
+    val tabs = listOf("İlan Detayı", "İlan Sahibi")
+    var selectedTabIndex by remember { mutableStateOf(0) }
+
 
     LaunchedEffect(selectedVehicle) {
         selectedVehicle?.let { vehicle ->
@@ -150,7 +155,7 @@ fun VehicleAdDetailScreen(
         Column(
             modifier = Modifier
                 .padding(padding)
-                .padding(horizontal = 20.dp, vertical = 24.dp)
+                .padding(start = 20.dp,top = 8.dp, end = 20.dp, bottom = 20.dp)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -307,11 +312,34 @@ fun VehicleAdDetailScreen(
                 }
 
             } else {
-                InfoText("Başlık", title)
-                InfoText("Açıklama", description)
-                InfoText("Taşıma Kapasitesi", "$capacity ton")
-                InfoText("Konum", location)
-                InfoText("Tarih", date)
+                AdDetailTabRow(
+                    tabs = tabs,
+                    selectedTabIndex = selectedTabIndex,
+                    onTabSelected = { selectedTabIndex = it }
+                )
+
+                when (selectedTabIndex) {
+                    0 -> {
+                        VehicleAdDetailSection(
+                            title = title,
+                            description = description,
+                            cargoType = cargoType,
+                            capacity = capacity,
+                            location = location,
+                            date = date
+                        )
+                    }
+
+                    1 -> {
+                        // TODO: Replace with actual user data
+                        AdOwnerInfoSection(
+                            name = "Mehmet Yılmaz",
+                            email = "mehmet@example.com",
+                            phone = "+90 555 123 45 67"
+                        )
+                    }
+                }
+
 
                 Spacer(Modifier.weight(1f))
                 if (isMyAd) {
