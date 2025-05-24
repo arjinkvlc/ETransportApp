@@ -188,7 +188,7 @@ fun VehicleAdDetailScreen(
                             description = description,
                             cargoType = vehicleAd.vehicleType,
                             capacity = capacity,
-                            location = vehicleAd.city,
+                            location = vehicleAd.city+" , " + vehicleAd.country,
                             date = vehicleAd.createdDate
                         )
                     }
