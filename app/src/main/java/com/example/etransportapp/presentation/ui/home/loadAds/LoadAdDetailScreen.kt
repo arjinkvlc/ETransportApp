@@ -176,6 +176,7 @@ fun LoadAdDetailScreen(
                     label = { Text("Başlık") },
                     modifier = Modifier.fillMaxWidth()
                 )
+                Text(text = "Yükleme Noktası", color = DarkGray, style = MaterialTheme.typography.titleSmall)
                 CountryCitySelector(
                     username = Constants.GEO_NAMES_USERNAME,
                     geoViewModel = geoNamesViewModel,
@@ -185,7 +186,7 @@ fun LoadAdDetailScreen(
                         origin = "$cityName, $countryName"
                     }
                 )
-
+                Text(text = "Varış Noktası", color = DarkGray, style = MaterialTheme.typography.titleSmall)
                 CountryCitySelector(
                     username = Constants.GEO_NAMES_USERNAME,
                     geoViewModel = geoNamesViewModel,
