@@ -110,7 +110,7 @@ fun VehicleAdDetailScreen(
         Column(
             modifier = Modifier
                 .padding(padding)
-                .padding(horizontal = 20.dp, vertical = 24.dp)
+                .padding(start = 20.dp, end = 20.dp, top = 8.dp, bottom = 20.dp)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(12.dp)
