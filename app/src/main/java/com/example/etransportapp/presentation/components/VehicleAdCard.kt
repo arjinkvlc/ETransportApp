@@ -15,10 +15,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.etransportapp.R
 import com.example.etransportapp.data.model.ad.VehicleAd
+import com.example.etransportapp.data.model.ad.VehicleAdGetResponse
 import com.example.etransportapp.ui.theme.DarkGray
 
 @Composable
-fun VehicleAdCard(item: VehicleAd, onClick: () -> Unit) {
+fun VehicleAdCard(item: VehicleAdGetResponse, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -30,13 +31,12 @@ fun VehicleAdCard(item: VehicleAd, onClick: () -> Unit) {
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
 
-            // Başlık ve tarih
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(item.title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text(item.date, style = MaterialTheme.typography.labelSmall)
+                Text(item.createdDate.substring(0, 10), style = MaterialTheme.typography.labelSmall)
             }
 
             Spacer(Modifier.height(4.dp))
@@ -48,8 +48,8 @@ fun VehicleAdCard(item: VehicleAd, onClick: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Column(modifier = Modifier.weight(1f)) {
-                    InfoRow("Konum:", item.location)
-                    InfoRow("Araç Türü:", item.cargoType)
+                    InfoRow("Konum:", "${item.city}, ${item.country}")
+                    InfoRow("Araç Türü:", item.vehicleType)
                     InfoRow("Kapasite:", "${item.capacity} Ton")
                 }
 
@@ -65,7 +65,7 @@ fun VehicleAdCard(item: VehicleAd, onClick: () -> Unit) {
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = "A",
+                            text = item.carrierName?.firstOrNull()?.uppercaseChar()?.toString() ?: "?",
                             color = Color.White,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
@@ -76,6 +76,7 @@ fun VehicleAdCard(item: VehicleAd, onClick: () -> Unit) {
         }
     }
 }
+
 
 
 @Composable

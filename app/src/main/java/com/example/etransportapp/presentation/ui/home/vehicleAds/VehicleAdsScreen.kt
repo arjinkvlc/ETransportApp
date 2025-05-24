@@ -20,6 +20,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -40,57 +41,51 @@ fun VehicleAdsScreen(
     navController: NavHostController,
     viewModel: VehicleAdViewModel
 ) {
+    LaunchedEffect(Unit) {
+        viewModel.fetchAllVehicleAds()
+        println("Çekilen araç ilanları: ${viewModel.vehicleAds.value}")
+    }
+
     val vehicles by viewModel.vehicleAds.collectAsState()
+
     val selectedSort = viewModel.selectedSort
     val selectedFilter = viewModel.selectedFilter
 
     Column(modifier = modifier.fillMaxSize()) {
-        Row(modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+        Row(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
             OvalDropdownBar(
                 label = "Sırala",
-                options = listOf(
-                    "Tümü",
-                    "En Yeni",
-                    "En Eski",
-                    "Ucuzdan Pahalıya",
-                    "Pahalıdan Ucuza"
-                ),
+                options = listOf("Tümü", "En Yeni", "En Eski", "Taşıma Kapasitesi"),
                 selectedOption = selectedSort,
                 onOptionSelected = { viewModel.selectedSort = it },
-                modifier = Modifier
-                    .padding(vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 8.dp)
             )
             OvalDropdownBar(
                 label = "Filtrele",
                 options = listOf("Tümü", "Açık Kasa", "Tenteli", "Frigofirik", "Tanker"),
                 selectedOption = selectedFilter,
                 onOptionSelected = { viewModel.selectedFilter = it },
-                modifier = Modifier
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
             )
-            if (selectedFilter == "Tümü") {
-                Text(
-                    text = "Temizle X",
-                    color = Color.LightGray,
-                    modifier = Modifier
-                        .padding(top = 24.dp),
-                    fontWeight = FontWeight.Bold
-
-                )
-            } else {
-                Text(
-                    text = "Temizle X",
-                    color = RoseRed,
-                    modifier = Modifier
-                        .padding(top = 24.dp)
-                        .clickable { viewModel.selectedFilter = "Tümü" },
-                    fontWeight = FontWeight.Bold
-                )
-            }
+            Text(
+                text = "Temizle X",
+                color = if (selectedFilter == "Tümü") Color.LightGray else RoseRed,
+                modifier = Modifier
+                    .padding(top = 24.dp)
+                    .clickable { viewModel.selectedFilter = "Tümü" },
+                fontWeight = FontWeight.Bold
+            )
         }
-        HorizontalDivider(modifier = Modifier
-            .weight(1f)
-            .padding(horizontal = 16.dp),)
+
+        HorizontalDivider(
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
@@ -104,3 +99,4 @@ fun VehicleAdsScreen(
         }
     }
 }
+

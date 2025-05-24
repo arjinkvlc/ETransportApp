@@ -1,6 +1,6 @@
 package com.example.etransportapp.data.model.ad
 
-data class VehicleAdResponse(
+data class VehicleAdCreateResponse(
     val capacity: Int,
     val carrierId: String,
     val carrierName: Any,

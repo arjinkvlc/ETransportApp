@@ -3,6 +3,7 @@ package com.example.etransportapp.presentation.navigation
 import android.content.Context
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -119,21 +120,31 @@ fun NavGraph(
         }
 
         composable(NavRoutes.VEHICLE_AD_DETAIL) {
+            val context = LocalContext.current
             val selectedAd = vehicleAdViewModel.selectedAd
+
             selectedAd?.let {
                 VehicleAdDetailScreen(
                     vehicleAd = it,
                     navController = navController,
                     onDeleteClick = {
-                        vehicleAdViewModel.deleteAd(it)
-                        navController.popBackStack()
+                        vehicleAdViewModel.deleteAd(context, it) {
+                            navController.popBackStack()
+                        }
                     },
                     onUpdateClick = { updatedAd ->
-                        vehicleAdViewModel.updateAd(updatedAd)
-                    }, vehicleViewModel = vehicleViewModel
+                        vehicleAdViewModel.updateAd(context, updatedAd) {
+                            navController.popBackStack()
+                        }
+                    },
+                    vehicleViewModel = vehicleViewModel
                 )
+            } ?: run {
+                // Eğer selectedAd null ise geri dön
+                navController.popBackStack()
             }
         }
+
         composable("vehicleAdOffers/{vehicleAdId}") { backStackEntry ->
             val vehicleAdId = backStackEntry.arguments?.getString("vehicleAdId") ?: ""
             VehicleAdOffersScreen(vehicleAdId = vehicleAdId, navController = navController)
