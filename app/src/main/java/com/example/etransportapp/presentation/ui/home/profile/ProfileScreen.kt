@@ -62,7 +62,6 @@ fun ProfileScreen(
         Column {
             Spacer(Modifier.height(24.dp))
 
-            // 🔹 Kullanıcı Üst Bilgi
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Surface(
                     shape = CircleShape,
@@ -90,20 +89,12 @@ fun ProfileScreen(
 
             Spacer(Modifier.height(32.dp))
 
-            // 🔹 İletişim Bilgileri
             Text("İletişim Bilgileri", fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(8.dp))
             ProfileInfoRow(icon = R.drawable.baseline_phone_24, text = profile?.phoneNumber ?: "-")
             ProfileInfoRow(icon = R.drawable.baseline_email_24, text = profile?.email ?: "-")
 
-            Spacer(Modifier.height(32.dp))
 
-            // 🔹 Destek Menüsü
-            Text("Destek", fontWeight = FontWeight.SemiBold)
-            Spacer(Modifier.height(8.dp))
-            ProfileMenuItem(text = "Yardım Merkezi", onClick = { })
-            ProfileMenuItem(text = "Kullanım Koşulları", onClick = { })
-            ProfileMenuItem(text = "Gizlilik Politikası", onClick = { })
 
             Spacer(Modifier.height(32.dp))
 
@@ -113,6 +104,14 @@ fun ProfileScreen(
             ProfileMenuItem(text = "Araçlarım") {
                 navController.navigate(NavRoutes.MY_VEHICLES)
             }
+
+            Spacer(Modifier.height(32.dp))
+
+            Text("Destek", fontWeight = FontWeight.SemiBold)
+            Spacer(Modifier.height(8.dp))
+            ProfileMenuItem(text = "Yardım Merkezi", onClick = { })
+            ProfileMenuItem(text = "Kullanım Koşulları", onClick = { })
+            ProfileMenuItem(text = "Gizlilik Politikası", onClick = { })
         }
 
         // 🔹 Çıkış Yap

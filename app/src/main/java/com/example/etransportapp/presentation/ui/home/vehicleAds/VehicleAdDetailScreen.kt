@@ -153,7 +153,7 @@ fun VehicleAdDetailScreen(
                 .padding(horizontal = 20.dp, vertical = 24.dp)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+            verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             if (isEditing) {
                 OutlinedTextField(
@@ -228,6 +228,7 @@ fun VehicleAdDetailScreen(
                     }
                 }
 
+                Text(text = "Konum", color = DarkGray, style = MaterialTheme.typography.titleSmall)
                 CountryCitySelector(
                     username = Constants.GEO_NAMES_USERNAME,
                     geoViewModel = geoNamesViewModel,

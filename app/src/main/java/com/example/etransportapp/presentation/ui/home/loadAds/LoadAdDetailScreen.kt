@@ -29,7 +29,10 @@ import com.example.etransportapp.ui.theme.DarkGray
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.etransportapp.presentation.components.AdDetailTabRow
+import com.example.etransportapp.presentation.components.AdOwnerInfoSection
 import com.example.etransportapp.presentation.components.CountryCitySelector
+import com.example.etransportapp.presentation.components.LoadAdDetailSection
 import com.example.etransportapp.presentation.components.LoadOfferDialog
 import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
@@ -67,6 +70,8 @@ fun LoadAdDetailScreen(
     val geoNamesViewModel: GeoNamesViewModel = viewModel()
     var showOfferDialog by remember { mutableStateOf(false) }
     var offerPrice by remember { mutableStateOf("") }
+    val tabs = listOf("İlan Detayı", "İlan Sahibi")
+    var selectedTabIndex by remember { mutableStateOf(0) }
 
 
     Scaffold(
@@ -176,6 +181,11 @@ fun LoadAdDetailScreen(
                     label = { Text("Başlık") },
                     modifier = Modifier.fillMaxWidth()
                 )
+                Text(
+                    text = "Yükleme Noktası",
+                    color = DarkGray,
+                    style = MaterialTheme.typography.titleSmall
+                )
                 CountryCitySelector(
                     username = Constants.GEO_NAMES_USERNAME,
                     geoViewModel = geoNamesViewModel,
@@ -185,7 +195,11 @@ fun LoadAdDetailScreen(
                         origin = "$cityName, $countryName"
                     }
                 )
-
+                Text(
+                    text = "Varış Noktası",
+                    color = DarkGray,
+                    style = MaterialTheme.typography.titleSmall
+                )
                 CountryCitySelector(
                     username = Constants.GEO_NAMES_USERNAME,
                     geoViewModel = geoNamesViewModel,
@@ -328,15 +342,41 @@ fun LoadAdDetailScreen(
                     modifier = Modifier.fillMaxWidth()
                 )
             } else {
-                InfoText("Başlık", title)
-                InfoText("Yükleme Noktası", origin)
-                InfoText("Varış Noktası", destination)
-                InfoText("Yük Ağırlığı ", "$weight ton")
-                InfoText("Fiyat", "$price $currency")
-                InfoText("Tarih", date)
-                InfoText("Açıklama", description)
+                AdDetailTabRow(
+                    tabs = tabs,
+                    selectedTabIndex = selectedTabIndex,
+                    onTabSelected = { selectedTabIndex = it }
+                )
+
+
+                Spacer(modifier = Modifier.height(12.dp))
+
+                when (selectedTabIndex) {
+                    0 -> {
+                        LoadAdDetailSection(
+                            title = title,
+                            description = description,
+                            origin = origin,
+                            destination = destination,
+                            weight = weight,
+                            price = price,
+                            currency = currency,
+                            date = date
+                        )
+                    }
+
+                    1 -> {
+                        //TODO: Will update this section with real data
+                        AdOwnerInfoSection(
+                            name = "Mehmet Yılmaz",
+                            email = "mehmet@example.com",
+                            phone = "+90 555 123 45 67"
+                        )
+                    }
+                }
 
                 Spacer(Modifier.weight(1f))
+
                 if (isMyAd) {
                     Button(
                         onClick = {
@@ -388,3 +428,4 @@ fun LoadAdDetailScreen(
         }
     }
 }
+

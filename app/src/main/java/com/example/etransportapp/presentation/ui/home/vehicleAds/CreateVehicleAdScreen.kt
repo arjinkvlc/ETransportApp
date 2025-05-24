@@ -248,6 +248,7 @@ fun CreateVehicleAdScreen(
                     }
                 }
             }
+            Text(text = "Konum", color = DarkGray, style = MaterialTheme.typography.titleSmall)
 
             CountryCitySelector(
                 username = Constants.GEO_NAMES_USERNAME,
