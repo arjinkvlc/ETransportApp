@@ -2,9 +2,13 @@ package com.example.etransportapp.presentation.viewModels
 
 import android.content.Context
 import android.widget.Toast
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.Vehicle
+import com.example.etransportapp.data.model.auth.UserProfileResponse
 import com.example.etransportapp.data.model.vehicle.FetchUserVehiclesResponse
 import com.example.etransportapp.data.model.vehicle.VehicleRequest
 import com.example.etransportapp.data.model.vehicle.VehicleResponse
@@ -25,6 +29,24 @@ class VehicleViewModel : ViewModel() {
 
     private val _selectedVehicleById = MutableStateFlow<FetchUserVehiclesResponse?>(null)
     val selectedVehicleById: StateFlow<FetchUserVehiclesResponse?> = _selectedVehicleById
+
+    var adOwnerInfo = mutableStateOf<UserProfileResponse?>(null)
+        private set
+
+
+    fun fetchAdOwner(userId: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.userApi.getUserProfile(userId)
+                if (response.isSuccessful) {
+                    adOwnerInfo.value = response.body()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 
     fun addVehicle(context: Context, vehicle: VehicleRequest, onComplete: () -> Unit) {
         val userId = PreferenceHelper.getUserId(context) ?: return
