@@ -5,15 +5,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.ad.LoadAd
-import com.example.etransportapp.data.remote.api.GeoPlace
-import com.example.etransportapp.data.remote.service.CurrencyService
-import com.example.etransportapp.data.remote.service.HereService
-import com.example.etransportapp.util.Constants
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 
 class LoadAdViewModel : ViewModel() {
     private val _loadAds = MutableStateFlow<List<LoadAd>>(emptyList())
