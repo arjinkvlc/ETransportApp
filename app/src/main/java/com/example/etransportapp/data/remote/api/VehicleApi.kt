@@ -24,4 +24,8 @@ interface VehicleApi {
         @Body request: VehicleRequest
     ): Response<Unit>
 
+    @GET("api/Vehicle/{id}")
+    suspend fun getVehicleById(@Path("id") id: Int): Response<FetchUserVehiclesResponse>
+
+
 }

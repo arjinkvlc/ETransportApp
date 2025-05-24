@@ -1,6 +1,6 @@
 package com.example.etransportapp.presentation.ui.home.vehicleAds
 
-import androidx.compose.foundation.Image
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,9 +14,8 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -25,17 +24,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.VehicleAd
-import com.example.etransportapp.presentation.viewModels.GeoNamesViewModel
-import com.example.etransportapp.ui.theme.DarkGray
-import java.text.SimpleDateFormat
-import java.util.*
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.etransportapp.R
 import com.example.etransportapp.presentation.components.CountryCitySelector
+import com.example.etransportapp.presentation.viewModels.GeoNamesViewModel
 import com.example.etransportapp.presentation.viewModels.VehicleViewModel
+import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
-
+import java.text.SimpleDateFormat
+import androidx.lifecycle.viewmodel.compose.viewModel
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,16 +41,18 @@ fun CreateVehicleAdScreen(
     navController: NavHostController,
     viewModel: VehicleAdViewModel,
     vehicleViewModel: VehicleViewModel
-
 ) {
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        vehicleViewModel.fetchVehiclesByUser(context)
+    }
+
+
     var title by remember { mutableStateOf(TextFieldValue("")) }
     var description by remember { mutableStateOf(TextFieldValue("")) }
     var date by remember {
-        mutableStateOf(
-            TextFieldValue(
-                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())
-            )
-        )
+        mutableStateOf(TextFieldValue(SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())))
     }
     var capacity by remember { mutableStateOf(TextFieldValue("")) }
     var location by remember { mutableStateOf("") }
@@ -68,17 +67,28 @@ fun CreateVehicleAdScreen(
     var selectedCargoType by remember { mutableStateOf("Açık Kasa") }
     var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
 
+    val selectedVehicle by vehicleViewModel.selectedVehicleById.collectAsState()
+
+    LaunchedEffect(selectedVehicle) {
+        selectedVehicle?.let { vehicle ->
+            capacity = TextFieldValue(vehicle.capacity.toString())
+            selectedCargoType = when (vehicle.vehicleType.lowercase()) {
+                "frigo", "frigofirik" -> "Frigofirik"
+                "açık kasa" -> "Açık Kasa"
+                "tenteli" -> "Tenteli"
+                "tanker" -> "Tanker"
+                else -> "Diğer"
+            }
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
                 title = { Text("Yeni Araç İlanı Oluştur", textAlign = TextAlign.Center) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Geri",
-                            tint = Color.White
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -89,9 +99,7 @@ fun CreateVehicleAdScreen(
         },
         bottomBar = {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+                modifier = Modifier.fillMaxWidth().padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Button(
@@ -114,11 +122,11 @@ fun CreateVehicleAdScreen(
                                 )
                             )
                             navController.popBackStack()
+                        } else {
+                            Toast.makeText(context, "Lütfen tüm gerekli alanları doldurun.", Toast.LENGTH_SHORT).show()
                         }
                     },
-                    modifier = Modifier
-                        .fillMaxWidth(0.9f)
-                        .height(50.dp),
+                    modifier = Modifier.fillMaxWidth(0.9f).height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = RoseRed)
                 ) {
                     Text("İlanı Oluştur")
@@ -135,9 +143,7 @@ fun CreateVehicleAdScreen(
                         openDatePicker.value = false
                         datePickerState.selectedDateMillis?.let { millis ->
                             val formattedDate =
-                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
-                                    Date(millis)
-                                )
+                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(millis))
                             date = TextFieldValue(formattedDate)
                         }
                     }) {
@@ -175,6 +181,7 @@ fun CreateVehicleAdScreen(
                 label = { Text("Açıklama") },
                 modifier = Modifier.fillMaxWidth()
             )
+
             if (vehicleViewModel.myVehicles.value.isNotEmpty()) {
                 Text(
                     text = "Araçlarım (${vehicleViewModel.myVehicles.value.size})",
@@ -186,7 +193,6 @@ fun CreateVehicleAdScreen(
                 )
             }
 
-
             OutlinedTextField(
                 value = capacity,
                 onValueChange = { capacity = it },
@@ -196,11 +202,7 @@ fun CreateVehicleAdScreen(
                     keyboardType = KeyboardType.Number,
                     imeAction = ImeAction.Done
                 ),
-                keyboardActions = KeyboardActions(
-                    onDone = {
-                        focusManager.clearFocus()
-                    }
-                )
+                keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
             )
 
             ExposedDropdownMenuBox(
@@ -215,9 +217,7 @@ fun CreateVehicleAdScreen(
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCargoTypeMenuExpanded)
                     },
-                    modifier = Modifier
-                        .menuAnchor()
-                        .fillMaxWidth()
+                    modifier = Modifier.menuAnchor().fillMaxWidth()
                 )
 
                 ExposedDropdownMenu(
@@ -236,7 +236,6 @@ fun CreateVehicleAdScreen(
                 }
             }
 
-
             CountryCitySelector(
                 labelPrefix = "Konum",
                 username = Constants.GEO_NAMES_USERNAME,
@@ -246,7 +245,6 @@ fun CreateVehicleAdScreen(
                         geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
                     location = "$cityName, $countryName"
                 }
-
             )
 
             OutlinedTextField(
@@ -272,14 +270,13 @@ fun CreateVehicleAdScreen(
                     title = { Text("Araç Seç") },
                     text = {
                         Column {
-                            vehicleViewModel.myVehicles2.collectAsState().value.forEach { vehicle ->
+                            vehicleViewModel.myVehicles.collectAsState().value.forEach { vehicle ->
                                 Text(
-                                    text = "${vehicle.name} - ${vehicle.plate}",
+                                    text = "${vehicle.title} - ${vehicle.licensePlate}",
                                     modifier = Modifier
                                         .fillMaxWidth()
                                         .clickable {
-                                            selectedCargoType = vehicle.vehicleType
-                                            capacity = TextFieldValue(vehicle.capacity.toString())
+                                            vehicleViewModel.fetchVehicleById(vehicle.id, context)
                                             showVehiclePicker = false
                                         }
                                         .padding(8.dp)
