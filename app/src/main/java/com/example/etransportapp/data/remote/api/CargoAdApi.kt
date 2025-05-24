@@ -2,6 +2,7 @@ package com.example.etransportapp.data.remote.api
 
 import com.example.etransportapp.data.model.ad.CargoAdCreateRequest
 import com.example.etransportapp.data.model.ad.CargoAdResponse
+import com.example.etransportapp.data.model.ad.CargoAdUpdateRequest
 import retrofit2.Response
 import retrofit2.http.*
 
@@ -18,6 +19,12 @@ interface CargoAdApi {
 
     @DELETE("api/CargoAd/{id}")
     suspend fun deleteCargoAd(@Path("id") id: Int): Response<Unit>
+
+    @PUT("api/CargoAd/{id}")
+    suspend fun updateCargoAd(
+        @Path("id") id: Int,
+        @Body request: CargoAdUpdateRequest
+    ): Response<Unit>
 
     @GET("api/CargoAd/by-customer/{customerId}")
     suspend fun getCargoAdsByCustomer(@Path("customerId") customerId: String): Response<List<CargoAdResponse>>
