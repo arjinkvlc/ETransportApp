@@ -22,7 +22,9 @@ class VehicleViewModel : ViewModel() {
 
     private val _myVehicles = MutableStateFlow<List<FetchUserVehiclesResponse>>(emptyList())
     val myVehicles: StateFlow<List<FetchUserVehiclesResponse>> = _myVehicles
-    var selectedVehicle: Vehicle? = null
+
+    private val _selectedVehicleById = MutableStateFlow<FetchUserVehiclesResponse?>(null)
+    val selectedVehicleById: StateFlow<FetchUserVehiclesResponse?> = _selectedVehicleById
 
     fun addVehicle(context: Context, vehicle: VehicleRequest, onComplete: () -> Unit) {
         val userId = PreferenceHelper.getUserId(context) ?: return
@@ -62,6 +64,28 @@ class VehicleViewModel : ViewModel() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     Toast.makeText(context, "Hata: ${e.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+
+    fun fetchVehicleById(vehicleId: Int, context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val response = RetrofitInstance.vehicleApi.getVehicleById(vehicleId)
+                if (response.isSuccessful) {
+                    _selectedVehicleById.value = response.body()
+                } else {
+                    _selectedVehicleById.value = null
+                    withContext(Dispatchers.Main) {
+                        Toast.makeText(context, "Araç bulunamadı", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            } catch (e: Exception) {
+                _selectedVehicleById.value = null
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(context, "Araç bilgisi alınamadı: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
         }
