@@ -50,6 +50,7 @@ fun VehicleAdDetailScreen(
 
     LaunchedEffect(Unit) {
         vehicleViewModel.fetchVehiclesByUser(context)
+        vehicleViewModel.fetchAdOwner(vehicleAd.carrierId)
     }
 
     val currentUserId = remember { PreferenceHelper.getUserId(context) }
@@ -75,6 +76,7 @@ fun VehicleAdDetailScreen(
     val tabs = listOf("İlan Detayı", "İlan Sahibi")
     var selectedTabIndex by remember { mutableStateOf(0) }
 
+    val owner = vehicleViewModel.adOwnerInfo.value
     val selectedVehicle by vehicleViewModel.selectedVehicleById.collectAsState()
 
     LaunchedEffect(selectedVehicle) {
@@ -231,9 +233,9 @@ fun VehicleAdDetailScreen(
                     1 -> {
                         // TODO: Replace with actual user data
                         AdOwnerInfoSection(
-                            name = "Mehmet Yılmaz",
-                            email = "mehmet@example.com",
-                            phone = "+90 555 123 45 67"
+                            name = "${owner?.name ?: "Bilinmiyor"} ${owner?.surname ?: ""}",
+                            email = owner?.email ?: "E-posta bulunamadı",
+                            phone = owner?.phoneNumber ?: "Telefon bulunamadı"
                         )
                     }
                 }
