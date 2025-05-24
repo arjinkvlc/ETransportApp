@@ -118,7 +118,7 @@ fun RegisterScreen(
                         value = viewModel.phoneNumber,
                         onValueChange = { viewModel.phoneNumber = it },
                         label = { Text("Telefon") },
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier.fillMaxWidth(),
                     )
                     OutlinedTextField(
                         value = viewModel.userName,

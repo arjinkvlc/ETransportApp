@@ -1,10 +1,20 @@
 package com.example.etransportapp.presentation.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import com.example.etransportapp.data.model.vehicle.VehicleRequest
 import com.example.etransportapp.ui.theme.RoseRed
 
@@ -23,43 +33,80 @@ fun VehicleDialog(
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
-            Button(
-                onClick = {
-                    if (title.isNotBlank() && type.isNotBlank() && capacity.isNotBlank() && plate.isNotBlank() && model.isNotBlank()) {
-                        val request = VehicleRequest(
-                            title = title,
-                            vehicleType = type,
-                            capacity = capacity.toIntOrNull() ?: 0,
-                            licensePlate = plate,
-                            model = model,
-                            carrierId = initialVehicle?.carrierId.orEmpty() // boş geçilebilir, ViewModel'de override ediliyor
-                        )
-                        onSave(request)
-                    }
-                },
-                colors = ButtonDefaults.buttonColors(containerColor = RoseRed),
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Kaydet")
+                OutlinedButton(
+                    onClick = onDismiss,
+                    border = ButtonDefaults.outlinedButtonBorder.copy(
+                        brush = SolidColor(RoseRed)
+                    ),
+                    modifier = Modifier.width(128.dp)
+                ) {
+                    Text(
+                        "İptal",
+                        style = MaterialTheme.typography.labelLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = RoseRed,
+                    )
+                }
+
+                Button(
+                    onClick = {
+                        if (title.isNotBlank() && type.isNotBlank() && capacity.isNotBlank() && plate.isNotBlank() && model.isNotBlank()) {
+                            val request = VehicleRequest(
+                                title = title,
+                                vehicleType = type,
+                                capacity = capacity.toIntOrNull() ?: 0,
+                                licensePlate = plate,
+                                model = model,
+                                carrierId = initialVehicle?.carrierId.orEmpty() // boş geçilebilir, ViewModel'de override ediliyor
+                            )
+                            onSave(request)
+                        }
+                    },
+                    colors = ButtonDefaults.buttonColors(containerColor = RoseRed),
+                    modifier = Modifier.width(128.dp)
+                ) {
+                    Text("Kaydet")
+                }
             }
         },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                Text("İptal", color = RoseRed)
-            }
+        title = {
+            Text(
+                if (initialVehicle == null) "Araç Ekle" else "Araç Düzenle",
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 8.dp)
+            )
         },
-        title = { Text(if (initialVehicle == null) "Araç Ekle" else "Araç Düzenle") },
         text = {
             Column {
-                OutlinedTextField(value = title, onValueChange = { title = it }, label = { Text("Başlık") })
-                OutlinedTextField(value = type, onValueChange = { type = it }, label = { Text("Tür") })
+                OutlinedTextField(
+                    value = title,
+                    onValueChange = { title = it },
+                    label = { Text("Başlık") })
+                OutlinedTextField(
+                    value = type,
+                    onValueChange = { type = it },
+                    label = { Text("Tür") })
                 OutlinedTextField(
                     value = capacity,
                     onValueChange = { capacity = it },
-                    label = { Text("Kapasite (kg)") },
+                    label = { Text("Kapasite (ton)") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
-                OutlinedTextField(value = plate, onValueChange = { plate = it }, label = { Text("Plaka") })
-                OutlinedTextField(value = model, onValueChange = { model = it }, label = { Text("Model") })
+                OutlinedTextField(
+                    value = plate,
+                    onValueChange = { plate = it },
+                    label = { Text("Plaka") })
+                OutlinedTextField(
+                    value = model,
+                    onValueChange = { model = it },
+                    label = { Text("Model") })
             }
         }
     )
