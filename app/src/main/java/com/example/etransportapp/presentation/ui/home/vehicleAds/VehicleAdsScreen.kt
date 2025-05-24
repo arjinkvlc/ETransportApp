@@ -43,9 +43,11 @@ fun VehicleAdsScreen(
 ) {
     LaunchedEffect(Unit) {
         viewModel.fetchAllVehicleAds()
+        println("Çekilen araç ilanları: ${viewModel.vehicleAds.value}")
     }
 
-    val vehicles by viewModel.filteredLoadAds
+    val vehicles by viewModel.vehicleAds.collectAsState()
+
     val selectedSort = viewModel.selectedSort
     val selectedFilter = viewModel.selectedFilter
 
@@ -58,12 +60,7 @@ fun VehicleAdsScreen(
         ) {
             OvalDropdownBar(
                 label = "Sırala",
-                options = listOf(
-                    "Tümü",
-                    "En Yeni",
-                    "En Eski",
-                    "Taşıma Kapasitesi"
-                ),
+                options = listOf("Tümü", "En Yeni", "En Eski", "Taşıma Kapasitesi"),
                 selectedOption = selectedSort,
                 onOptionSelected = { viewModel.selectedSort = it },
                 modifier = Modifier.padding(vertical = 8.dp)
@@ -86,8 +83,7 @@ fun VehicleAdsScreen(
         }
 
         HorizontalDivider(
-            modifier = Modifier
-                .padding(horizontal = 16.dp)
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
 
         LazyColumn(
@@ -103,3 +99,4 @@ fun VehicleAdsScreen(
         }
     }
 }
+
