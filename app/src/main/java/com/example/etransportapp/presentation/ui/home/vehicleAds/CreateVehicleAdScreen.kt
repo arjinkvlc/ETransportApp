@@ -23,7 +23,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.etransportapp.data.model.ad.VehicleAd
 import com.example.etransportapp.presentation.components.CountryCitySelector
 import com.example.etransportapp.presentation.viewModels.GeoNamesViewModel
 import com.example.etransportapp.presentation.viewModels.VehicleViewModel
@@ -32,7 +31,7 @@ import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
 import java.text.SimpleDateFormat
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.example.etransportapp.data.model.ad.VehicleAdRequest
+import com.example.etransportapp.data.model.ad.VehicleAdCreateRequest
 import com.example.etransportapp.util.PreferenceHelper
 import java.util.*
 
@@ -117,7 +116,7 @@ fun CreateVehicleAdScreen(
                             selectedCountry.isNotBlank() &&
                             userId != null
                         ) {
-                            val request = VehicleAdRequest(
+                            val request = VehicleAdCreateRequest(
                                 title = title.text,
                                 description = description.text,
                                 city = selectedCity,

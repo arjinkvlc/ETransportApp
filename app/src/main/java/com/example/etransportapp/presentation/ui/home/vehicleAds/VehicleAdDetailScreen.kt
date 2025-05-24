@@ -21,72 +21,50 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.etransportapp.data.model.ad.VehicleAd
+import com.example.etransportapp.data.model.ad.VehicleAdGetResponse
 import com.example.etransportapp.presentation.components.InfoText
 import com.example.etransportapp.presentation.viewModels.GeoNamesViewModel
+import com.example.etransportapp.presentation.viewModels.VehicleViewModel
 import com.example.etransportapp.ui.theme.DarkGray
-import java.text.SimpleDateFormat
-import java.util.*
+import com.example.etransportapp.ui.theme.RoseRed
+import com.example.etransportapp.util.Constants
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.etransportapp.presentation.components.CountryCitySelector
 import com.example.etransportapp.presentation.components.VehicleOfferDialog
-import com.example.etransportapp.presentation.viewModels.VehicleViewModel
-import com.example.etransportapp.ui.theme.RoseRed
-import com.example.etransportapp.util.Constants
+import com.example.etransportapp.util.PreferenceHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VehicleAdDetailScreen(
-    vehicleAd: VehicleAd,
+    vehicleAd: VehicleAdGetResponse,
     navController: NavHostController,
-    isMyAd: Boolean = vehicleAd.userId == "username",
     onDeleteClick: (() -> Unit)? = null,
-    onUpdateClick: ((VehicleAd) -> Unit)? = null,
+    onUpdateClick: ((VehicleAdGetResponse) -> Unit)? = null,
     vehicleViewModel: VehicleViewModel
 ) {
     val context = LocalContext.current
+    val currentUserId = remember { PreferenceHelper.getUserId(context) }
 
-    LaunchedEffect(Unit) {
-        vehicleViewModel.fetchVehiclesByUser(context)
-    }
 
-    var isEditing by remember { mutableStateOf(false) }
+    val isMyAd = remember { vehicleAd.carrierId == currentUserId }
+
     val focusManager = LocalFocusManager.current
 
+    var isEditing by remember { mutableStateOf(false) }
     var title by remember { mutableStateOf(vehicleAd.title) }
     var description by remember { mutableStateOf(vehicleAd.description) }
-    var location by remember { mutableStateOf(vehicleAd.location) }
-    var date by remember { mutableStateOf(vehicleAd.date) }
-    var capacity by remember { mutableStateOf(vehicleAd.capacity) }
-
-    val openDatePicker = remember { mutableStateOf(false) }
-    val datePickerState = rememberDatePickerState()
-    val geoNamesViewModel: GeoNamesViewModel = viewModel()
-
-    var selectedCargoType by remember { mutableStateOf(vehicleAd.cargoType.ifBlank { "Açık Kasa" }) }
-    val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
+    var selectedCountry by remember { mutableStateOf(vehicleAd.country) }
+    var selectedCity by remember { mutableStateOf(vehicleAd.city) }
+    var capacity by remember { mutableStateOf(vehicleAd.capacity.toString()) }
+    var selectedCargoType by remember { mutableStateOf(vehicleAd.vehicleType.ifBlank { "Açık Kasa" }) }
     var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
     var showVehicleOfferDialog by remember { mutableStateOf(false) }
     var offerMessage by remember { mutableStateOf("") }
-    var showVehiclePicker by remember { mutableStateOf(false) }
 
-    val selectedVehicle by vehicleViewModel.selectedVehicleById.collectAsState()
-
-    LaunchedEffect(selectedVehicle) {
-        selectedVehicle?.let { vehicle ->
-            capacity = vehicle.capacity.toString()
-            selectedCargoType = when (vehicle.vehicleType.lowercase()) {
-                "frigo", "frigofirik" -> "Frigofirik"
-                "açık kasa" -> "Açık Kasa"
-                "tenteli" -> "Tenteli"
-                "tanker" -> "Tanker"
-                else -> "Diğer"
-            }
-        }
-    }
+    val geoNamesViewModel: GeoNamesViewModel = viewModel()
+    val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
 
     Scaffold(
         topBar = {
@@ -94,11 +72,7 @@ fun VehicleAdDetailScreen(
                 title = { Text("Araç İlan Detayı", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Geri",
-                            tint = Color.White
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri", tint = Color.White)
                     }
                 },
                 actions = {
@@ -109,41 +83,27 @@ fun VehicleAdDetailScreen(
                                     vehicleAd.copy(
                                         title = title,
                                         description = description,
-                                        location = location,
-                                        date = date,
-                                        capacity = capacity,
-                                        cargoType = selectedCargoType,
+                                        vehicleType = selectedCargoType,
+                                        country = selectedCountry,
+                                        city = selectedCity,
+                                        capacity = capacity.toIntOrNull() ?: 0
                                     )
                                 )
                                 isEditing = false
                             }) {
-                                Icon(
-                                    Icons.Default.Check,
-                                    contentDescription = "Kaydet",
-                                    tint = Color.White
-                                )
+                                Icon(Icons.Default.Check, contentDescription = "Kaydet", tint = Color.White)
                             }
                         } else {
                             IconButton(onClick = { isEditing = true }) {
-                                Icon(
-                                    Icons.Default.Edit,
-                                    contentDescription = "Düzenle",
-                                    tint = Color.White
-                                )
+                                Icon(Icons.Default.Edit, contentDescription = "Düzenle", tint = Color.White)
                             }
                         }
                         IconButton(onClick = { onDeleteClick?.invoke() }) {
-                            Icon(
-                                Icons.Default.Delete,
-                                contentDescription = "Sil",
-                                tint = Color.White
-                            )
+                            Icon(Icons.Default.Delete, contentDescription = "Sil", tint = Color.White)
                         }
                     }
                 },
-                colors = TopAppBarDefaults.mediumTopAppBarColors(
-                    containerColor = DarkGray
-                )
+                colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = DarkGray)
             )
         }
     ) { padding ->
@@ -168,31 +128,13 @@ fun VehicleAdDetailScreen(
                     label = { Text("Açıklama") },
                     modifier = Modifier.fillMaxWidth()
                 )
-
-                if (vehicleViewModel.myVehicles.value.isNotEmpty()) {
-                    Text(
-                        text = "Araçlarım (${vehicleViewModel.myVehicles.value.size})",
-                        color = RoseRed,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier
-                            .align(Alignment.End)
-                            .clickable { showVehiclePicker = true }
-                    )
-                }
                 OutlinedTextField(
                     value = capacity,
                     onValueChange = { capacity = it },
                     label = { Text("Taşıma Kapasitesi (ton)") },
                     modifier = Modifier.fillMaxWidth(),
-                    keyboardOptions = KeyboardOptions(
-                        keyboardType = KeyboardType.Number,
-                        imeAction = ImeAction.Done
-                    ),
-                    keyboardActions = KeyboardActions(
-                        onDone = {
-                            focusManager.clearFocus()
-                        }
-                    )
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
+                    keyboardActions = KeyboardActions(onDone = { focusManager.clearFocus() })
                 )
 
                 ExposedDropdownMenuBox(
@@ -204,14 +146,9 @@ fun VehicleAdDetailScreen(
                         onValueChange = {},
                         readOnly = true,
                         label = { Text("Yük Tipi") },
-                        trailingIcon = {
-                            ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCargoTypeMenuExpanded)
-                        },
-                        modifier = Modifier
-                            .menuAnchor()
-                            .fillMaxWidth()
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCargoTypeMenuExpanded) },
+                        modifier = Modifier.menuAnchor().fillMaxWidth()
                     )
-
                     ExposedDropdownMenu(
                         expanded = isCargoTypeMenuExpanded,
                         onDismissRequest = { isCargoTypeMenuExpanded = false }
@@ -233,87 +170,19 @@ fun VehicleAdDetailScreen(
                     username = Constants.GEO_NAMES_USERNAME,
                     geoViewModel = geoNamesViewModel,
                     onSelected = { countryCode, cityName ->
-                        val countryName =
-                            geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
-                        location = "$cityName, $countryName"
+                        selectedCountry = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
+                        selectedCity = cityName
                     }
                 )
-
-                OutlinedTextField(
-                    value = date,
-                    onValueChange = {},
-                    label = { Text("Tarih") },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { openDatePicker.value = true },
-                    enabled = false,
-                    colors = OutlinedTextFieldDefaults.colors(
-                        disabledTextColor = Color.Black,
-                        disabledContainerColor = Color.Transparent,
-                        disabledLabelColor = Color.Black,
-                        disabledBorderColor = Color.Gray
-                    )
-                )
-
-                // 🔹 Date Picker Dialog
-                if (openDatePicker.value) {
-                    DatePickerDialog(
-                        onDismissRequest = { openDatePicker.value = false },
-                        confirmButton = {
-                            TextButton(onClick = {
-                                openDatePicker.value = false
-                                datePickerState.selectedDateMillis?.let { millis ->
-                                    val formattedDate =
-                                        SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
-                                            Date(millis)
-                                        )
-                                    date = formattedDate
-                                }
-                            }) {
-                                Text("Tamam")
-                            }
-                        },
-                        dismissButton = {
-                            TextButton(onClick = { openDatePicker.value = false }) {
-                                Text("İptal")
-                            }
-                        }
-                    ) {
-                        DatePicker(state = datePickerState)
-                    }
-                }
-                if (showVehiclePicker) {
-                    AlertDialog(
-                        onDismissRequest = { showVehiclePicker = false },
-                        confirmButton = {},
-                        title = { Text("Araç Seç") },
-                        text = {
-                            Column {
-                                vehicleViewModel.myVehicles.collectAsState().value.forEach { vehicle ->
-                                    Text(
-                                        text = "${vehicle.title} - ${vehicle.licensePlate}",
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .clickable {
-                                                vehicleViewModel.fetchVehicleById(vehicle.id, context)
-                                                showVehiclePicker = false
-                                            }
-                                            .padding(8.dp)
-                                    )
-                                }
-                            }
-                        }
-                    )
-                }
-
             } else {
                 InfoText("Başlık", title)
                 InfoText("Açıklama", description)
                 InfoText("Taşıma Kapasitesi", "$capacity ton")
-                InfoText("Konum", location)
-                InfoText("Tarih", date)
+                InfoText("Konum", "$selectedCity, $selectedCountry")
+                InfoText("Tarih", vehicleAd.createdDate.substring(0, 10))
 
                 Spacer(Modifier.weight(1f))
+
                 if (isMyAd) {
                     Button(
                         onClick = {
@@ -344,23 +213,24 @@ fun VehicleAdDetailScreen(
                     }
                 }
 
-            }
-            if (showVehicleOfferDialog) {
-                VehicleOfferDialog(
-                    message = offerMessage,
-                    onMessageChange = { offerMessage = it },
-                    onDismiss = {
-                        showVehicleOfferDialog = false
-                        offerMessage = ""
-                    },
-                    onConfirm = {
-                        // TODO: Teklifi backend'e gönder
-                        showVehicleOfferDialog = false
-                        offerMessage = ""
-                    }
-                )
-            }
+                if (showVehicleOfferDialog) {
+                    VehicleOfferDialog(
+                        message = offerMessage,
+                        onMessageChange = { offerMessage = it },
+                        onDismiss = {
+                            showVehicleOfferDialog = false
+                            offerMessage = ""
+                        },
+                        onConfirm = {
+                            // TODO: Teklifi backend'e gönder
+                            showVehicleOfferDialog = false
+                            offerMessage = ""
+                        }
+                    )
+                }
 
+            }
         }
     }
 }
+
