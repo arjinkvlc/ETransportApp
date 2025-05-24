@@ -1,6 +1,5 @@
 package com.example.etransportapp.presentation.ui.home.vehicleAds
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -13,25 +12,25 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.VehicleAdGetResponse
-import com.example.etransportapp.presentation.components.InfoText
 import com.example.etransportapp.presentation.viewModels.GeoNamesViewModel
 import com.example.etransportapp.presentation.viewModels.VehicleViewModel
 import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.etransportapp.presentation.components.AdDetailTabRow
+import com.example.etransportapp.presentation.components.AdOwnerInfoSection
 import com.example.etransportapp.presentation.components.CountryCitySelector
+import com.example.etransportapp.presentation.components.VehicleAdDetailSection
 import com.example.etransportapp.presentation.components.VehicleOfferDialog
 import com.example.etransportapp.util.PreferenceHelper
 
@@ -46,7 +45,6 @@ fun VehicleAdDetailScreen(
 ) {
     val context = LocalContext.current
     val currentUserId = remember { PreferenceHelper.getUserId(context) }
-
 
     val isMyAd = remember { vehicleAd.carrierId == currentUserId }
 
@@ -65,6 +63,8 @@ fun VehicleAdDetailScreen(
 
     val geoNamesViewModel: GeoNamesViewModel = viewModel()
     val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
+    val tabs = listOf("İlan Detayı", "İlan Sahibi")
+    var selectedTabIndex by remember { mutableStateOf(0) }
 
     Scaffold(
         topBar = {
@@ -175,13 +175,37 @@ fun VehicleAdDetailScreen(
                     }
                 )
             } else {
-                InfoText("Başlık", title)
-                InfoText("Açıklama", description)
-                InfoText("Taşıma Kapasitesi", "$capacity ton")
-                InfoText("Konum", "$selectedCity, $selectedCountry")
-                InfoText("Tarih", vehicleAd.createdDate.substring(0, 10))
+                AdDetailTabRow(
+                    tabs = tabs,
+                    selectedTabIndex = selectedTabIndex,
+                    onTabSelected = { selectedTabIndex = it }
+                )
+
+                when (selectedTabIndex) {
+                    0 -> {
+                        VehicleAdDetailSection(
+                            title = title,
+                            description = description,
+                            cargoType = vehicleAd.vehicleType,
+                            capacity = capacity,
+                            location = vehicleAd.city,
+                            date = vehicleAd.createdDate
+                        )
+                    }
+
+                    1 -> {
+                        // TODO: Replace with actual user data
+                        AdOwnerInfoSection(
+                            name = "Mehmet Yılmaz",
+                            email = "mehmet@example.com",
+                            phone = "+90 555 123 45 67"
+                        )
+                    }
+                }
+
 
                 Spacer(Modifier.weight(1f))
+
 
                 if (isMyAd) {
                     Button(
