@@ -31,6 +31,7 @@ import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
 import java.text.SimpleDateFormat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -58,7 +59,7 @@ fun CreateVehicleAdScreen(
 
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
-    val geoNamesViewModel = GeoNamesViewModel()
+    val geoNamesViewModel: GeoNamesViewModel = viewModel()
     val focusManager = LocalFocusManager.current
     var showVehiclePicker by remember { mutableStateOf(false) }
 
