@@ -13,11 +13,15 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.VehicleAd
@@ -29,6 +33,7 @@ import java.util.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.etransportapp.presentation.components.CountryCitySelector
 import com.example.etransportapp.presentation.components.VehicleOfferDialog
+import com.example.etransportapp.presentation.viewModels.VehicleViewModel
 import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
 
@@ -39,8 +44,15 @@ fun VehicleAdDetailScreen(
     navController: NavHostController,
     isMyAd: Boolean = vehicleAd.userId == "username",
     onDeleteClick: (() -> Unit)? = null,
-    onUpdateClick: ((VehicleAd) -> Unit)? = null
+    onUpdateClick: ((VehicleAd) -> Unit)? = null,
+    vehicleViewModel: VehicleViewModel
 ) {
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        vehicleViewModel.fetchVehiclesByUser(context)
+    }
+
     var isEditing by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
@@ -59,8 +71,22 @@ fun VehicleAdDetailScreen(
     var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
     var showVehicleOfferDialog by remember { mutableStateOf(false) }
     var offerMessage by remember { mutableStateOf("") }
+    var showVehiclePicker by remember { mutableStateOf(false) }
 
+    val selectedVehicle by vehicleViewModel.selectedVehicleById.collectAsState()
 
+    LaunchedEffect(selectedVehicle) {
+        selectedVehicle?.let { vehicle ->
+            capacity = vehicle.capacity.toString()
+            selectedCargoType = when (vehicle.vehicleType.lowercase()) {
+                "frigo", "frigofirik" -> "Frigofirik"
+                "açık kasa" -> "Açık Kasa"
+                "tenteli" -> "Tenteli"
+                "tanker" -> "Tanker"
+                else -> "Diğer"
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -142,6 +168,17 @@ fun VehicleAdDetailScreen(
                     label = { Text("Açıklama") },
                     modifier = Modifier.fillMaxWidth()
                 )
+
+                if (vehicleViewModel.myVehicles.value.isNotEmpty()) {
+                    Text(
+                        text = "Araçlarım (${vehicleViewModel.myVehicles.value.size})",
+                        color = RoseRed,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .align(Alignment.End)
+                            .clickable { showVehiclePicker = true }
+                    )
+                }
                 OutlinedTextField(
                     value = capacity,
                     onValueChange = { capacity = it },
@@ -244,6 +281,29 @@ fun VehicleAdDetailScreen(
                     ) {
                         DatePicker(state = datePickerState)
                     }
+                }
+                if (showVehiclePicker) {
+                    AlertDialog(
+                        onDismissRequest = { showVehiclePicker = false },
+                        confirmButton = {},
+                        title = { Text("Araç Seç") },
+                        text = {
+                            Column {
+                                vehicleViewModel.myVehicles.collectAsState().value.forEach { vehicle ->
+                                    Text(
+                                        text = "${vehicle.title} - ${vehicle.licensePlate}",
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable {
+                                                vehicleViewModel.fetchVehicleById(vehicle.id, context)
+                                                showVehiclePicker = false
+                                            }
+                                            .padding(8.dp)
+                                    )
+                                }
+                            }
+                        }
+                    )
                 }
 
             } else {

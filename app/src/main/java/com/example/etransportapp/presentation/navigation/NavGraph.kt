@@ -130,7 +130,7 @@ fun NavGraph(
                     },
                     onUpdateClick = { updatedAd ->
                         vehicleAdViewModel.updateAd(updatedAd)
-                    }
+                    }, vehicleViewModel = vehicleViewModel
                 )
             }
         }
