@@ -1,5 +1,6 @@
 package com.example.etransportapp.presentation.ui.home.vehicleAds
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
@@ -12,10 +13,12 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -44,6 +47,11 @@ fun VehicleAdDetailScreen(
     vehicleViewModel: VehicleViewModel
 ) {
     val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        vehicleViewModel.fetchVehiclesByUser(context)
+    }
+
     val currentUserId = remember { PreferenceHelper.getUserId(context) }
 
     val isMyAd = remember { vehicleAd.carrierId == currentUserId }
@@ -60,11 +68,28 @@ fun VehicleAdDetailScreen(
     var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
     var showVehicleOfferDialog by remember { mutableStateOf(false) }
     var offerMessage by remember { mutableStateOf("") }
+    var showVehiclePicker by remember { mutableStateOf(false) }
 
     val geoNamesViewModel: GeoNamesViewModel = viewModel()
     val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
     val tabs = listOf("İlan Detayı", "İlan Sahibi")
     var selectedTabIndex by remember { mutableStateOf(0) }
+
+    val selectedVehicle by vehicleViewModel.selectedVehicleById.collectAsState()
+
+    LaunchedEffect(selectedVehicle) {
+        selectedVehicle?.let { vehicle ->
+            capacity = vehicle.capacity.toString()
+            selectedCargoType = when (vehicle.vehicleType.lowercase()) {
+                "frigo", "frigofirik" -> "Frigofirik"
+                "açık kasa" -> "Açık Kasa"
+                "tenteli" -> "Tenteli"
+                "tanker" -> "Tanker"
+                else -> "Diğer"
+            }
+        }
+    }
+
 
     Scaffold(
         topBar = {
@@ -128,6 +153,16 @@ fun VehicleAdDetailScreen(
                     label = { Text("Açıklama") },
                     modifier = Modifier.fillMaxWidth()
                 )
+                if (vehicleViewModel.myVehicles.value.isNotEmpty()) {
+                    Text(
+                        text = "Araçlarım (${vehicleViewModel.myVehicles.value.size})",
+                        color = RoseRed,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .align(Alignment.End)
+                            .clickable { showVehiclePicker = true }
+                    )
+                }
                 OutlinedTextField(
                     value = capacity,
                     onValueChange = { capacity = it },
@@ -252,7 +287,29 @@ fun VehicleAdDetailScreen(
                         }
                     )
                 }
-
+            }
+            if (showVehiclePicker) {
+                AlertDialog(
+                    onDismissRequest = { showVehiclePicker = false },
+                    confirmButton = {},
+                    title = { Text("Araç Seç") },
+                    text = {
+                        Column {
+                            vehicleViewModel.myVehicles.collectAsState().value.forEach { vehicle ->
+                                Text(
+                                    text = "${vehicle.title} - ${vehicle.licensePlate}",
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            vehicleViewModel.fetchVehicleById(vehicle.id, context)
+                                            showVehiclePicker = false
+                                        }
+                                        .padding(8.dp)
+                                )
+                            }
+                        }
+                    }
+                )
             }
         }
     }
