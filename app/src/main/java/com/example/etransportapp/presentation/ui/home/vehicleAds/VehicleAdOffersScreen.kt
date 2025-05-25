@@ -7,9 +7,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.ui.theme.RoseRed
@@ -19,16 +21,17 @@ import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun VehicleAdOffersScreen(vehicleAdId: String, navController: NavHostController) {
-    val vehicleOffers = listOf(
-        Triple("Mehmet Yılmaz", "+90 555 123 45 67", "Mersin'den Frankfurt'a yüküm var."),
-        Triple("Ayşe Kaya", "+90 544 987 65 43", "Irak-Polonya 3000£."),
-        Triple(
-            "Ali Demir",
-            "+90 530 321 76 89",
-            "Yarın sabaha Gebze'den Edirne'ye kuş yükü yüklememiz var, ilgilenir misiniz?"
-        )
-    )
+fun VehicleAdOffersScreen(
+    vehicleAdId: String,
+    navController: NavHostController,
+    vehicleAdViewModel: VehicleAdViewModel = viewModel()
+) {
+    val offers = vehicleAdViewModel.vehicleAdOffers
+    val senderInfoMap = vehicleAdViewModel.senderInfoMap
+
+    LaunchedEffect(vehicleAdId) {
+        vehicleAdViewModel.fetchVehicleOffersByVehicleAdId(vehicleAdId.toInt())
+    }
 
     Scaffold(
         topBar = {
@@ -36,11 +39,7 @@ fun VehicleAdOffersScreen(vehicleAdId: String, navController: NavHostController)
                 title = { Text("Gelen Teklifler", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = "Geri",
-                            tint = Color.White
-                        )
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri", tint = Color.White)
                     }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = DarkGray)
@@ -54,7 +53,13 @@ fun VehicleAdOffersScreen(vehicleAdId: String, navController: NavHostController)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            vehicleOffers.forEach { (name, phone, message) ->
+            offers.value.forEach { offer ->
+                LaunchedEffect(offer.senderId) {
+                    vehicleAdViewModel.fetchUserInfo(offer.senderId)
+                }
+
+                val sender = senderInfoMap[offer.senderId]
+
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
@@ -62,43 +67,85 @@ fun VehicleAdOffersScreen(vehicleAdId: String, navController: NavHostController)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row {
-                            Text(text = name, style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                text = "${sender?.name.orEmpty()} ${sender?.surname.orEmpty()}",
+                                style = MaterialTheme.typography.titleMedium
+                            )
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
-                                text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
-                                    Date()
-                                ), style = MaterialTheme.typography.titleSmall
+                                text = offer.createdDate.substring(0, 10),
+                                style = MaterialTheme.typography.titleSmall
                             )
                         }
+
                         Spacer(modifier = Modifier.height(4.dp))
                         Row {
                             Text(
-                                text = "Telefon: $phone",
+                                text = "Telefon: ${sender?.phoneNumber ?: "Bilinmiyor"}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.Gray
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
-                                "Mail: deneme@gmail.com",
+                                text = "Mail: ${sender?.email ?: "Bilinmiyor"}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.Gray
                             )
                         }
+/*
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text(text = message, style = MaterialTheme.typography.bodyMedium)
+
+                        Text(
+                            text = "Teklif: ${offer.price} USD",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )*/
 
                         Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "Mesaj: ${offer.message}",
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Durum: ${offer.status}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                        )
+
+                        Spacer(modifier = Modifier.height(8.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                            OutlinedButton(onClick = {
-                                val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
-                                navController.context.startActivity(intent)
-                            }, modifier = Modifier.width(140.dp)) {
+                            OutlinedButton(
+                                onClick = {
+                                    val phone = sender?.phoneNumber
+                                    if (!phone.isNullOrBlank()) {
+                                        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
+                                        navController.context.startActivity(intent)
+                                    }
+                                },
+                                enabled = sender?.phoneNumber != null,
+                                modifier = Modifier.width(140.dp)
+                            ) {
                                 Text("İletişime Geç", color = RoseRed)
                             }
+
                             Spacer(modifier = Modifier.weight(1f))
+
+                            val isCancelled = offer.status == "Cancelled"
+
                             Button(
-                                onClick = { /* Reddet */ },
-                                colors = ButtonDefaults.buttonColors(containerColor = RoseRed),
+                                onClick = {
+                                    vehicleAdViewModel.cancelVehicleOffer(
+                                        offerId = offer.id,
+                                        onSuccess = { /* Güncellenecek */ },
+                                        onError = { /* Hata gösterilebilir */ }
+                                    )
+                                },
+                                enabled = !isCancelled,
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (isCancelled) Color.Gray else RoseRed
+                                ),
                                 modifier = Modifier.width(140.dp)
                             ) {
                                 Text("Reddet", color = Color.White)
