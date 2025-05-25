@@ -15,11 +15,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.etransportapp.R
+import com.example.etransportapp.data.model.ad.CargoAdResponse
 import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.ui.theme.DarkGray
 
 @Composable
-fun LoadAdCard(item: LoadAd, onClick: () -> Unit) {
+fun LoadAdCard(item: CargoAdResponse, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -46,7 +47,7 @@ fun LoadAdCard(item: LoadAd, onClick: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = item.date,
+                    text = item.createdDate.take(10),
                     style = MaterialTheme.typography.labelSmall
                 )
             }
@@ -62,9 +63,9 @@ fun LoadAdCard(item: LoadAd, onClick: () -> Unit) {
             ) {
                 // Sol sütun: bilgiler
                 Column(modifier = Modifier.weight(1f)) {
-                    InfoRow("Nereden:", item.origin)
-                    InfoRow("Nereye:", item.destination)
-                    InfoRow("Yük Tipi:", "Frigo") // item.cargoType ?: "Bilinmiyor"
+                    InfoRow("Nereden:", "${item.pickCity}, ${item.pickCountry}")
+                    InfoRow("Nereye:", "${item.dropCity}, ${item.dropCountry}")
+                    InfoRow("Yük Tipi:", item.cargoType) // item.cargoType ?: "Bilinmiyor"
                     InfoRow("Ağırlık:", "${item.weight} Ton")
                 }
 
@@ -85,7 +86,7 @@ fun LoadAdCard(item: LoadAd, onClick: () -> Unit) {
                             contentAlignment = Alignment.Center
                         ) {
                             Text(
-                                text = "A",
+                                text = item.customerName?.firstOrNull()?.uppercase() ?: "A",
                                 color = Color.White,
                                 fontSize = 20.sp,
                                 fontWeight = FontWeight.Bold

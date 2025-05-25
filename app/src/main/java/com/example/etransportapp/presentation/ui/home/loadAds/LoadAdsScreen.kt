@@ -28,6 +28,10 @@ fun LoadAdsScreen(
     val selectedSort = viewModel.selectedSort
     val selectedFilter = viewModel.selectedFilter
 
+    LaunchedEffect(Unit) {
+        viewModel.fetchAllCargoAds()
+    }
+
 
     Column(modifier = modifier.fillMaxSize()) {
         Row(modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly){

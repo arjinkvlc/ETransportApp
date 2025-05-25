@@ -5,10 +5,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.example.etransportapp.data.model.ad.CargoAdResponse
 import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.data.model.ad.VehicleAdGetResponse
 import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdViewModel
@@ -18,6 +21,7 @@ import com.example.etransportapp.presentation.components.VehicleAdCard
 import com.example.etransportapp.presentation.navigation.NavRoutes
 import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.ui.theme.RoseRed
+import com.example.etransportapp.util.PreferenceHelper
 
 @Composable
 fun MyAdsScreen(
@@ -26,15 +30,22 @@ fun MyAdsScreen(
     loadAdViewModel: LoadAdViewModel,
     vehicleAdViewModel: VehicleAdViewModel
 ) {
-    var selectedTabIndex by remember { mutableStateOf(0) }
+
+    LaunchedEffect(Unit) {
+        loadAdViewModel.fetchAllCargoAds()
+        vehicleAdViewModel.fetchAllVehicleAds()
+    }
+
+    var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
     val tabTitles = listOf("Yük İlanları", "Araç İlanları")
 
-    val myLoadAds by loadAdViewModel.myLoadAds.collectAsState()
-    val myVehicleAds by vehicleAdViewModel.vehicleAds.collectAsState() // tüm ilanlar çekiliyor
+    val myLoadAds by loadAdViewModel.loadAds.collectAsState()
+    val myVehicleAds by vehicleAdViewModel.vehicleAds.collectAsState()
 
-    val filteredMyVehicleAds = myVehicleAds.filter {
-        it.carrierId == "username" // veya userId kontrolü yap
-    }
+    val currentUserId = PreferenceHelper.getUserId(LocalContext.current) ?: ""
+
+    val filteredLoadAds = myLoadAds.filter { it.userId == currentUserId }
+    val filteredVehicleAds = myVehicleAds.filter { it.carrierId == currentUserId }
 
     Column(modifier = modifier.fillMaxSize()) {
         TabRow(
@@ -52,12 +63,12 @@ fun MyAdsScreen(
         }
 
         when (selectedTabIndex) {
-            0 -> LoadAdsList(myLoadAds) { selectedAd ->
+            0 -> LoadAdsList(filteredLoadAds) { selectedAd ->
                 loadAdViewModel.selectedAd = selectedAd
                 navController.navigate(NavRoutes.LOAD_AD_DETAIL)
             }
 
-            1 -> VehicleAdsList(filteredMyVehicleAds) { selectedAd ->
+            1 -> VehicleAdsList(filteredVehicleAds) { selectedAd ->
                 vehicleAdViewModel.selectedAd = selectedAd
                 navController.navigate(NavRoutes.VEHICLE_AD_DETAIL)
             }
@@ -66,7 +77,7 @@ fun MyAdsScreen(
 }
 
 @Composable
-fun LoadAdsList(loadAds: List<LoadAd>, onAdClick: (LoadAd) -> Unit) {
+fun LoadAdsList(loadAds: List<CargoAdResponse>, onAdClick: (CargoAdResponse) -> Unit) {
     LazyColumn(modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)) {
         items(loadAds) { ad ->
             LoadAdCard(item = ad, onClick = { onAdClick(ad) })

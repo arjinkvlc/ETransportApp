@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -28,10 +29,11 @@ import com.example.etransportapp.ui.theme.DarkGray
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.etransportapp.data.model.ad.CargoAdCreateRequest
 import com.example.etransportapp.data.remote.api.GeoPlace
 import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
-
+import com.example.etransportapp.util.PreferenceHelper
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,6 +42,7 @@ fun CreateLoadAdScreen(
     navController: NavHostController,
     viewModel: LoadAdViewModel
 ) {
+    val context = LocalContext.current
     var title by remember { mutableStateOf(TextFieldValue("")) }
     var description by remember { mutableStateOf(TextFieldValue("")) }
     var price by remember { mutableStateOf(TextFieldValue("")) }
@@ -95,33 +98,37 @@ fun CreateLoadAdScreen(
             ) {
                 Button(
                     onClick = {
-                        if(weight.text.contains(",")){
+                        if (weight.text.contains(",")) {
                             weight = weight.copy(text = weight.text.replace(",", "."))
                         }
-                        if (
-                            title.text.isNotBlank() &&
-                            description.text.isNotBlank() &&
-                            origin.isNotBlank() &&
-                            destination.isNotBlank() &&
-                            price.text.isNotBlank() &&
-                            date.text.isNotBlank()
-                        ) {
-                            viewModel.addLoadAd(
-                                LoadAd(
-                                    title = title.text,
-                                    description = description.text,
-                                    origin = origin,
-                                    destination = destination,
-                                    cargoType = selectedCargoType,
-                                    price = price.text,
-                                    currency = selectedCurrency,
-                                    date = date.text,
-                                    userId = "username",
-                                    weight = weight.text,
-                                )
-                            )
-                            navController.popBackStack()
-                        }
+
+                        val pickCity = selectedOriginPlace?.name ?: ""
+                        val pickCountry = selectedOriginPlace?.countryName ?: ""
+                        val dropCity = selectedDestinationPlace?.name ?: ""
+                        val dropCountry = selectedDestinationPlace?.countryName ?: ""
+
+                        val request = CargoAdCreateRequest(
+                            userId = PreferenceHelper.getUserId(context) ?: "",
+                            title = title.text,
+                            description = description.text,
+                            weight = weight.text.toIntOrNull() ?: 0,
+                            cargoType = selectedCargoType,
+                            dropCountry = dropCountry,
+                            dropCity = dropCity,
+                            pickCountry = pickCountry,
+                            pickCity = pickCity,
+                            currency = selectedCurrency,
+                            price = price.text.toIntOrNull() ?: 0
+                        )
+
+                        viewModel.createCargoAd(
+                            request = request,
+                            onSuccess = {
+                                navController.popBackStack()
+                            },
+                            onError = {
+                            }
+                        )
                     },
                     modifier = Modifier
                         .fillMaxWidth(0.9f)
