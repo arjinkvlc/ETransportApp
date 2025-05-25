@@ -1,5 +1,6 @@
 package com.example.etransportapp.presentation.ui.home.vehicleAds
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -30,13 +31,18 @@ import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.etransportapp.data.model.offer.VehicleOfferRequest
 import com.example.etransportapp.presentation.components.AdDetailTabRow
 import com.example.etransportapp.presentation.components.AdOwnerInfoSection
 import com.example.etransportapp.presentation.components.CountryCitySelector
 import com.example.etransportapp.presentation.components.VehicleAdDetailSection
 import com.example.etransportapp.presentation.components.VehicleOfferDialog
+import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdViewModel
 import com.example.etransportapp.util.PreferenceHelper
 import com.example.etransportapp.util.VehicleTypeMapUtil
+import java.text.SimpleDateFormat
+import java.util.Calendar
+import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -48,6 +54,19 @@ fun VehicleAdDetailScreen(
     vehicleViewModel: VehicleViewModel
 ) {
     val context = LocalContext.current
+    val viewModel: VehicleAdViewModel = viewModel()
+
+    val userId = PreferenceHelper.getUserId(context) ?: ""
+
+    val sentOffers = viewModel.sentVehicleOffers.value
+    val existingOffer = sentOffers.find { it.vehicleAdId == vehicleAd.id && it.status == "Pending" }
+
+    val isOfferButtonEnabled = existingOffer == null
+    val offerButtonText = if (isOfferButtonEnabled) "Teklif Gönder" else "Teklif Beklemede"
+
+    LaunchedEffect(userId) {
+        viewModel.fetchSentVehicleOffers(userId)
+    }
 
     LaunchedEffect(Unit) {
         vehicleViewModel.fetchVehiclesByUser(context)
@@ -255,18 +274,22 @@ fun VehicleAdDetailScreen(
                     }
                 } else {
                     Button(
-                        onClick = { showVehicleOfferDialog = true },
+                        onClick = {
+                            if (isOfferButtonEnabled) showVehicleOfferDialog = true
+                        },
+                        enabled = isOfferButtonEnabled,
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 8.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = RoseRed,
+                            containerColor = if (isOfferButtonEnabled) RoseRed else Color.Gray,
                             contentColor = Color.White
                         )
                     ) {
-                        Text("Teklif Gönder")
+                        Text(offerButtonText)
                     }
                 }
+
 
                 if (showVehicleOfferDialog) {
                     VehicleOfferDialog(
@@ -277,12 +300,41 @@ fun VehicleAdDetailScreen(
                             offerMessage = ""
                         },
                         onConfirm = {
-                            // TODO: Teklifi backend'e gönder
-                            showVehicleOfferDialog = false
-                            offerMessage = ""
+                            val senderId = PreferenceHelper.getUserId(context)
+                            if (senderId == null) {
+                                Toast.makeText(context, "Kullanıcı kimliği bulunamadı", Toast.LENGTH_SHORT).show()
+                                return@VehicleOfferDialog
+                            }
+
+                            val expiry = Calendar.getInstance().apply {
+                                add(Calendar.DAY_OF_YEAR, 2)
+                            }.time
+                            val formattedExpiry = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(expiry)
+
+                            val request = VehicleOfferRequest(
+                                senderId = senderId,
+                                receiverId = vehicleAd.carrierId,
+                                vehicleAdId = vehicleAd.id,
+                                message = offerMessage,
+                                expiryDate = formattedExpiry
+                            )
+
+                            viewModel.createVehicleOffer(
+                                request = request,
+                                onSuccess = {
+                                    showVehicleOfferDialog = false
+                                    offerMessage = ""
+                                    viewModel.fetchSentVehicleOffers(senderId) // Listeyi yenile
+                                    Toast.makeText(context, "Teklif gönderildi", Toast.LENGTH_SHORT).show()
+                                },
+                                onError = {
+                                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                                }
+                            )
                         }
                     )
                 }
+
             }
             if (showVehiclePicker) {
                 AlertDialog(

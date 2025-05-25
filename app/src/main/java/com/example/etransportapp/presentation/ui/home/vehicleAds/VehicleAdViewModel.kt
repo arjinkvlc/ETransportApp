@@ -8,11 +8,18 @@ import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.ad.VehicleAdCreateRequest
 import com.example.etransportapp.data.model.ad.VehicleAdGetResponse
 import com.example.etransportapp.data.model.ad.VehicleAdUpdateRequest
+import com.example.etransportapp.data.model.auth.UserProfileResponse
+import com.example.etransportapp.data.model.offer.VehicleOfferRequest
+import com.example.etransportapp.data.model.offer.VehicleOfferResponse
+import com.example.etransportapp.data.model.offer.VehicleOfferStatusUpdateRequest
+import com.example.etransportapp.util.PreferenceHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class VehicleAdViewModel : ViewModel() {
 
@@ -22,6 +29,13 @@ class VehicleAdViewModel : ViewModel() {
     var selectedAd: VehicleAdGetResponse? = null
     var selectedSort by mutableStateOf("Tümü")
     var selectedFilter by mutableStateOf("Tümü")
+
+    var offerSentMap = mutableStateMapOf<Int, Boolean>()
+
+    val sentVehicleOffers = mutableStateOf<List<VehicleOfferResponse>>(emptyList())
+
+    val vehicleAdOffers = mutableStateOf<List<VehicleOfferResponse>>(emptyList())
+    val senderInfoMap = mutableStateMapOf<String, UserProfileResponse>()
 
     val sortedLoadAds = derivedStateOf {
         when (selectedSort) {
@@ -54,6 +68,7 @@ class VehicleAdViewModel : ViewModel() {
             }
         }
     }
+
 
     fun createVehicleAd(
         context: Context,
@@ -124,6 +139,91 @@ class VehicleAdViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 Toast.makeText(context, "Hata: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun createVehicleOffer(
+        request: VehicleOfferRequest,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.vehicleOfferApi.createVehicleOffer(request)
+                if (response.isSuccessful) {
+                    offerSentMap[request.vehicleAdId] = true
+                    onSuccess()
+                } else {
+                    onError("Teklif gönderilemedi: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("Hata oluştu: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun fetchSentVehicleOffers(userId: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.vehicleOfferApi.getVehicleOffersBySenderId(userId)
+                if (response.isSuccessful) {
+                    sentVehicleOffers.value = response.body() ?: emptyList()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun fetchVehicleOffersByVehicleAdId(adId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.vehicleOfferApi.getVehicleOffersByVehicleAdId(adId)
+                if (response.isSuccessful) {
+                    vehicleAdOffers.value = response.body() ?: emptyList()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun fetchUserInfo(userId: String) {
+        if (senderInfoMap.containsKey(userId)) return
+
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.userApi.getUserProfile(userId)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        senderInfoMap[userId] = it
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun cancelVehicleOffer(offerId: Int, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val request = VehicleOfferStatusUpdateRequest(
+                    offerId = offerId,
+                    status = "Cancelled"
+                )
+                val response = RetrofitInstance.vehicleOfferApi.updateVehicleOfferStatus(offerId, request)
+                if (response.isSuccessful) {
+                    vehicleAdOffers.value = vehicleAdOffers.value.map {
+                        if (it.id == offerId) it.copy(status = "Cancelled") else it
+                    }
+                    onSuccess()
+                } else {
+                    onError("İşlem başarısız")
+                }
+            } catch (e: Exception) {
+                onError("Sunucu hatası: ${e.message}")
             }
         }
     }
