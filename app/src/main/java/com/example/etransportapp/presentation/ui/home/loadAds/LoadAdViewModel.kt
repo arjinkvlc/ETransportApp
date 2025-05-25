@@ -204,22 +204,24 @@ class LoadAdViewModel : ViewModel() {
     fun cancelOffer(offerId: Int, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
             try {
-                val request = CargoOfferStatusUpdateRequest(
-                    offerId = offerId,
-                    status = "Cancelled"
-                )
+                val request = CargoOfferStatusUpdateRequest(offerId = offerId, status = "Cancelled")
                 val response = RetrofitInstance.cargoOfferApi.updateOfferStatus(offerId, request)
                 if (response.isSuccessful) {
-                    fetchOffersByCargoAdId(offerId)
+                    val updatedOffers = _cargoAdOffers.value.map {
+                        if (it.id == offerId) it.copy(status = "Cancelled") else it
+                    }
+                    _cargoAdOffers.value = updatedOffers
+
                     onSuccess()
                 } else {
-                    onError("Reddetme başarısız: ${response.code()}")
+                    onError("Teklif durumu güncellenemedi: ${response.code()}")
                 }
             } catch (e: Exception) {
                 onError("Hata oluştu: ${e.localizedMessage}")
             }
         }
     }
+
 
 
 
