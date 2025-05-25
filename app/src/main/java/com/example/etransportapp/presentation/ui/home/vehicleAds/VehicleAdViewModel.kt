@@ -8,11 +8,16 @@ import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.ad.VehicleAdCreateRequest
 import com.example.etransportapp.data.model.ad.VehicleAdGetResponse
 import com.example.etransportapp.data.model.ad.VehicleAdUpdateRequest
+import com.example.etransportapp.data.model.offer.VehicleOfferRequest
+import com.example.etransportapp.data.model.offer.VehicleOfferResponse
+import com.example.etransportapp.util.PreferenceHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class VehicleAdViewModel : ViewModel() {
 
@@ -22,6 +27,10 @@ class VehicleAdViewModel : ViewModel() {
     var selectedAd: VehicleAdGetResponse? = null
     var selectedSort by mutableStateOf("Tümü")
     var selectedFilter by mutableStateOf("Tümü")
+
+    var offerSentMap = mutableStateMapOf<Int, Boolean>()
+
+    val sentVehicleOffers = mutableStateOf<List<VehicleOfferResponse>>(emptyList())
 
     val sortedLoadAds = derivedStateOf {
         when (selectedSort) {
@@ -54,6 +63,7 @@ class VehicleAdViewModel : ViewModel() {
             }
         }
     }
+
 
     fun createVehicleAd(
         context: Context,
@@ -124,6 +134,39 @@ class VehicleAdViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 Toast.makeText(context, "Hata: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    fun createVehicleOffer(
+        request: VehicleOfferRequest,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.vehicleOfferApi.createVehicleOffer(request)
+                if (response.isSuccessful) {
+                    offerSentMap[request.vehicleAdId] = true
+                    onSuccess()
+                } else {
+                    onError("Teklif gönderilemedi: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("Hata oluştu: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun fetchSentVehicleOffers(userId: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.vehicleOfferApi.getVehicleOffersBySenderId(userId)
+                if (response.isSuccessful) {
+                    sentVehicleOffers.value = response.body() ?: emptyList()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
             }
         }
     }
