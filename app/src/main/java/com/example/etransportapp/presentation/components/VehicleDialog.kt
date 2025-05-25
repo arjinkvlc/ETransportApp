@@ -16,8 +16,11 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.etransportapp.data.model.vehicle.VehicleRequest
+import com.example.etransportapp.presentation.viewModels.VehicleViewModel
 import com.example.etransportapp.ui.theme.RoseRed
+import com.example.etransportapp.util.VehicleTypeMapUtil
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun VehicleDialog(
     initialVehicle: VehicleRequest? = null,
@@ -29,6 +32,7 @@ fun VehicleDialog(
     var capacity by remember { mutableStateOf(initialVehicle?.capacity?.toString().orEmpty()) }
     var plate by remember { mutableStateOf(initialVehicle?.licensePlate.orEmpty()) }
     var model by remember { mutableStateOf(initialVehicle?.model.orEmpty()) }
+    var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -61,7 +65,7 @@ fun VehicleDialog(
                                 capacity = capacity.toIntOrNull() ?: 0,
                                 licensePlate = plate,
                                 model = model,
-                                carrierId = initialVehicle?.carrierId.orEmpty() // boş geçilebilir, ViewModel'de override ediliyor
+                                carrierId = initialVehicle?.carrierId.orEmpty()
                             )
                             onSave(request)
                         }
@@ -89,10 +93,34 @@ fun VehicleDialog(
                     value = title,
                     onValueChange = { title = it },
                     label = { Text("Başlık") })
-                OutlinedTextField(
-                    value = type,
-                    onValueChange = { type = it },
-                    label = { Text("Tür") })
+
+                ExposedDropdownMenuBox(
+                    expanded = isCargoTypeMenuExpanded,
+                    onExpandedChange = { isCargoTypeMenuExpanded = !isCargoTypeMenuExpanded }
+                ) {
+                    OutlinedTextField(
+                        value = type,
+                        onValueChange = {},
+                        readOnly = true,
+                        label = { Text("Yük Tipi") },
+                        trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCargoTypeMenuExpanded) },
+                        modifier = Modifier.menuAnchor().fillMaxWidth()
+                    )
+                    ExposedDropdownMenu(
+                        expanded = isCargoTypeMenuExpanded,
+                        onDismissRequest = { isCargoTypeMenuExpanded = false }
+                    ) {
+                        VehicleTypeMapUtil.vehicleTypeLabels.forEach { label ->
+                            DropdownMenuItem(
+                                text = { Text(label) },
+                                onClick = {
+                                    type = label
+                                    isCargoTypeMenuExpanded = false
+                                }
+                            )
+                        }
+                    }
+                }
                 OutlinedTextField(
                     value = capacity,
                     onValueChange = { capacity = it },
