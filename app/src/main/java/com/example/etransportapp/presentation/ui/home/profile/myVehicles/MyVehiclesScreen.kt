@@ -158,6 +158,7 @@ fun MyVehiclesScreen(
         if (showDialog) {
             val initialRequest = vehicleToEdit?.let {
                 VehicleRequest(
+                    id = it.id,
                     title = it.title,
                     vehicleType = it.vehicleType,
                     capacity = it.capacity,
