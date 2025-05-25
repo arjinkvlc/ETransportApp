@@ -82,13 +82,7 @@ fun VehicleAdDetailScreen(
     LaunchedEffect(selectedVehicle) {
         selectedVehicle?.let { vehicle ->
             capacity = vehicle.capacity.toString()
-            selectedCargoType = when (vehicle.vehicleType.lowercase()) {
-                "frigo", "frigofirik" -> "Frigofirik"
-                "açık kasa" -> "Açık Kasa"
-                "tenteli" -> "Tenteli"
-                "tanker" -> "Tanker"
-                else -> "Diğer"
-            }
+            selectedCargoType = vehicle.vehicleType
         }
     }
 
