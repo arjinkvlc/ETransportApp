@@ -5,14 +5,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.etransportapp.data.model.ad.CargoAdResponse
 import com.example.etransportapp.data.model.ad.LoadAd
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
 
 class LoadAdViewModel : ViewModel() {
-    private val _loadAds = MutableStateFlow<List<LoadAd>>(emptyList())
-    val loadAds: StateFlow<List<LoadAd>> = _loadAds
-    var selectedAd: LoadAd? = null
+    private val _loadAds = MutableStateFlow<List<CargoAdResponse>>(emptyList())
+    val loadAds: StateFlow<List<CargoAdResponse>> = _loadAds
+    var selectedAd: CargoAdResponse? = null
+    var selectedAd2: LoadAd? = null
 
     private val _myLoadAds = MutableStateFlow<List<LoadAd>>(emptyList())
     val myLoadAds: StateFlow<List<LoadAd>> = _myLoadAds
@@ -20,7 +24,7 @@ class LoadAdViewModel : ViewModel() {
 
     var selectedSort by mutableStateOf("Tümü")
     var selectedFilter by mutableStateOf("Tümü")
-
+/*
     val sortedLoadAds = derivedStateOf {
         when (selectedSort) {
             "En Yeni" -> loadAds.value.sortedBy {it.date }
@@ -28,7 +32,7 @@ class LoadAdViewModel : ViewModel() {
             "Pahalıdan Ucuza" -> loadAds.value.sortedByDescending { it.price }
             else -> loadAds.value
         }
-    }
+    }*/
 
     val filteredLoadAds = derivedStateOf {
         when (selectedFilter) {
@@ -38,6 +42,23 @@ class LoadAdViewModel : ViewModel() {
         }
     }
 
+    fun fetchAllCargoAds() {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.cargoAdApi.getAllCargoAds()
+                if (response.isSuccessful) {
+                    _loadAds.value = response.body() ?: emptyList()
+                    println("Yüklenen kargo ilanları: ${_loadAds.value}")
+                } else {
+                    println("Kargo ilanları çekilemedi: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                println("Hata oluştu: ${e.message}")
+            }
+        }
+    }
+
+    /*
     fun addLoadAd(ad: LoadAd) {
         _loadAds.value = _loadAds.value + ad
         if (ad.userId == "username") {
@@ -54,5 +75,5 @@ class LoadAdViewModel : ViewModel() {
         _loadAds.value = _loadAds.value.map { if (it == selectedAd) updatedAd else it }
         _myLoadAds.value = _myLoadAds.value.map { if (it == selectedAd) updatedAd else it }
         selectedAd = updatedAd
-    }
+    }*/
 }
