@@ -33,6 +33,7 @@ import java.text.SimpleDateFormat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.etransportapp.data.model.ad.VehicleAdCreateRequest
 import com.example.etransportapp.util.PreferenceHelper
+import com.example.etransportapp.util.VehicleTypeMapUtil
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,8 +71,7 @@ fun CreateVehicleAdScreen(
     val focusManager = LocalFocusManager.current
     var showVehiclePicker by remember { mutableStateOf(false) }
 
-    val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
-    var selectedCargoType by remember { mutableStateOf("Açık Kasa") }
+    var selectedCargoType by remember { mutableStateOf(VehicleTypeMapUtil.vehicleTypeLabels.first()) }
     var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
 
     var selectedCity by remember { mutableStateOf("") }
@@ -263,11 +263,11 @@ fun CreateVehicleAdScreen(
                     expanded = isCargoTypeMenuExpanded,
                     onDismissRequest = { isCargoTypeMenuExpanded = false }
                 ) {
-                    cargoTypes.forEach { type ->
+                    VehicleTypeMapUtil.vehicleTypeLabels.forEach { label ->
                         DropdownMenuItem(
-                            text = { Text(type) },
+                            text = { Text(label) },
                             onClick = {
-                                selectedCargoType = type
+                                selectedCargoType = label
                                 isCargoTypeMenuExpanded = false
                             }
                         )
