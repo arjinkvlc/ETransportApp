@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.ad.CargoAdResponse
 import com.example.etransportapp.data.model.ad.LoadAd
+import com.example.etransportapp.data.model.auth.UserProfileResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -57,6 +58,25 @@ class LoadAdViewModel : ViewModel() {
             }
         }
     }
+
+    var adOwnerInfo = mutableStateOf<UserProfileResponse?>(null)
+        private set
+
+    fun fetchAdOwnerInfo(userId: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.userApi.getUserProfile(userId)
+                if (response.isSuccessful) {
+                    adOwnerInfo.value = response.body()
+                } else {
+                    println("Kullanıcı bilgisi alınamadı: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                println("Hata oluştu: ${e.message}")
+            }
+        }
+    }
+
 
     /*
     fun addLoadAd(ad: LoadAd) {

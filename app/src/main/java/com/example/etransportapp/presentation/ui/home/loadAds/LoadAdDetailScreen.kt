@@ -48,6 +48,14 @@ fun LoadAdDetailScreen(
     onDeleteClick: (() -> Unit)? = null,
     onUpdateClick: ((LoadAd) -> Unit)? = null
 ) {
+
+    val viewModel: LoadAdViewModel = viewModel()
+    LaunchedEffect(loadAd.userId) {
+        viewModel.fetchAdOwnerInfo(loadAd.userId)
+    }
+    val adOwner = viewModel.adOwnerInfo.value
+
+
     var isEditing by remember { mutableStateOf(false) }
 
     var title by remember { mutableStateOf(loadAd.title) }
@@ -370,9 +378,9 @@ fun LoadAdDetailScreen(
                     1 -> {
                         //TODO: Will update this section with real data
                         AdOwnerInfoSection(
-                            name = "Mehmet Yılmaz",
-                            email = "mehmet@example.com",
-                            phone = "+90 555 123 45 67"
+                            name = "${adOwner?.name ?: "Bilinmiyor"} ${adOwner?.surname ?: ""}",
+                            email = adOwner?.email ?: "E-posta yok",
+                            phone = adOwner?.phoneNumber ?: "Telefon yok"
                         )
                     }
                 }
