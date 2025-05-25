@@ -29,6 +29,7 @@ import com.example.etransportapp.ui.theme.DarkGray
 import java.text.SimpleDateFormat
 import java.util.*
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.etransportapp.data.model.ad.CargoAdResponse
 import com.example.etransportapp.presentation.components.AdDetailTabRow
 import com.example.etransportapp.presentation.components.AdOwnerInfoSection
 import com.example.etransportapp.presentation.components.CountryCitySelector
@@ -41,7 +42,7 @@ import com.example.etransportapp.util.Constants
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LoadAdDetailScreen(
-    loadAd: LoadAd,
+    loadAd: CargoAdResponse,
     navController: NavHostController,
     isMyAd: Boolean = loadAd.userId == "username",
     onDeleteClick: (() -> Unit)? = null,
@@ -51,11 +52,11 @@ fun LoadAdDetailScreen(
 
     var title by remember { mutableStateOf(loadAd.title) }
     var description by remember { mutableStateOf(loadAd.description) }
-    var origin by remember { mutableStateOf(loadAd.origin) }
-    var destination by remember { mutableStateOf(loadAd.destination) }
-    var price by remember { mutableStateOf(loadAd.price) }
-    var date by remember { mutableStateOf(loadAd.date) }
-    var weight by remember { mutableStateOf(loadAd.weight) }
+    var origin by remember { mutableStateOf("${loadAd.pickCity}, ${loadAd.pickCountry}") }
+    var destination by remember { mutableStateOf("${loadAd.dropCity}, ${loadAd.dropCountry}") }
+    var price by remember { mutableStateOf(loadAd.price.toString()) }
+    var date by remember { mutableStateOf(loadAd.createdDate.substring(0, 10)) }
+    var weight by remember { mutableStateOf(loadAd.weight.toString()) }
     var currency by remember { mutableStateOf(loadAd.currency) }
     val currencies = listOf("TRY", "USD", "EUR")
     var isCurrencyMenuExpanded by remember { mutableStateOf(false) }
@@ -94,6 +95,7 @@ fun LoadAdDetailScreen(
                                 if (weight.contains(",")) {
                                     weight = weight.replace(",", ".")
                                 }
+                                /*
                                 onUpdateClick?.invoke(
                                     loadAd.copy(
                                         title = title,
@@ -106,7 +108,7 @@ fun LoadAdDetailScreen(
                                         date = date,
                                         weight = weight
                                     )
-                                )
+                                )*/
                                 isEditing = false
                             }) {
                                 Icon(
