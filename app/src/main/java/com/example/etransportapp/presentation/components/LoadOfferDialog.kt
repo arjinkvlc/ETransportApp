@@ -32,10 +32,12 @@ import com.example.etransportapp.ui.theme.RoseRed
 fun LoadOfferDialog(
     currency: String,
     offerPrice: String,
+    onMessageChange: (String) -> Unit,
     onPriceChange: (String) -> Unit,
     onDismiss: () -> Unit,
-    onConfirm: () -> Unit
-) {
+    onConfirm: () -> Unit,
+    message: String,
+    ) {
     AlertDialog(
         onDismissRequest = onDismiss,
         containerColor = Color.White,
@@ -61,11 +63,12 @@ fun LoadOfferDialog(
                             color = RoseRed,
                             shape = RoundedCornerShape(8.dp)
                         )
-                        .padding(horizontal = 16.dp),
+                        .padding(end = 16.dp),
                 ) {
                     TextField(
                         value = offerPrice,
                         onValueChange = onPriceChange,
+                        label = { Text("Teklifiniz") },
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         modifier = Modifier.weight(1f),
                         singleLine = true,
@@ -74,7 +77,9 @@ fun LoadOfferDialog(
                             unfocusedIndicatorColor = Color.Transparent,
                             disabledIndicatorColor = Color.Transparent,
                             focusedContainerColor = Color.Transparent,
-                            unfocusedContainerColor = Color.Transparent
+                            unfocusedContainerColor = Color.Transparent,
+                            focusedLabelColor = RoseRed,
+                            unfocusedLabelColor = Color.Gray
                         )
                     )
                     Text(
@@ -83,6 +88,32 @@ fun LoadOfferDialog(
                         modifier = Modifier.padding(start = 8.dp)
                     )
                 }
+                TextField(
+                    value = message,
+                    onValueChange = { onMessageChange(it) },
+                    label = { Text("Mesajınız") },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(120.dp)
+                        .border(
+                            width = 1.dp,
+                            color = RoseRed,
+                            shape = RoundedCornerShape(8.dp)
+                        ),
+                    singleLine = false,
+                    maxLines = 4,
+                    colors = TextFieldDefaults.colors(
+                        focusedContainerColor = Color.White,
+                        unfocusedContainerColor = Color.White,
+                        disabledContainerColor = Color.White,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        focusedLabelColor = RoseRed,
+                        unfocusedLabelColor = Color.Gray
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                )
             }
         },
         confirmButton = {

@@ -1,28 +1,21 @@
 package com.example.etransportapp.presentation.ui.home.loadAds
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import android.content.Intent
+import android.net.Uri
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.ui.theme.DarkGray
+import com.example.etransportapp.ui.theme.RoseRed
+import java.text.SimpleDateFormat
+import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -30,17 +23,16 @@ fun LoadAdOffersScreen(
     loadAdId: String,
     navController: NavHostController
 ) {
-    // TODO: ViewModel'den teklifleri çek
     val offers = listOf(
-        "Kullanıcı A - 8000 TL",
-        "Kullanıcı B - 7500 TL",
-        "Kullanıcı C - 7900 TL"
+        Triple("Mert Yıldız", "+90 545 123 45 67", "8000 TL"),
+        Triple("Elif Deniz", "+90 544 654 32 10", "7500 TL"),
+        Triple("Ahmet Kara", "+90 532 987 65 43", "7900 TL")
     )
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Gelen Teklifler", color = Color.White) },
+                title = { Text("Gelen Yük Teklifleri", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri", tint = Color.White)
@@ -57,17 +49,66 @@ fun LoadAdOffersScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            offers.forEach { offer ->
+            offers.forEach { (name, phone, price) ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
-                    Text(
-                        text = offer,
-                        modifier = Modifier.padding(16.dp),
-                        style = MaterialTheme.typography.bodyLarge
-                    )
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Row {
+                            Text(text = name, style = MaterialTheme.typography.titleMedium)
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date()),// CreatedDate
+                                style = MaterialTheme.typography.titleSmall
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Telefon: $phone",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                        )
+
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = "Teklif: $price",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "Mesaj: Bu yük için en iyi fiyatı sunuyorum. Lütfen benimle iletişime geçin.",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            OutlinedButton(
+                                onClick = {
+                                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
+                                    navController.context.startActivity(intent)
+                                },
+                                modifier = Modifier.width(140.dp)
+                            ) {
+                                Text("İletişime Geç", color = RoseRed)
+                            }
+
+                            Spacer(modifier = Modifier.weight(1f))
+
+                            Button(
+                                onClick = { /* Reddet */ },
+                                colors = ButtonDefaults.buttonColors(containerColor = RoseRed),
+                                modifier = Modifier.width(140.dp)
+                            ) {
+                                Text("Reddet", color = Color.White)
+                            }
+                        }
+                    }
                 }
             }
         }

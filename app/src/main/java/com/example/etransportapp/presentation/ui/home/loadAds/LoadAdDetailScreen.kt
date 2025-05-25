@@ -63,6 +63,8 @@ fun LoadAdDetailScreen(
     var selectedCargoType by remember { mutableStateOf("Açık Kasa") }
     val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
     var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
+    var offerMessage by remember { mutableStateOf("") }
+
 
 
     val openDatePicker = remember { mutableStateOf(false) }
@@ -377,7 +379,7 @@ fun LoadAdDetailScreen(
 
                 Spacer(Modifier.weight(1f))
 
-                if (isMyAd) {
+                if (!isMyAd) {
                     Button(
                         onClick = {
                             navController.navigate("loadAdOffers/${loadAd.id}")
@@ -409,17 +411,21 @@ fun LoadAdDetailScreen(
             }
             if (showOfferDialog) {
                 LoadOfferDialog(
+                    message = offerMessage,
                     currency = currency,
                     offerPrice = offerPrice,
+                    onMessageChange = { offerMessage = it },
                     onPriceChange = { offerPrice = it },
                     onDismiss = {
                         showOfferDialog = false
                         offerPrice = ""
+                        offerMessage = ""
                     },
                     onConfirm = {
                         // TODO: Teklif gönderme işlemi
                         showOfferDialog = false
                         offerPrice = ""
+                        offerMessage = ""
                     }
                 )
             }
