@@ -1,5 +1,6 @@
 package com.example.etransportapp.presentation.ui.home.loadAds
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
@@ -30,6 +32,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.etransportapp.data.model.ad.CargoAdResponse
+import com.example.etransportapp.data.model.ad.CargoAdUpdateRequest
 import com.example.etransportapp.presentation.components.AdDetailTabRow
 import com.example.etransportapp.presentation.components.AdOwnerInfoSection
 import com.example.etransportapp.presentation.components.CountryCitySelector
@@ -46,8 +49,10 @@ fun LoadAdDetailScreen(
     navController: NavHostController,
     isMyAd: Boolean = loadAd.userId == "username",
     onDeleteClick: (() -> Unit)? = null,
-    onUpdateClick: ((LoadAd) -> Unit)? = null
-) {
+    onUpdateClick: ((CargoAdUpdateRequest) -> Unit)? = null,
+    ) {
+
+    val context = LocalContext.current
 
     val viewModel: LoadAdViewModel = viewModel()
     LaunchedEffect(loadAd.userId) {
@@ -103,20 +108,24 @@ fun LoadAdDetailScreen(
                                 if (weight.contains(",")) {
                                     weight = weight.replace(",", ".")
                                 }
-                                /*
+
                                 onUpdateClick?.invoke(
-                                    loadAd.copy(
+                                    CargoAdUpdateRequest(
+                                        id = loadAd.id,
                                         title = title,
                                         description = description,
-                                        origin = origin,
-                                        destination = destination,
+                                        weight = weight.toIntOrNull() ?: 0,
                                         cargoType = selectedCargoType,
-                                        price = price,
-                                        currency = currency,
-                                        date = date,
-                                        weight = weight
+                                        price = price.toIntOrNull() ?: 0,
+                                        isExpired = false,
+                                        dropCountry = loadAd.dropCountry,
+                                        dropCity = loadAd.dropCity,
+                                        pickCountry = loadAd.pickCountry,
+                                        pickCity = loadAd.pickCity,
+                                        currency = currency
                                     )
-                                )*/
+                                )
+
                                 isEditing = false
                             }) {
                                 Icon(
@@ -125,6 +134,7 @@ fun LoadAdDetailScreen(
                                     tint = Color.White
                                 )
                             }
+
                         } else {
                             IconButton(onClick = { isEditing = true }) {
                                 Icon(

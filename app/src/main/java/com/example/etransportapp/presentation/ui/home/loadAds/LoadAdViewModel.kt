@@ -7,6 +7,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.ad.CargoAdResponse
+import com.example.etransportapp.data.model.ad.CargoAdUpdateRequest
 import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.data.model.auth.UserProfileResponse
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -73,6 +74,37 @@ class LoadAdViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 println("Hata oluştu: ${e.message}")
+            }
+        }
+    }
+
+    fun updateCargoAd(ad: CargoAdUpdateRequest, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.cargoAdApi.updateCargoAd(ad.id, ad)
+                if (response.isSuccessful) {
+                    onSuccess()
+                } else {
+                    onError("Güncelleme başarısız: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("Sunucu hatası: ${e.message}")
+            }
+        }
+    }
+
+    fun deleteCargoAd(id: Int, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.cargoAdApi.deleteCargoAd(id)
+                if (response.isSuccessful) {
+                    fetchAllCargoAds()
+                    onSuccess()
+                } else {
+                    onError("Silme başarısız: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("Hata oluştu: ${e.localizedMessage}")
             }
         }
     }

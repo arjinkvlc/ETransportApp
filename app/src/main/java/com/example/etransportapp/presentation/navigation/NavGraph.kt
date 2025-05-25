@@ -1,6 +1,8 @@
 package com.example.etransportapp.presentation.navigation
 
 import android.content.Context
+import android.content.SharedPreferences
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -103,13 +105,28 @@ fun NavGraph(
                 LoadAdDetailScreen(
                     loadAd = it,
                     navController = navController,
+                    isMyAd = it.userId == PreferenceHelper.getUserId(context),
+
                     onDeleteClick = {
-                        loadAdViewModel.deleteAd(it)
-                        navController.popBackStack()
+                        loadAdViewModel.deleteCargoAd(
+                            id = selectedAd.id,
+                            onSuccess = { navController.popBackStack() },
+                            onError = { errorMsg ->
+                                Toast.makeText(context, errorMsg, Toast.LENGTH_SHORT).show()
+                            }
+                        )
+                        //navController.popBackStack()
                     },
                     onUpdateClick = { updatedAd ->
-                        loadAdViewModel.updateAd(updatedAd)
+                        loadAdViewModel.updateCargoAd(
+                            ad = updatedAd,
+                            onSuccess = {
+                            },
+                            onError = {
+                            }
+                        )
                     }
+
                 )
             }
         }
