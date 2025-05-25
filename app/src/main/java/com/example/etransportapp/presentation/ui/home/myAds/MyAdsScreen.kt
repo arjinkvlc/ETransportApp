@@ -4,10 +4,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.data.model.ad.VehicleAdGetResponse
@@ -41,12 +44,20 @@ fun MyAdsScreen(
             selectedTabIndex = selectedTabIndex,
             containerColor = DarkGray,
             contentColor = Color.White,
+            indicator = { tabPositions ->
+                TabRowDefaults.SecondaryIndicator(
+                    modifier = Modifier
+                        .tabIndicatorOffset(tabPositions[selectedTabIndex])
+                        .height(3.dp),
+                    color = RoseRed
+                )
+            },
         ) {
             tabTitles.forEachIndexed { index, title ->
                 Tab(
                     selected = selectedTabIndex == index,
                     onClick = { selectedTabIndex = index },
-                    text = { Text(title) },
+                    text = { Text(text = title, fontSize =if (selectedTabIndex == index) 16.sp else 12.sp, fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Medium) },
                 )
             }
         }
