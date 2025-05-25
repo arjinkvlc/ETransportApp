@@ -9,7 +9,7 @@ import retrofit2.http.*
 interface CargoOfferApi {
 
     @POST("api/CargoOffer")
-    suspend fun createOffer(@Body request: CargoOfferRequest): Response<CargoOfferResponse>
+    suspend fun createCargoOffer(@Body request: CargoOfferRequest): Response<CargoOfferResponse>
 
     @GET("api/CargoOffer")
     suspend fun getAllOffers(): Response<List<CargoOfferResponse>>
@@ -18,7 +18,7 @@ interface CargoOfferApi {
     suspend fun updateOfferStatus(
         @Path("id") offerId: Int,
         @Body request: CargoOfferStatusUpdateRequest
-    ): Response<Void>
+    ): Response<Unit>
 
     @GET("api/CargoOffer/{id}")
     suspend fun getOfferById(@Path("id") offerId: Int): Response<CargoOfferResponse>

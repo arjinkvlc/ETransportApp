@@ -30,6 +30,7 @@ import java.util.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.etransportapp.data.model.ad.CargoAdResponse
 import com.example.etransportapp.data.model.ad.CargoAdUpdateRequest
+import com.example.etransportapp.data.model.offer.CargoOfferRequest
 import com.example.etransportapp.presentation.components.AdDetailTabRow
 import com.example.etransportapp.presentation.components.AdOwnerInfoSection
 import com.example.etransportapp.presentation.components.CountryCitySelector
@@ -37,6 +38,7 @@ import com.example.etransportapp.presentation.components.LoadAdDetailSection
 import com.example.etransportapp.presentation.components.LoadOfferDialog
 import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
+import com.example.etransportapp.util.PreferenceHelper
 import com.example.etransportapp.util.VehicleTypeMapUtil
 
 
@@ -57,6 +59,16 @@ fun LoadAdDetailScreen(
         viewModel.fetchAdOwnerInfo(loadAd.userId)
     }
     val adOwner = viewModel.adOwnerInfo.value
+
+    val userId = PreferenceHelper.getUserId(context) ?: ""
+    LaunchedEffect(userId) {
+        viewModel.fetchSentOffers(userId)
+    }
+    val sentOffers = viewModel.sentOffers.value
+    val existingOffer = sentOffers.find { it.cargoAdId == loadAd.id && it.status == "Pending" }
+
+    val isOfferButtonEnabled = existingOffer == null
+    val offerButtonText = if (isOfferButtonEnabled) "Teklif Ver" else "Teklif Beklemede"
 
 
     var isEditing by remember { mutableStateOf(false) }
@@ -384,9 +396,8 @@ fun LoadAdDetailScreen(
                     }
 
                     1 -> {
-                        //TODO: Will update this section with real data
                         AdOwnerInfoSection(
-                            name = "${adOwner?.name ?: "Bilinmiyor"} ${adOwner?.surname ?: ""}",
+                            name = "${adOwner?.name ?: ""} ${adOwner?.surname ?: ""}",
                             email = adOwner?.email ?: "E-posta yok",
                             phone = adOwner?.phoneNumber ?: "Telefon yok"
                         )
@@ -416,13 +427,16 @@ fun LoadAdDetailScreen(
                         modifier = Modifier
                             .fillMaxWidth()
                             .padding(horizontal = 8.dp),
+                        enabled = isOfferButtonEnabled,
                         colors = ButtonDefaults.buttonColors(
                             containerColor = RoseRed,
-                            contentColor = Color.White
+                            contentColor = Color.White,
+                            disabledContainerColor = Color.Gray
                         )
                     ) {
-                        Text("Teklif Ver")
+                        Text(offerButtonText)
                     }
+
                 }
             }
             if (showOfferDialog) {
@@ -438,11 +452,40 @@ fun LoadAdDetailScreen(
                         offerMessage = ""
                     },
                     onConfirm = {
-                        // TODO: Teklif gönderme işlemi
-                        showOfferDialog = false
-                        offerPrice = ""
-                        offerMessage = ""
+                        val userId = PreferenceHelper.getUserId(context)
+                        if (userId == null) {
+                            Toast.makeText(context, "Kullanıcı kimliği bulunamadı", Toast.LENGTH_SHORT).show()
+                            return@LoadOfferDialog
+                        }
+
+                        val expiry = Calendar.getInstance().apply {
+                            add(Calendar.DAY_OF_YEAR, 2)
+                        }.time
+                        val formattedExpiry = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault()).format(expiry)
+
+                        val request = CargoOfferRequest(
+                            senderId = userId,
+                            receiverId = loadAd.userId,
+                            cargoAdId = loadAd.id,
+                            price = offerPrice.toIntOrNull() ?: 0,
+                            message = offerMessage,
+                            expiryDate = formattedExpiry
+                        )
+
+                        viewModel.createCargoOffer(
+                            request = request,
+                            onSuccess = {
+                                showOfferDialog = false
+                                offerPrice = ""
+                                offerMessage = ""
+                                Toast.makeText(context, "Teklif gönderildi", Toast.LENGTH_SHORT).show()
+                            },
+                            onError = {
+                                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+                            }
+                        )
                     }
+
                 )
             }
 

@@ -7,10 +7,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.ui.theme.RoseRed
@@ -23,11 +25,20 @@ fun LoadAdOffersScreen(
     loadAdId: String,
     navController: NavHostController
 ) {
-    val offers = listOf(
+
+    val viewModel: LoadAdViewModel = viewModel()
+    val offers = viewModel.cargoAdOffers
+    val senderInfoMap = viewModel.senderInfoMap
+
+    LaunchedEffect(loadAdId) {
+        viewModel.fetchOffersByCargoAdId(loadAdId.toInt())
+    }
+
+    /*val offers = listOf(
         Triple("Mert Yıldız", "+90 545 123 45 67", "8000 TL"),
         Triple("Elif Deniz", "+90 544 654 32 10", "7500 TL"),
         Triple("Ahmet Kara", "+90 532 987 65 43", "7900 TL")
-    )
+    )*/
 
     Scaffold(
         topBar = {
@@ -49,18 +60,26 @@ fun LoadAdOffersScreen(
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            offers.forEach { (name, phone, price) ->
+            offers.value.forEach { offer ->
+                LaunchedEffect(offer.senderId) {
+                    viewModel.fetchUserInfo(offer.senderId)
+                }
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
+                    val sender = senderInfoMap[offer.senderId]
+
                     Column(modifier = Modifier.padding(16.dp)) {
                         Row {
-                            Text(text = name, style = MaterialTheme.typography.titleMedium)
+                            Text(
+                                text = "${sender?.name.orEmpty()} ${sender?.surname.orEmpty()}",
+                                style = MaterialTheme.typography.titleMedium
+                            )
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
-                                text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date()),// CreatedDate
+                                text = offer.createdDate.substring(0, 10),
                                 style = MaterialTheme.typography.titleSmall
                             )
                         }
@@ -68,13 +87,13 @@ fun LoadAdOffersScreen(
                         Spacer(modifier = Modifier.height(4.dp))
                         Row {
                             Text(
-                                text = "Telefon: $phone",
+                                text = "Telefon: ${sender?.phoneNumber ?: "Bilinmiyor"}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.Gray
                             )
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
-                                "Mail: deneme@gmail.com",
+                                text = "Mail: ${sender?.email ?: "Bilinmiyor"}",
                                 style = MaterialTheme.typography.bodySmall,
                                 color = Color.Gray
                             )
@@ -82,25 +101,35 @@ fun LoadAdOffersScreen(
 
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "Teklif: $price",
+                            text = "Teklif: ${offer.price} ${"USD"}",
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold
                         )
 
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
-                            text = "Mesaj: Bu yük için en iyi fiyatı sunuyorum. Lütfen benimle iletişime geçin.",
+                            text = "Mesaj: ${offer.message}",
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold
                         )
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "Durum: ${offer.status}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                        )
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             OutlinedButton(
                                 onClick = {
-                                    val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
-                                    navController.context.startActivity(intent)
+                                    val phone = sender?.phoneNumber
+                                    if (!phone.isNullOrBlank()) {
+                                        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
+                                        navController.context.startActivity(intent)
+                                    }
                                 },
+                                enabled = sender?.phoneNumber != null,
                                 modifier = Modifier.width(140.dp)
                             ) {
                                 Text("İletişime Geç", color = RoseRed)
@@ -108,17 +137,35 @@ fun LoadAdOffersScreen(
 
                             Spacer(modifier = Modifier.weight(1f))
 
+                            val isCancelled = offer.status == "Cancelled"
+
                             Button(
-                                onClick = { /* Reddet */ },
-                                colors = ButtonDefaults.buttonColors(containerColor = RoseRed),
+                                onClick = {
+                                    viewModel.cancelOffer(
+                                        offerId = offer.id,
+                                        onSuccess = {
+                                            // UI otomatik güncellenecek çünkü offers StateFlow
+                                        },
+                                        onError = {
+                                            // Hata mesajı gösterilebilir
+                                        }
+                                    )
+                                },
+                                enabled = !isCancelled, // Cancel edilmişse pasif hale getir
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (isCancelled) Color.Gray else RoseRed
+                                ),
                                 modifier = Modifier.width(140.dp)
                             ) {
                                 Text("Reddet", color = Color.White)
                             }
+
                         }
                     }
                 }
+
             }
         }
     }
 }
+
