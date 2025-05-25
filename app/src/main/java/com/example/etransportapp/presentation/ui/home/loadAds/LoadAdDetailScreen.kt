@@ -399,7 +399,7 @@ fun LoadAdDetailScreen(
 
                 Spacer(Modifier.weight(1f))
 
-                if (!isMyAd) {
+                if (isMyAd) {
                     Button(
                         onClick = {
                             navController.navigate("loadAdOffers/${loadAd.id}")
