@@ -1,7 +1,9 @@
 package com.example.etransportapp.presentation.ui.home.loadAds
 
+import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
@@ -27,6 +29,10 @@ class LoadAdViewModel : ViewModel() {
     val myLoadAds: StateFlow<List<LoadAd>> = _myLoadAds
 
     val sentOffers = mutableStateOf<List<CargoOfferResponse>>(emptyList())
+
+    private val _cargoAdOffers = mutableStateOf<List<CargoOfferResponse>>(emptyList())
+    val cargoAdOffers: State<List<CargoOfferResponse>> = _cargoAdOffers
+    val senderInfoMap = mutableStateMapOf<String, UserProfileResponse>()
 
     var selectedSort by mutableStateOf("Tümü")
     var selectedFilter by mutableStateOf("Tümü")
@@ -165,25 +171,33 @@ class LoadAdViewModel : ViewModel() {
         }
     }
 
-
-
-
-    /*
-    fun addLoadAd(ad: LoadAd) {
-        _loadAds.value = _loadAds.value + ad
-        if (ad.userId == "username") {
-            _myLoadAds.value = _myLoadAds.value + ad
+    fun fetchOffersByCargoAdId(cargoAdId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.cargoOfferApi.getOffersByCargoAd(cargoAdId)
+                if (response.isSuccessful) {
+                    _cargoAdOffers.value = response.body() ?: emptyList()
+                } else {
+                    println("Teklifler alınamadı: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                println("Teklifleri çekerken hata oluştu: ${e.localizedMessage}")
+            }
         }
     }
 
-    fun deleteAd(ad: LoadAd) {
-        _loadAds.value = _loadAds.value.filterNot { it == ad }
-        _myLoadAds.value = _myLoadAds.value.filterNot { it == ad }
+    fun fetchUserInfo(userId: String) {
+        viewModelScope.launch {
+            if (senderInfoMap.contains(userId)) return@launch
+            try {
+                val response = RetrofitInstance.userApi.getUserProfile(userId)
+                if (response.isSuccessful) {
+                    response.body()?.let { senderInfoMap[userId] = it }
+                }
+            } catch (e: Exception) {
+                println("Kullanıcı bilgisi alınamadı: ${e.localizedMessage}")
+            }
+        }
     }
 
-    fun updateAd(updatedAd: LoadAd) {
-        _loadAds.value = _loadAds.value.map { if (it == selectedAd) updatedAd else it }
-        _myLoadAds.value = _myLoadAds.value.map { if (it == selectedAd) updatedAd else it }
-        selectedAd = updatedAd
-    }*/
 }
