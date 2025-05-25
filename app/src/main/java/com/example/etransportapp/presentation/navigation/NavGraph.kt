@@ -16,6 +16,7 @@ import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdOffersScreen
 import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdViewModel
 import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdsScreen
 import com.example.etransportapp.presentation.ui.home.myAds.MyAdsScreen
+import com.example.etransportapp.presentation.ui.home.notifications.NotificationScreen
 import com.example.etransportapp.presentation.ui.home.profile.ProfileScreen
 import com.example.etransportapp.presentation.ui.home.profile.myVehicles.MyVehiclesScreen
 import com.example.etransportapp.presentation.ui.home.vehicleAds.CreateVehicleAdScreen
@@ -168,6 +169,9 @@ fun NavGraph(
         }
         composable(NavRoutes.FORGOT_PASSWORD) {
             ForgotPasswordScreen(navController)
+        }
+        composable(NavRoutes.NOTIFICATIONS) {
+            NotificationScreen(navController)
         }
 
     }
