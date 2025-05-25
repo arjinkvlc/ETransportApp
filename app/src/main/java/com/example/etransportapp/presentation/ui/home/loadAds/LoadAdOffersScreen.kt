@@ -113,7 +113,13 @@ fun LoadAdOffersScreen(
                             fontWeight = FontWeight.SemiBold
                         )
 
-                        Spacer(modifier = Modifier.height(12.dp))
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = "Durum: ${offer.status}",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = Color.Gray
+                        )
                         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                             OutlinedButton(
                                 onClick = {
@@ -131,13 +137,29 @@ fun LoadAdOffersScreen(
 
                             Spacer(modifier = Modifier.weight(1f))
 
+                            val isCancelled = offer.status == "Cancelled"
+
                             Button(
-                                onClick = { /* Reddet */ },
-                                colors = ButtonDefaults.buttonColors(containerColor = RoseRed),
+                                onClick = {
+                                    viewModel.cancelOffer(
+                                        offerId = offer.id,
+                                        onSuccess = {
+                                            // UI otomatik güncellenecek çünkü offers StateFlow
+                                        },
+                                        onError = {
+                                            // Hata mesajı gösterilebilir
+                                        }
+                                    )
+                                },
+                                enabled = !isCancelled, // Cancel edilmişse pasif hale getir
+                                colors = ButtonDefaults.buttonColors(
+                                    containerColor = if (isCancelled) Color.Gray else RoseRed
+                                ),
                                 modifier = Modifier.width(140.dp)
                             ) {
                                 Text("Reddet", color = Color.White)
                             }
+
                         }
                     }
                 }

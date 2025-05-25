@@ -18,7 +18,7 @@ interface CargoOfferApi {
     suspend fun updateOfferStatus(
         @Path("id") offerId: Int,
         @Body request: CargoOfferStatusUpdateRequest
-    ): Response<Void>
+    ): Response<Unit>
 
     @GET("api/CargoOffer/{id}")
     suspend fun getOfferById(@Path("id") offerId: Int): Response<CargoOfferResponse>

@@ -15,6 +15,7 @@ import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.data.model.auth.UserProfileResponse
 import com.example.etransportapp.data.model.offer.CargoOfferRequest
 import com.example.etransportapp.data.model.offer.CargoOfferResponse
+import com.example.etransportapp.data.model.offer.CargoOfferStatusUpdateRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -199,5 +200,27 @@ class LoadAdViewModel : ViewModel() {
             }
         }
     }
+
+    fun cancelOffer(offerId: Int, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            try {
+                val request = CargoOfferStatusUpdateRequest(
+                    offerId = offerId,
+                    status = "Cancelled"
+                )
+                val response = RetrofitInstance.cargoOfferApi.updateOfferStatus(offerId, request)
+                if (response.isSuccessful) {
+                    fetchOffersByCargoAdId(offerId)
+                    onSuccess()
+                } else {
+                    onError("Reddetme başarısız: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("Hata oluştu: ${e.localizedMessage}")
+            }
+        }
+    }
+
+
 
 }
