@@ -36,6 +36,7 @@ import com.example.etransportapp.presentation.components.CountryCitySelector
 import com.example.etransportapp.presentation.components.VehicleAdDetailSection
 import com.example.etransportapp.presentation.components.VehicleOfferDialog
 import com.example.etransportapp.util.PreferenceHelper
+import com.example.etransportapp.util.VehicleTypeMapUtil
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -72,7 +73,6 @@ fun VehicleAdDetailScreen(
     var showVehiclePicker by remember { mutableStateOf(false) }
 
     val geoNamesViewModel: GeoNamesViewModel = viewModel()
-    val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
     val tabs = listOf("İlan Detayı", "İlan Sahibi")
     var selectedTabIndex by remember { mutableStateOf(0) }
 
@@ -82,13 +82,7 @@ fun VehicleAdDetailScreen(
     LaunchedEffect(selectedVehicle) {
         selectedVehicle?.let { vehicle ->
             capacity = vehicle.capacity.toString()
-            selectedCargoType = when (vehicle.vehicleType.lowercase()) {
-                "frigo", "frigofirik" -> "Frigofirik"
-                "açık kasa" -> "Açık Kasa"
-                "tenteli" -> "Tenteli"
-                "tanker" -> "Tanker"
-                else -> "Diğer"
-            }
+            selectedCargoType = vehicle.vehicleType
         }
     }
 
@@ -190,11 +184,11 @@ fun VehicleAdDetailScreen(
                         expanded = isCargoTypeMenuExpanded,
                         onDismissRequest = { isCargoTypeMenuExpanded = false }
                     ) {
-                        cargoTypes.forEach { type ->
+                        VehicleTypeMapUtil.vehicleTypeLabels.forEach { label ->
                             DropdownMenuItem(
-                                text = { Text(type) },
+                                text = { Text(label) },
                                 onClick = {
-                                    selectedCargoType = type
+                                    selectedCargoType = label
                                     isCargoTypeMenuExpanded = false
                                 }
                             )

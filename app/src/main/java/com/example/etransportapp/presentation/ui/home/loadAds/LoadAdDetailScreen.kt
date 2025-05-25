@@ -1,6 +1,5 @@
 package com.example.etransportapp.presentation.ui.home.loadAds
 
-import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -24,8 +23,6 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.etransportapp.data.model.ad.LoadAd
-import com.example.etransportapp.presentation.components.InfoText
 import com.example.etransportapp.presentation.viewModels.GeoNamesViewModel
 import com.example.etransportapp.ui.theme.DarkGray
 import java.text.SimpleDateFormat
@@ -40,6 +37,7 @@ import com.example.etransportapp.presentation.components.LoadAdDetailSection
 import com.example.etransportapp.presentation.components.LoadOfferDialog
 import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
+import com.example.etransportapp.util.VehicleTypeMapUtil
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -74,12 +72,9 @@ fun LoadAdDetailScreen(
     val currencies = listOf("TRY", "USD", "EUR")
     var isCurrencyMenuExpanded by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
-    var selectedCargoType by remember { mutableStateOf("Açık Kasa") }
-    val cargoTypes = listOf("Açık Kasa", "Tenteli", "Frigofirik", "Tanker", "Diğer")
+    var selectedCargoType by remember { mutableStateOf(loadAd.cargoType) ?: mutableStateOf("Açık Kasa") }
     var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
     var offerMessage by remember { mutableStateOf("") }
-
-
 
     val openDatePicker = remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
@@ -252,11 +247,11 @@ fun LoadAdDetailScreen(
                         expanded = isCargoTypeMenuExpanded,
                         onDismissRequest = { isCargoTypeMenuExpanded = false }
                     ) {
-                        cargoTypes.forEach { type ->
+                        VehicleTypeMapUtil.vehicleTypeLabels.forEach { label ->
                             DropdownMenuItem(
-                                text = { Text(type) },
+                                text = { Text(label) },
                                 onClick = {
-                                    selectedCargoType = type
+                                    selectedCargoType = label
                                     isCargoTypeMenuExpanded = false
                                 }
                             )
@@ -380,6 +375,7 @@ fun LoadAdDetailScreen(
                             description = description,
                             origin = origin,
                             destination = destination,
+                            type = selectedCargoType,
                             weight = weight,
                             price = price,
                             currency = currency,
