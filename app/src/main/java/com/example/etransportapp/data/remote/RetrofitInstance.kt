@@ -7,6 +7,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import android.content.Context
 import com.example.etransportapp.data.remote.api.CargoAdApi
+import com.example.etransportapp.data.remote.api.CargoOfferApi
 import com.example.etransportapp.data.remote.api.UserApi
 import com.example.etransportapp.data.remote.api.VehicleAdApi
 import com.example.etransportapp.data.remote.api.VehicleApi
@@ -70,5 +71,6 @@ object RetrofitInstance {
     val vehicleApi: VehicleApi by lazy { retrofit.create(VehicleApi::class.java) }
     val vehicleAdApi: VehicleAdApi by lazy { retrofit.create(VehicleAdApi::class.java) }
     val cargoAdApi: CargoAdApi by lazy { retrofit.create(CargoAdApi::class.java) }
-
+    val cargoOfferApi: CargoOfferApi by lazy { retrofit.create(CargoOfferApi::class.java) }
+    
 }
