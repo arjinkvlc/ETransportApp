@@ -33,6 +33,7 @@ fun VehicleDialog(
     var plate by remember { mutableStateOf(initialVehicle?.licensePlate.orEmpty()) }
     var model by remember { mutableStateOf(initialVehicle?.model.orEmpty()) }
     var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
+    val id = initialVehicle?.id ?: 0
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -60,6 +61,7 @@ fun VehicleDialog(
                     onClick = {
                         if (title.isNotBlank() && type.isNotBlank() && capacity.isNotBlank() && plate.isNotBlank() && model.isNotBlank()) {
                             val request = VehicleRequest(
+                                id = id,
                                 title = title,
                                 vehicleType = type,
                                 capacity = capacity.toIntOrNull() ?: 0,
