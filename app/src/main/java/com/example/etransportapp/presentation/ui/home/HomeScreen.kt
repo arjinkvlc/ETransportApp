@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -63,6 +64,17 @@ fun HomeScreen(navController: NavHostController) {
                                 fontSize = 24.sp
                             )
                         )
+                    },
+                    actions = {
+                        IconButton(onClick = {
+                            navController.navigate("notifications")
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = "Bildirimler",
+                                tint = Color.White
+                            )
+                        }
                     },
                     colors = TopAppBarDefaults.mediumTopAppBarColors(
                         containerColor = DarkGray,
