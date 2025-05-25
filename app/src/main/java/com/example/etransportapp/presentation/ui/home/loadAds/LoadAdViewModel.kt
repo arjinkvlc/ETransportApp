@@ -11,6 +11,8 @@ import com.example.etransportapp.data.model.ad.CargoAdResponse
 import com.example.etransportapp.data.model.ad.CargoAdUpdateRequest
 import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.data.model.auth.UserProfileResponse
+import com.example.etransportapp.data.model.offer.CargoOfferRequest
+import com.example.etransportapp.data.model.offer.CargoOfferResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -24,6 +26,7 @@ class LoadAdViewModel : ViewModel() {
     private val _myLoadAds = MutableStateFlow<List<LoadAd>>(emptyList())
     val myLoadAds: StateFlow<List<LoadAd>> = _myLoadAds
 
+    val sentOffers = mutableStateOf<List<CargoOfferResponse>>(emptyList())
 
     var selectedSort by mutableStateOf("Tümü")
     var selectedFilter by mutableStateOf("Tümü")
@@ -129,6 +132,39 @@ class LoadAdViewModel : ViewModel() {
             }
         }
     }
+
+    fun createCargoOffer(
+        request: CargoOfferRequest,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.cargoOfferApi.createCargoOffer(request)
+                if (response.isSuccessful) {
+                    onSuccess()
+                } else {
+                    onError("Teklif gönderilemedi: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("Hata oluştu: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun fetchSentOffers(userId: String) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.cargoOfferApi.getOffersBySender(userId)
+                if (response.isSuccessful) {
+                    sentOffers.value = response.body() ?: emptyList()
+                }
+            } catch (e: Exception) {
+                println("Teklifler alınamadı: ${e.message}")
+            }
+        }
+    }
+
 
 
 
