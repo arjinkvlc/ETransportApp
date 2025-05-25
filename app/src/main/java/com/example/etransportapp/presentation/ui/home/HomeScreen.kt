@@ -101,6 +101,9 @@ fun HomeScreen(navController: NavHostController) {
                             NavigationBarItem(
                                 selected = currentRoute == screen.route,
                                 onClick = {
+                                    if (showActionModal) {
+                                        showActionModal = false
+                                    }
                                     navController.navigate(screen.route) {
                                         popUpTo(navController.graph.startDestinationId) {
                                             saveState = true
