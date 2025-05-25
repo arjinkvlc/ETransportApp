@@ -11,6 +11,7 @@ import com.example.etransportapp.data.remote.api.CargoOfferApi
 import com.example.etransportapp.data.remote.api.UserApi
 import com.example.etransportapp.data.remote.api.VehicleAdApi
 import com.example.etransportapp.data.remote.api.VehicleApi
+import com.example.etransportapp.data.remote.api.VehicleOfferApi
 import java.security.SecureRandom
 import java.security.cert.X509Certificate
 import javax.net.ssl.SSLContext
@@ -72,5 +73,6 @@ object RetrofitInstance {
     val vehicleAdApi: VehicleAdApi by lazy { retrofit.create(VehicleAdApi::class.java) }
     val cargoAdApi: CargoAdApi by lazy { retrofit.create(CargoAdApi::class.java) }
     val cargoOfferApi: CargoOfferApi by lazy { retrofit.create(CargoOfferApi::class.java) }
-    
+    val vehicleOfferApi: VehicleOfferApi by lazy { retrofit.create(VehicleOfferApi::class.java) }
+
 }
