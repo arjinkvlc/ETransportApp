@@ -60,7 +60,7 @@ fun LoadAdOffersScreen(
                             Text(text = name, style = MaterialTheme.typography.titleMedium)
                             Spacer(modifier = Modifier.weight(1f))
                             Text(
-                                text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date()),
+                                text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date()),// CreatedDate
                                 style = MaterialTheme.typography.titleSmall
                             )
                         }
@@ -75,6 +75,13 @@ fun LoadAdOffersScreen(
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = "Teklif: $price",
+                            style = MaterialTheme.typography.bodyMedium,
+                            fontWeight = FontWeight.SemiBold
+                        )
+
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Text(
+                            text = "Mesaj: Bu yük için en iyi fiyatı sunuyorum. Lütfen benimle iletişime geçin.",
                             style = MaterialTheme.typography.bodyMedium,
                             fontWeight = FontWeight.SemiBold
                         )
