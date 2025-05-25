@@ -53,7 +53,13 @@ fun CreateVehicleAdScreen(
     var title by remember { mutableStateOf(TextFieldValue("")) }
     var description by remember { mutableStateOf(TextFieldValue("")) }
     var date by remember {
-        mutableStateOf(TextFieldValue(SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date())))
+        mutableStateOf(
+            TextFieldValue(
+                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                    Date()
+                )
+            )
+        )
     }
     var capacity by remember { mutableStateOf(TextFieldValue("")) }
     var location by remember { mutableStateOf("") }
@@ -91,8 +97,15 @@ fun CreateVehicleAdScreen(
             TopAppBar(
                 title = { Text("Yeni Araç İlanı Oluştur", textAlign = TextAlign.Center) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri", tint = Color.White)
+                    IconButton(onClick = {
+                        vehicleViewModel.clearSelectedVehicle()
+                        navController.popBackStack()
+                    }) {
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Geri",
+                            tint = Color.White
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(
@@ -103,7 +116,9 @@ fun CreateVehicleAdScreen(
         },
         bottomBar = {
             Box(
-                modifier = Modifier.fillMaxWidth().padding(16.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Button(
@@ -135,10 +150,16 @@ fun CreateVehicleAdScreen(
                                 }
                             )
                         } else {
-                            Toast.makeText(context, "Lütfen tüm alanları doldurun", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                context,
+                                "Lütfen tüm alanları doldurun",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     },
-                    modifier = Modifier.fillMaxWidth(0.9f).height(50.dp),
+                    modifier = Modifier
+                        .fillMaxWidth(0.9f)
+                        .height(50.dp),
                     colors = ButtonDefaults.buttonColors(containerColor = RoseRed)
                 ) {
                     Text("İlanı Oluştur")
@@ -155,7 +176,11 @@ fun CreateVehicleAdScreen(
                         openDatePicker.value = false
                         datePickerState.selectedDateMillis?.let { millis ->
                             val formattedDate =
-                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(millis))
+                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                                    Date(
+                                        millis
+                                    )
+                                )
                             date = TextFieldValue(formattedDate)
                         }
                     }) {
@@ -229,7 +254,9 @@ fun CreateVehicleAdScreen(
                     trailingIcon = {
                         ExposedDropdownMenuDefaults.TrailingIcon(expanded = isCargoTypeMenuExpanded)
                     },
-                    modifier = Modifier.menuAnchor().fillMaxWidth()
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
                 )
 
                 ExposedDropdownMenu(

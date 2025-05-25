@@ -116,7 +116,7 @@ fun MyVehiclesScreen(
                                 Text(vehicle.title, style = MaterialTheme.typography.titleMedium)
                                 Spacer(modifier = Modifier.height(4.dp))
                                 Text("Tür: ${vehicle.vehicleType}", style = MaterialTheme.typography.bodyMedium)
-                                Text("Kapasite: ${vehicle.capacity} kg", style = MaterialTheme.typography.bodyMedium)
+                                Text("Kapasite: ${vehicle.capacity} Ton", style = MaterialTheme.typography.bodyMedium)
                                 Text("Plaka: ${vehicle.licensePlate}", style = MaterialTheme.typography.bodyMedium)
                                 Text("Model: ${vehicle.model}", style = MaterialTheme.typography.bodyMedium)
                             }
