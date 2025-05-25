@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.etransportapp.data.model.ad.CargoAdCreateRequest
 import com.example.etransportapp.data.model.ad.CargoAdResponse
 import com.example.etransportapp.data.model.ad.CargoAdUpdateRequest
 import com.example.etransportapp.data.model.ad.LoadAd
@@ -108,6 +109,27 @@ class LoadAdViewModel : ViewModel() {
             }
         }
     }
+
+    fun createCargoAd(
+        request: CargoAdCreateRequest,
+        onSuccess: () -> Unit,
+        onError: (String) -> Unit
+    ) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.cargoAdApi.createCargoAd(request)
+                if (response.isSuccessful) {
+                    fetchAllCargoAds()
+                    onSuccess()
+                } else {
+                    onError("İlan oluşturulamadı: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("Sunucu hatası: ${e.localizedMessage}")
+            }
+        }
+    }
+
 
 
     /*
