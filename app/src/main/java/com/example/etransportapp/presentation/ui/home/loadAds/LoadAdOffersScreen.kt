@@ -66,11 +66,19 @@ fun LoadAdOffersScreen(
                         }
 
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = "Telefon: $phone",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
-                        )
+                        Row {
+                            Text(
+                                text = "Telefon: $phone",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                "Mail: deneme@gmail.com",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray
+                            )
+                        }
 
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(

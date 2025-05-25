@@ -128,5 +128,4 @@ class VehicleAdViewModel : ViewModel() {
         }
     }
 
-
 }

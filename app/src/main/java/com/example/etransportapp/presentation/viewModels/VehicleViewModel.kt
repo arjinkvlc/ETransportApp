@@ -188,5 +188,9 @@ class VehicleViewModel : ViewModel() {
             }
         }
     }
+    fun clearSelectedVehicle() {
+        _selectedVehicleById.value = null
+    }
+
 
 }
