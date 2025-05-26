@@ -432,7 +432,7 @@ fun LoadAdDetailScreen(
                         colors = ButtonDefaults.buttonColors(
                             containerColor = RoseRed,
                             contentColor = Color.White,
-                            disabledContainerColor = Color.Gray
+                            disabledContainerColor = Color.LightGray
                         )
                     ) {
                         Text(offerButtonText)
