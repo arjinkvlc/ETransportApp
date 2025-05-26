@@ -25,6 +25,7 @@ fun NotificationScreen(
 
     LaunchedEffect(Unit) {
         viewModel.fetchNotifications()
+        viewModel.fetchUnreadCount()
     }
 
     Scaffold(
