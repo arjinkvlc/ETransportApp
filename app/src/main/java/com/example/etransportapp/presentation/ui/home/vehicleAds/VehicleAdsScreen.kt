@@ -23,6 +23,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -34,6 +37,7 @@ import com.example.etransportapp.presentation.components.VehicleAdCard
 import com.example.etransportapp.presentation.navigation.NavRoutes
 import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.ui.theme.RoseRed
+import com.example.etransportapp.util.VehicleTypeMapUtil
 
 @Composable
 fun VehicleAdsScreen(
@@ -41,15 +45,14 @@ fun VehicleAdsScreen(
     navController: NavHostController,
     viewModel: VehicleAdViewModel
 ) {
+    val vehicles by viewModel.filteredVehicleAds.collectAsState()
+    val selectedSort = viewModel.selectedSort
+    var selectedFilterLabel by remember { mutableStateOf("Tümü") }
+
     LaunchedEffect(Unit) {
         viewModel.fetchAllVehicleAds()
         println("Çekilen araç ilanları: ${viewModel.vehicleAds.value}")
     }
-
-    val vehicles by viewModel.vehicleAds.collectAsState()
-
-    val selectedSort = viewModel.selectedSort
-    val selectedFilter = viewModel.selectedFilter
 
     Column(modifier = modifier.fillMaxSize()) {
         Row(
@@ -65,26 +68,36 @@ fun VehicleAdsScreen(
                 onOptionSelected = { viewModel.selectedSort = it },
                 modifier = Modifier.padding(vertical = 8.dp)
             )
+
             OvalDropdownBar(
                 label = "Filtrele",
-                options = listOf("Tümü", "Açık Kasa", "Tenteli", "Frigofirik", "Tanker"),
-                selectedOption = selectedFilter,
-                onOptionSelected = { viewModel.selectedFilter = it },
+                options = listOf("Tümü") + VehicleTypeMapUtil.vehicleTypeLabels,
+                selectedOption = selectedFilterLabel,
+                onOptionSelected = { selectedLabel ->
+                    selectedFilterLabel = selectedLabel
+                    viewModel.selectedFilter = if (selectedLabel == "Tümü") {
+                        "Tümü"
+                    } else {
+                        VehicleTypeMapUtil.getEnumValueFromLabel(selectedLabel) ?: "Others"
+                    }
+                },
                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
             )
+
             Text(
                 text = "Temizle X",
-                color = if (selectedFilter == "Tümü") Color.LightGray else RoseRed,
+                color = if (viewModel.selectedFilter == "Tümü") Color.LightGray else RoseRed,
                 modifier = Modifier
                     .padding(top = 24.dp)
-                    .clickable { viewModel.selectedFilter = "Tümü" },
+                    .clickable {
+                        viewModel.selectedFilter = "Tümü"
+                        selectedFilterLabel = "Tümü"
+                    },
                 fontWeight = FontWeight.Bold
             )
         }
 
-        HorizontalDivider(
-            modifier = Modifier.padding(horizontal = 16.dp)
-        )
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
