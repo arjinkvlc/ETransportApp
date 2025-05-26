@@ -7,7 +7,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.etransportapp.data.model.Vehicle
 import com.example.etransportapp.data.model.auth.UserProfileResponse
 import com.example.etransportapp.data.model.vehicle.FetchUserVehiclesResponse
 import com.example.etransportapp.data.model.vehicle.VehicleRequest
@@ -20,9 +19,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class VehicleViewModel : ViewModel() {
-
-    private val _myVehicles2 = MutableStateFlow<List<Vehicle>>(emptyList())
-    val myVehicles2: StateFlow<List<Vehicle>> = _myVehicles2
 
     private val _myVehicles = MutableStateFlow<List<FetchUserVehiclesResponse>>(emptyList())
     val myVehicles: StateFlow<List<FetchUserVehiclesResponse>> = _myVehicles
