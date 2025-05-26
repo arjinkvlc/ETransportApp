@@ -12,14 +12,14 @@ import com.example.etransportapp.data.model.auth.UserProfileResponse
 import com.example.etransportapp.data.model.offer.VehicleOfferRequest
 import com.example.etransportapp.data.model.offer.VehicleOfferResponse
 import com.example.etransportapp.data.model.offer.VehicleOfferStatusUpdateRequest
-import com.example.etransportapp.util.PreferenceHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class VehicleAdViewModel : ViewModel() {
 
@@ -37,7 +37,28 @@ class VehicleAdViewModel : ViewModel() {
     val vehicleAdOffers = mutableStateOf<List<VehicleOfferResponse>>(emptyList())
     val senderInfoMap = mutableStateMapOf<String, UserProfileResponse>()
 
-    val sortedLoadAds = derivedStateOf {
+    private val _filteredVehicleAds = MutableStateFlow<List<VehicleAdGetResponse>>(emptyList())
+    val filteredVehicleAds: StateFlow<List<VehicleAdGetResponse>> = _filteredVehicleAds
+
+    init {
+        combine(vehicleAds, snapshotFlow { selectedFilter }, snapshotFlow { selectedSort }) { ads, filter, sort ->
+            val sorted = when (sort) {
+                "En Yeni" -> ads.sortedBy { it.createdDate }
+                "En Eski" -> ads.sortedByDescending { it.createdDate }
+                "Taşıma Kapasitesi" -> ads.sortedBy { it.capacity }
+                else -> ads
+            }
+
+            if (filter == "Tümü") sorted
+            else sorted.filter { it.vehicleType == filter }
+        }.onEach {
+            _filteredVehicleAds.value = it
+        }.launchIn(viewModelScope)
+    }
+
+
+
+    val sortedVehicleAds = derivedStateOf {
         when (selectedSort) {
             "En Yeni" -> vehicleAds.value.sortedBy { it.createdDate }
             "En Eski" -> vehicleAds.value.sortedByDescending { it.createdDate }
@@ -46,15 +67,6 @@ class VehicleAdViewModel : ViewModel() {
         }
     }
 
-    val filteredLoadAds = derivedStateOf {
-        when (selectedFilter) {
-            "Açık Kasa" -> sortedLoadAds.value.filter { it.vehicleType == "Açık Kasa" }
-            "Tenteli" -> sortedLoadAds.value.filter { it.vehicleType == "Tenteli" }
-            "Frigofirik" -> sortedLoadAds.value.filter { it.vehicleType == "Frigofirik" }
-            "Tanker" -> sortedLoadAds.value.filter { it.vehicleType == "Tanker" }
-            else -> sortedLoadAds.value
-        }
-    }
 
     fun fetchAllVehicleAds() {
         viewModelScope.launch {

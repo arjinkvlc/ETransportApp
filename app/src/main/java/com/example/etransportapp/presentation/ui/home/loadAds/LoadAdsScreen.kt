@@ -17,6 +17,7 @@ import com.example.etransportapp.presentation.components.LoadAdCard
 import com.example.etransportapp.presentation.components.OvalDropdownBar
 import com.example.etransportapp.presentation.navigation.NavRoutes
 import com.example.etransportapp.ui.theme.RoseRed
+import com.example.etransportapp.util.VehicleTypeMapUtil
 
 @Composable
 fun LoadAdsScreen(
@@ -24,17 +25,18 @@ fun LoadAdsScreen(
     navController: NavHostController,
     viewModel: LoadAdViewModel
 ) {
-    val loads by viewModel.loadAds.collectAsState()
+    val loads by viewModel.filteredLoadAds.collectAsState()
     val selectedSort = viewModel.selectedSort
-    val selectedFilter = viewModel.selectedFilter
+    var selectedFilterLabel by remember { mutableStateOf("Tümü") }
 
     LaunchedEffect(Unit) {
         viewModel.fetchAllCargoAds()
     }
 
-
     Column(modifier = modifier.fillMaxSize()) {
-        Row(modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly){
+        Row(modifier = Modifier
+            .align(Alignment.CenterHorizontally)
+            .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly){
             OvalDropdownBar(
                 label = "Sırala",
                 options = listOf("Tümü", "En Yeni","En Eski", "Ucuzdan Pahalıya", "Pahalıdan Ucuza"),
@@ -45,20 +47,26 @@ fun LoadAdsScreen(
             )
             OvalDropdownBar(
                 label = "Filtrele",
-                options = listOf("Tümü", "Yurtiçi", "Uluslararası"),
-                selectedOption = selectedFilter,
-                onOptionSelected = { viewModel.selectedFilter = it },
+                options = listOf("Tümü") + VehicleTypeMapUtil.vehicleTypeLabels,
+                selectedOption = selectedFilterLabel,
+                onOptionSelected = { selectedLabel ->
+                    selectedFilterLabel = selectedLabel
+                    viewModel.selectedFilter = if (selectedLabel == "Tümü") {
+                        "Tümü"
+                    } else {
+                        VehicleTypeMapUtil.getEnumValueFromLabel(selectedLabel) ?: "Others"
+                    }
+                },
                 modifier = Modifier
                     .padding(horizontal = 8.dp, vertical = 8.dp)
             )
-            if (selectedFilter == "Tümü") {
+
+            if (viewModel.selectedFilter == "Tümü") {
                 Text(
                     text = "Temizle X",
                     color = Color.LightGray,
-                    modifier = Modifier
-                        .padding(top = 24.dp),
+                    modifier = Modifier.padding(top = 24.dp),
                     fontWeight = FontWeight.Bold
-
                 )
             } else {
                 Text(
@@ -66,12 +74,18 @@ fun LoadAdsScreen(
                     color = RoseRed,
                     modifier = Modifier
                         .padding(top = 24.dp)
-                        .clickable { viewModel.selectedFilter = "Tümü" },
+                        .clickable {
+                            viewModel.selectedFilter = "Tümü"
+                            selectedFilterLabel = "Tümü"
+                        },
                     fontWeight = FontWeight.Bold
                 )
             }
+
         }
-        HorizontalDivider(modifier = Modifier.weight(1f).padding(horizontal = 16.dp),)
+        HorizontalDivider(modifier = Modifier
+            .weight(1f)
+            .padding(horizontal = 16.dp),)
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),

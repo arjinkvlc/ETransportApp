@@ -137,8 +137,7 @@ fun CreateVehicleAdScreen(
                                 city = selectedCity,
                                 country = selectedCountry,
                                 carrierId = userId,
-                                vehicleType = selectedCargoType,
-                                capacity = capacity.text.toIntOrNull() ?: 0
+                                vehicleType = VehicleTypeMapUtil.getEnumValueFromLabel(selectedCargoType) ?: "Others",                                capacity = capacity.text.toIntOrNull() ?: 0
                             )
 
                             viewModel.createVehicleAd(

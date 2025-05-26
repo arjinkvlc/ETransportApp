@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.ad.CargoAdCreateRequest
@@ -18,42 +19,50 @@ import com.example.etransportapp.data.model.offer.CargoOfferResponse
 import com.example.etransportapp.data.model.offer.CargoOfferStatusUpdateRequest
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 class LoadAdViewModel : ViewModel() {
-    private val _loadAds = MutableStateFlow<List<CargoAdResponse>>(emptyList())
-    val loadAds: StateFlow<List<CargoAdResponse>> = _loadAds
-    var selectedAd: CargoAdResponse? = null
-    var selectedAd2: LoadAd? = null
-
-    private val _myLoadAds = MutableStateFlow<List<LoadAd>>(emptyList())
-    val myLoadAds: StateFlow<List<LoadAd>> = _myLoadAds
-
     val sentOffers = mutableStateOf<List<CargoOfferResponse>>(emptyList())
 
     private val _cargoAdOffers = mutableStateOf<List<CargoOfferResponse>>(emptyList())
     val cargoAdOffers: State<List<CargoOfferResponse>> = _cargoAdOffers
     val senderInfoMap = mutableStateMapOf<String, UserProfileResponse>()
 
+    private val _loadAds = MutableStateFlow<List<CargoAdResponse>>(emptyList())
+    val loadAds: StateFlow<List<CargoAdResponse>> = _loadAds
+
+    private val _filteredLoadAds = MutableStateFlow<List<CargoAdResponse>>(emptyList())
+    val filteredLoadAds: StateFlow<List<CargoAdResponse>> = _filteredLoadAds
+
+    var selectedAd: CargoAdResponse? = null
+
     var selectedSort by mutableStateOf("Tümü")
     var selectedFilter by mutableStateOf("Tümü")
-/*
-    val sortedLoadAds = derivedStateOf {
-        when (selectedSort) {
-            "En Yeni" -> loadAds.value.sortedBy {it.date }
-            "Ucuzdan Pahalı" -> loadAds.value.sortedBy { it.price }
-            "Pahalıdan Ucuza" -> loadAds.value.sortedByDescending { it.price }
-            else -> loadAds.value
-        }
-    }*/
 
-    val filteredLoadAds = derivedStateOf {
-        when (selectedFilter) {
-            "Yurtiçi" -> loadAds.value.filter { /* örnek filtreleme */ true }
-            "Uluslararası" -> loadAds.value.filter { /* örnek filtreleme */ true }
-            else -> loadAds.value
-        }
+    init {
+        combine(
+            loadAds,
+            snapshotFlow { selectedSort },
+            snapshotFlow { selectedFilter }
+        ) { ads, sort, filter ->
+            val sorted = when (sort) {
+                "En Yeni" -> ads.sortedBy { it.createdDate }
+                "En Eski" -> ads.sortedByDescending { it.createdDate }
+                "Ucuzdan Pahalıya" -> ads.sortedBy { it.price }
+                "Pahalıdan Ucuza" -> ads.sortedByDescending { it.price }
+                else -> ads
+            }
+
+            if (filter == "Tümü") sorted
+            else sorted.filter { it.cargoType == filter }
+        }.onEach {
+            _filteredLoadAds.value = it
+        }.launchIn(viewModelScope)
     }
+
 
     fun fetchAllCargoAds() {
         viewModelScope.launch {
@@ -221,8 +230,4 @@ class LoadAdViewModel : ViewModel() {
             }
         }
     }
-
-
-
-
 }
