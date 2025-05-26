@@ -109,7 +109,7 @@ fun VehicleAdOffersScreen(
 
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = "Durum: ${offer.status}",
+                            text = if(offer.status == "Pending") "Durum: Beklemede" else "Durum: Reddedildi",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
                         )
