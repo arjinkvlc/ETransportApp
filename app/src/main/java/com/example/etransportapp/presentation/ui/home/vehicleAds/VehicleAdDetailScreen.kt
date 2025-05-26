@@ -239,12 +239,11 @@ fun VehicleAdDetailScreen(
                             cargoType = vehicleAd.vehicleType,
                             capacity = capacity,
                             location = vehicleAd.city+" , " + vehicleAd.country,
-                            date = vehicleAd.createdDate
+                            date = vehicleAd.createdDate.substring(0,10)
                         )
                     }
 
                     1 -> {
-                        // TODO: Replace with actual user data
                         AdOwnerInfoSection(
                             name = "${owner?.name ?: "Bilinmiyor"} ${owner?.surname ?: ""}",
                             email = owner?.email ?: "E-posta bulunamadı",
