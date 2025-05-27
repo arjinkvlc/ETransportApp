@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,12 +47,16 @@ fun VehicleAdsScreen(
     viewModel: VehicleAdViewModel
 ) {
     val vehicles by viewModel.filteredVehicleAds.collectAsState()
-    val selectedSort = viewModel.selectedSort
-    var selectedFilterLabel by remember { mutableStateOf("Tümü") }
+    val selectedSortLabel by remember { derivedStateOf { viewModel.selectedSort } }
+    val selectedFilterLabel by remember {
+        derivedStateOf {
+            if (viewModel.selectedFilter == "Tümü") "Tümü"
+            else VehicleTypeMapUtil.vehicleTypeMap[viewModel.selectedFilter] ?: "Diğer"
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.fetchAllVehicleAds()
-        println("Çekilen araç ilanları: ${viewModel.vehicleAds.value}")
     }
 
     Column(modifier = modifier.fillMaxSize()) {
@@ -64,7 +69,7 @@ fun VehicleAdsScreen(
             OvalDropdownBar(
                 label = "Sırala",
                 options = listOf("Tümü", "En Yeni", "En Eski", "Taşıma Kapasitesi"),
-                selectedOption = selectedSort,
+                selectedOption = selectedSortLabel,
                 onOptionSelected = { viewModel.selectedSort = it },
                 modifier = Modifier.padding(vertical = 8.dp)
             )
@@ -74,7 +79,6 @@ fun VehicleAdsScreen(
                 options = listOf("Tümü") + VehicleTypeMapUtil.vehicleTypeLabels,
                 selectedOption = selectedFilterLabel,
                 onOptionSelected = { selectedLabel ->
-                    selectedFilterLabel = selectedLabel
                     viewModel.selectedFilter = if (selectedLabel == "Tümü") {
                         "Tümü"
                     } else {
@@ -91,7 +95,6 @@ fun VehicleAdsScreen(
                     .padding(top = 24.dp)
                     .clickable {
                         viewModel.selectedFilter = "Tümü"
-                        selectedFilterLabel = "Tümü"
                     },
                 fontWeight = FontWeight.Bold
             )
@@ -112,4 +115,3 @@ fun VehicleAdsScreen(
         }
     }
 }
-
