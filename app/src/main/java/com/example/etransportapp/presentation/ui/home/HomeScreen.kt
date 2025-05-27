@@ -3,7 +3,8 @@ package com.example.etransportapp.presentation.ui.home
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.BadgedBox
+import androidx.compose.material3.Badge
 import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Notifications
@@ -19,6 +20,7 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.example.etransportapp.R
@@ -26,6 +28,7 @@ import com.example.etransportapp.presentation.components.FloatingActionMenu
 import com.example.etransportapp.presentation.navigation.BottomBarScreen
 import com.example.etransportapp.presentation.navigation.NavGraph
 import com.example.etransportapp.presentation.navigation.NavRoutes
+import com.example.etransportapp.presentation.ui.home.notifications.NotificationViewModel
 import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.ui.theme.RoseRed
 
@@ -35,6 +38,13 @@ fun HomeScreen(navController: NavHostController) {
     val currentBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry.value?.destination?.route
     val context = LocalContext.current
+
+    val notificationViewModel: NotificationViewModel = viewModel()
+    val unreadCount by notificationViewModel.unreadCount.collectAsState()
+
+    LaunchedEffect(Unit) {
+        notificationViewModel.fetchUnreadCount()
+    }
 
     var showActionModal by remember { mutableStateOf(false) }
 
@@ -66,14 +76,30 @@ fun HomeScreen(navController: NavHostController) {
                         )
                     },
                     actions = {
-                        IconButton(onClick = {
-                            navController.navigate("notifications")
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Notifications,
-                                contentDescription = "Bildirimler",
-                                tint = Color.White
-                            )
+                        BadgedBox(
+                            badge = {
+                                if (unreadCount > 0) {
+                                    Badge(
+                                        containerColor = Color.Red
+                                    ) {
+                                        Text(
+                                            text = unreadCount.toString(),
+                                            color = Color.White,
+                                            style = MaterialTheme.typography.labelSmall
+                                        )
+                                    }
+                                }
+                            }
+                        ) {
+                            IconButton(onClick = {
+                                navController.navigate("notifications")
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.Notifications,
+                                    contentDescription = "Bildirimler",
+                                    tint = Color.White
+                                )
+                            }
                         }
                     },
                     colors = TopAppBarDefaults.mediumTopAppBarColors(

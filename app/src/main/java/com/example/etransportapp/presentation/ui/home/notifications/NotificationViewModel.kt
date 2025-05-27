@@ -12,29 +12,65 @@ class NotificationViewModel : ViewModel() {
     private val _notifications = MutableStateFlow<List<Notification>>(emptyList())
     val notifications: StateFlow<List<Notification>> = _notifications
 
+    private val _unreadCount = MutableStateFlow(0)
+    val unreadCount: StateFlow<Int> = _unreadCount
+
     fun fetchNotifications() {
         viewModelScope.launch {
-            // Şimdilik dummy veri (backend bağlanınca gerçek API'den çekilecek)
-            _notifications.value = listOf(
-                Notification(
-                    id = 1,
-                    title = "Yeni Teklif",
-                    message = "Fatih Kargo için bir teklif aldınız.",
-                    createdDate = "2025-05-25",
-                    isRead = false,
-                    relatedEntityId = 101,
-                    type = 1
-                ),
-                Notification(
-                    id = 2,
-                    title = "İlanınız Yayında",
-                    message = "Yeni yük ilanınız başarıyla yayınlandı.",
-                    createdDate = "2025-05-24",
-                    isRead = true,
-                    relatedEntityId = 102,
-                    type = 2
-                )
-            )
+            try {
+                val response = RetrofitInstance.notificationApi.getUserNotifications()
+                if (response.isSuccessful) {
+                    _notifications.value = response.body() ?: emptyList()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
+
+    fun fetchUnreadCount() {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.notificationApi.getUnreadNotificationCount()
+                if (response.isSuccessful) {
+                    _unreadCount.value = response.body()?.count ?: 0
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun markAsRead(notificationId: Int) {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.notificationApi.markAsRead(notificationId)
+                if (response.isSuccessful) {
+                    _notifications.value = _notifications.value.map {
+                        if (it.id == notificationId) it.copy(isRead = true) else it
+                    }
+                    fetchUnreadCount()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun markAllAsRead() {
+        viewModelScope.launch {
+            try {
+                val response = RetrofitInstance.notificationApi.markAllAsRead()
+                if (response.isSuccessful) {
+                    _notifications.value = _notifications.value.map {
+                        it.copy(isRead = true)
+                    }
+                    fetchUnreadCount()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
 }

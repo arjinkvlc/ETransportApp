@@ -1,6 +1,5 @@
 package com.example.etransportapp.data.remote.api
 
-import com.example.etransportapp.data.model.Vehicle
 import com.example.etransportapp.data.model.vehicle.FetchUserVehiclesResponse
 import com.example.etransportapp.data.model.vehicle.VehicleRequest
 import com.example.etransportapp.data.model.vehicle.VehicleResponse
