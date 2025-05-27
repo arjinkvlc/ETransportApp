@@ -26,78 +26,70 @@ fun LoadAdsScreen(
     viewModel: LoadAdViewModel
 ) {
     val loads by viewModel.filteredLoadAds.collectAsState()
-    val selectedSort = viewModel.selectedSort
-    var selectedFilterLabel by remember { mutableStateOf("Tümü") }
+    val selectedSortLabel by remember { derivedStateOf { viewModel.selectedSort } }
+    val selectedFilterLabel by remember {
+        derivedStateOf {
+            if (viewModel.selectedFilter == "Tümü") "Tümü"
+            else VehicleTypeMapUtil.vehicleTypeMap[viewModel.selectedFilter] ?: "Diğer"
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.fetchAllCargoAds()
     }
 
     Column(modifier = modifier.fillMaxSize()) {
-        Row(modifier = Modifier
-            .align(Alignment.CenterHorizontally)
-            .fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly){
+        Row(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
             OvalDropdownBar(
                 label = "Sırala",
-                options = listOf("Tümü", "En Yeni","En Eski", "Ucuzdan Pahalıya", "Pahalıdan Ucuza"),
-                selectedOption = selectedSort,
+                options = listOf("Tümü", "En Yeni", "En Eski", "Ucuzdan Pahalıya", "Pahalıdan Ucuza"),
+                selectedOption = selectedSortLabel,
                 onOptionSelected = { viewModel.selectedSort = it },
-                modifier = Modifier
-                    .padding( vertical = 8.dp)
+                modifier = Modifier.padding(vertical = 8.dp)
             )
             OvalDropdownBar(
                 label = "Filtrele",
                 options = listOf("Tümü") + VehicleTypeMapUtil.vehicleTypeLabels,
                 selectedOption = selectedFilterLabel,
                 onOptionSelected = { selectedLabel ->
-                    selectedFilterLabel = selectedLabel
                     viewModel.selectedFilter = if (selectedLabel == "Tümü") {
                         "Tümü"
                     } else {
                         VehicleTypeMapUtil.getEnumValueFromLabel(selectedLabel) ?: "Others"
                     }
                 },
-                modifier = Modifier
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
+                modifier = Modifier.padding(horizontal = 8.dp, vertical = 8.dp)
             )
 
-            if (viewModel.selectedFilter == "Tümü") {
-                Text(
-                    text = "Temizle X",
-                    color = Color.LightGray,
-                    modifier = Modifier.padding(top = 24.dp),
-                    fontWeight = FontWeight.Bold
-                )
-            } else {
-                Text(
-                    text = "Temizle X",
-                    color = RoseRed,
-                    modifier = Modifier
-                        .padding(top = 24.dp)
-                        .clickable {
-                            viewModel.selectedFilter = "Tümü"
-                            selectedFilterLabel = "Tümü"
-                        },
-                    fontWeight = FontWeight.Bold
-                )
-            }
-
+            Text(
+                text = "Temizle X",
+                color = if (viewModel.selectedFilter == "Tümü") Color.LightGray else RoseRed,
+                modifier = Modifier
+                    .padding(top = 24.dp)
+                    .clickable {
+                        viewModel.selectedFilter = "Tümü"
+                    },
+                fontWeight = FontWeight.Bold
+            )
         }
-        HorizontalDivider(modifier = Modifier
-            .weight(1f)
-            .padding(horizontal = 16.dp),)
+
+        HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
 
         LazyColumn(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
         ) {
-            items(loads) { item ->
+            items(loads.asReversed()) { item ->
                 LoadAdCard(item) {
                     viewModel.selectedAd = item
                     navController.navigate(NavRoutes.LOAD_AD_DETAIL)
                 }
             }
         }
-
     }
 }
