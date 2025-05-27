@@ -106,7 +106,7 @@ fun VehicleAdsScreen(
             modifier = Modifier.fillMaxSize(),
             contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
         ) {
-            items(vehicles) { item ->
+            items(vehicles.asReversed()) { item ->
                 VehicleAdCard(item) {
                     viewModel.selectedAd = item
                     navController.navigate(NavRoutes.VEHICLE_AD_DETAIL)

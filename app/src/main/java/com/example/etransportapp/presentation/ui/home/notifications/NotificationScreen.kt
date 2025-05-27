@@ -1,5 +1,6 @@
 package com.example.etransportapp.presentation.ui.home.notifications
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -14,6 +15,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.etransportapp.ui.theme.DarkGray
 import androidx.compose.ui.text.font.FontWeight
+import com.example.etransportapp.ui.theme.RoseRed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -50,35 +52,40 @@ fun NotificationScreen(
             contentPadding = padding,
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .background(Color(0xFFEEEEEE))
         ) {
             items(notifications) { notification ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
+                        .padding(vertical = 8.dp, horizontal = 16.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.White),
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Text(
-                            text = notification.title,
-                            fontWeight = FontWeight.Bold,
-                            style = MaterialTheme.typography.titleMedium
-                        )
+                        Row{
+                            Text(
+                                text = notification.title,
+                                fontWeight = FontWeight.Bold,
+                                style = MaterialTheme.typography.titleMedium
+                            )
+                            Spacer(modifier = Modifier.weight(1f))
+                            Text(
+                                text = notification.createdDate.substring(0,10),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray
+                            )
+                        }
+
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(notification.message)
                         Spacer(modifier = Modifier.height(4.dp))
-                        Text(
-                            text = notification.createdDate,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = Color.Gray
-                        )
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
                             text = if (notification.isRead) "Okundu" else "Yeni",
                             style = MaterialTheme.typography.bodySmall,
-                            color = if (notification.isRead) Color.Gray else MaterialTheme.colorScheme.primary
+                            color = if (notification.isRead) Color.Gray else RoseRed,
+                            fontWeight = FontWeight.Bold,
                         )
                     }
                 }
