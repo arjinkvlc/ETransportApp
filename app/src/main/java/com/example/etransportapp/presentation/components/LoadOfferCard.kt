@@ -78,7 +78,7 @@ fun LoadOfferCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Araç: ${offer.cargoAdTitle}",
+                text = "İlan Başlığı: ${offer.cargoAdTitle}",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium
             )
