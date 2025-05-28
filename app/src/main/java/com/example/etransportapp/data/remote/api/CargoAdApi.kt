@@ -33,7 +33,7 @@ interface CargoAdApi {
     @GET("api/CargoAd/by-type/{cargoType}")
     suspend fun getCargoAdsByType(@Path("cargoType") cargoType: String): Response<List<CargoAdResponse>>
 
-    @GET("api/CargoAd/predict-suggested-price/")
+    @POST("api/CargoAd/predict-suggested-price/")
     suspend fun predictSuggestedPrice(
         @Body request: CargoAdPriceSuggestionRequest
     ): Response<List<Double>>
