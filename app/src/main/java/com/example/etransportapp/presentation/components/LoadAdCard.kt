@@ -18,6 +18,7 @@ import com.example.etransportapp.R
 import com.example.etransportapp.data.model.ad.CargoAdResponse
 import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.ui.theme.DarkGray
+import com.example.etransportapp.util.VehicleTypeMapUtil
 
 @Composable
 fun LoadAdCard(item: CargoAdResponse, onClick: () -> Unit) {
@@ -65,7 +66,7 @@ fun LoadAdCard(item: CargoAdResponse, onClick: () -> Unit) {
                 Column(modifier = Modifier.weight(1f)) {
                     InfoRow("Nereden:", "${item.pickCity}, ${item.pickCountry}")
                     InfoRow("Nereye:", "${item.dropCity}, ${item.dropCountry}")
-                    InfoRow("Yük Tipi:", item.cargoType) // item.cargoType ?: "Bilinmiyor"
+                    InfoRow("Yük Tipi:", VehicleTypeMapUtil.getLabelFromEnumValue(item.cargoType))
                     InfoRow("Ağırlık:", "${item.weight} Ton")
                 }
 
