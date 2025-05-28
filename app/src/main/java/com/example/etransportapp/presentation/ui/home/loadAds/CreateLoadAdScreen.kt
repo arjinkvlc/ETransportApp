@@ -9,6 +9,8 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ExitToApp
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -85,7 +87,8 @@ fun CreateLoadAdScreen(
                         }
                     }) {
                         Icon(
-                            Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = if (currentStep == 1)
+                                Icons.Filled.Close else Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Geri",
                             tint = Color.White
                         )
@@ -140,7 +143,9 @@ fun CreateLoadAdScreen(
                                     title = title.text,
                                     description = description.text,
                                     weight = weight.text.toIntOrNull() ?: 0,
-                                    cargoType = VehicleTypeMapUtil.getEnumValueFromLabel(selectedCargoType) ?: "Others",
+                                    cargoType = VehicleTypeMapUtil.getEnumValueFromLabel(
+                                        selectedCargoType
+                                    ) ?: "Others",
                                     dropCountry = selectedDestinationPlace?.countryName ?: "",
                                     dropCity = selectedDestinationPlace?.name ?: "",
                                     pickCountry = selectedOriginPlace?.countryName ?: "",
@@ -387,7 +392,11 @@ fun CreateLoadAdScreen(
                 }
 
                 if (stepTwoError.isNotEmpty()) {
-                    Text(stepTwoError, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        stepTwoError,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
             }
         }
