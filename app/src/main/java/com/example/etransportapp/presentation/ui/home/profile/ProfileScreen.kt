@@ -1,5 +1,6 @@
 package com.example.etransportapp.presentation.ui.home.profile
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,7 +48,7 @@ import com.example.etransportapp.util.PreferenceHelper
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: ProfileViewModel = viewModel()
+    viewModel: ProfileViewModel
 ) {
     val context = LocalContext.current
     val profile by viewModel.userProfile.collectAsState()

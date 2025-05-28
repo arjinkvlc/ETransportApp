@@ -18,6 +18,7 @@ import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdsScreen
 import com.example.etransportapp.presentation.ui.home.myAds.MyAdsScreen
 import com.example.etransportapp.presentation.ui.home.notifications.NotificationScreen
 import com.example.etransportapp.presentation.ui.home.profile.ProfileScreen
+import com.example.etransportapp.presentation.ui.home.profile.ProfileViewModel
 import com.example.etransportapp.presentation.ui.home.profile.myVehicles.MyVehiclesScreen
 import com.example.etransportapp.presentation.ui.home.profile.offers.ReceivedOffersScreen
 import com.example.etransportapp.presentation.ui.home.profile.offers.SentOffersScreen
@@ -50,6 +51,7 @@ fun NavGraph(
     val loadAdViewModel: LoadAdViewModel = viewModel()
     val vehicleAdViewModel: VehicleAdViewModel = viewModel()
     val vehicleViewModel: VehicleViewModel = viewModel()
+    val profileViewModel: ProfileViewModel = viewModel()
 
 
     NavHost(
@@ -82,7 +84,7 @@ fun NavGraph(
                 vehicleAdViewModel
             )
         }
-        composable(NavRoutes.PROFILE) { ProfileScreen(modifier, navController) }
+        composable(NavRoutes.PROFILE) { ProfileScreen(modifier, navController, viewModel = profileViewModel) }
         composable(NavRoutes.MY_VEHICLES) {
             MyVehiclesScreen(navController = navController, vehicleViewModel = vehicleViewModel)
         }
@@ -176,10 +178,10 @@ fun NavGraph(
             NotificationScreen(navController)
         }
         composable(NavRoutes.SENT_OFFERS) {
-            SentOffersScreen(navController = navController)
+            SentOffersScreen(navController = navController, viewModel = profileViewModel)
         }
         composable(NavRoutes.RECEIVED_OFFERS) {
-            ReceivedOffersScreen(navController = navController)
+            ReceivedOffersScreen(navController = navController, viewModel = profileViewModel)
         }
 
     }

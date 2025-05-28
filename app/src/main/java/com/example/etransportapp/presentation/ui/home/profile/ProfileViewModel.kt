@@ -3,6 +3,7 @@ package com.example.etransportapp.presentation.ui.home.profile
 import RetrofitInstance.cargoOfferApi
 import RetrofitInstance.vehicleOfferApi
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.auth.UserProfileResponse
@@ -61,6 +62,9 @@ class ProfileViewModel : ViewModel() {
             val cargoSent = cargoOfferApi.getOffersBySender(userId)
             val cargoReceived = cargoOfferApi.getOffersByReceiver(userId)
 
+            Log.d("ProfileViewModel", "vehicleReceived: ${vehicleReceived.code()} - ${vehicleReceived.body()?.size}")
+            Log.d("ProfileViewModel", "cargoReceived: ${cargoReceived.code()} - ${cargoReceived.body()?.size}")
+
             if (cargoSent.isSuccessful) {
                 _cargoOffersSent.value = cargoSent.body() ?: emptyList()
             }
@@ -68,6 +72,8 @@ class ProfileViewModel : ViewModel() {
                 _cargoOffersReceived.value = cargoReceived.body() ?: emptyList()
             }
         }
+
+
     }
 
 
