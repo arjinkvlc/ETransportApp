@@ -1,5 +1,6 @@
 package com.example.etransportapp.presentation.ui.home.profile.offers
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -27,6 +28,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.etransportapp.presentation.components.LoadOfferCard
@@ -106,7 +108,12 @@ fun SentOffersScreen(
 
             when (selectedTabIndex) {
                 0 -> {
-                    LazyColumn {
+                    LazyColumn(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
                         items(vehicleOffers) { offer ->
                             val receiver = viewModel.senderInfoMap[offer.receiverId]
                             VehicleOfferCard(
@@ -123,7 +130,12 @@ fun SentOffersScreen(
                 }
 
                 1 -> {
-                    LazyColumn {
+                    LazyColumn(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxSize(),
+                        verticalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
                         items(cargoOffers) { offer ->
                             val receiver = viewModel.senderInfoMap[offer.receiverId]
                             LoadOfferCard(

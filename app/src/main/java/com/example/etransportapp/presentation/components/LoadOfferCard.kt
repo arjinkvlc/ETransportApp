@@ -73,15 +73,25 @@ fun LoadOfferCard(
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.Gray
                 )
+
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            Text(
-                text = "İlan Başlığı: ${offer.cargoAdTitle}",
-                style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium
-            )
+            Row{
+                Text(
+                    text = "İlan Başlığı: ${offer.cargoAdTitle}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Medium
+                )
+                Spacer(modifier = Modifier.weight(1f))
+                Text(
+                    text = "Teklif Fiyatı: ${offer.price ?: "Bilinmiyor"}",
+                    style = MaterialTheme.typography.bodySmall,
+                    fontWeight = FontWeight.Medium
+                )
+            }
+
 
             Spacer(modifier = Modifier.height(6.dp))
 
