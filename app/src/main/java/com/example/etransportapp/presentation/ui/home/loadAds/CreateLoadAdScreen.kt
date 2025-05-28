@@ -22,7 +22,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.presentation.components.CountryCitySelector
 import com.example.etransportapp.presentation.viewModels.GeoNamesViewModel
 import com.example.etransportapp.ui.theme.DarkGray
@@ -50,7 +49,6 @@ fun CreateLoadAdScreen(
     var date by remember { mutableStateOf(TextFieldValue("")) }
     var weight by remember { mutableStateOf(TextFieldValue("")) }
 
-    // Yeni alanlar
     var origin by remember { mutableStateOf("") }
     var selectedOriginPlace by remember { mutableStateOf<GeoPlace?>(null) }
     var selectedDestinationPlace by remember { mutableStateOf<GeoPlace?>(null) }
@@ -62,10 +60,10 @@ fun CreateLoadAdScreen(
     var isCargoTypeMenuExpanded by remember { mutableStateOf(false) }
     val focusManager = LocalFocusManager.current
 
-
     val currencies = listOf("TRY", "USD", "EUR")
     var selectedCurrency by remember { mutableStateOf("TRY") }
     var isCurrencyMenuExpanded by remember { mutableStateOf(false) }
+    var suggestedPriceText by remember { mutableStateOf<String?>(null) }
 
 
     val geoNamesViewModel: GeoNamesViewModel = viewModel()
@@ -112,7 +110,8 @@ fun CreateLoadAdScreen(
                             title = title.text,
                             description = description.text,
                             weight = weight.text.toIntOrNull() ?: 0,
-                            cargoType = VehicleTypeMapUtil.getEnumValueFromLabel(selectedCargoType) ?: "Others",
+                            cargoType = VehicleTypeMapUtil.getEnumValueFromLabel(selectedCargoType)
+                                ?: "Others",
                             dropCountry = dropCountry,
                             dropCity = dropCity,
                             pickCountry = pickCountry,
@@ -148,7 +147,10 @@ fun CreateLoadAdScreen(
                     TextButton(onClick = {
                         openDatePicker.value = false
                         datePickerState.selectedDateMillis?.let { millis ->
-                            val formattedDate = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(millis))
+                            val formattedDate =
+                                SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(
+                                    Date(millis)
+                                )
                             date = TextFieldValue(formattedDate)
                         }
                     }) {
@@ -168,7 +170,7 @@ fun CreateLoadAdScreen(
         Column(
             modifier = modifier
                 .padding(innerPadding)
-                .padding(horizontal = 16.dp,)
+                .padding(horizontal = 16.dp)
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState()),
             verticalArrangement = Arrangement.spacedBy(6.dp)
@@ -187,25 +189,35 @@ fun CreateLoadAdScreen(
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Text(text = "Yükleme Noktası", color = DarkGray, style = MaterialTheme.typography.titleSmall)
+            Text(
+                text = "Yükleme Noktası",
+                color = DarkGray,
+                style = MaterialTheme.typography.titleSmall
+            )
             CountryCitySelector(
                 username = Constants.GEO_NAMES_USERNAME,
                 geoViewModel = geoNamesViewModel,
                 onSelected = { countryCode, cityName ->
                     val place = geoNamesViewModel.cities.value.find { it.name == cityName }
                     selectedOriginPlace = place
-                    val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
+                    val countryName =
+                        geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
                     origin = "$cityName, $countryName"
                 }
             )
-            Text(text = "Varış Noktası", color = DarkGray, style = MaterialTheme.typography.titleSmall)
+            Text(
+                text = "Varış Noktası",
+                color = DarkGray,
+                style = MaterialTheme.typography.titleSmall
+            )
             CountryCitySelector(
                 username = Constants.GEO_NAMES_USERNAME,
                 geoViewModel = geoNamesViewModel,
                 onSelected = { countryCode, cityName ->
                     val place = geoNamesViewModel.cities.value.find { it.name == cityName }
                     selectedDestinationPlace = place
-                    val countryName = geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
+                    val countryName =
+                        geoNamesViewModel.countries.value.find { it.countryCode == countryCode }?.countryName.orEmpty()
                     destination = "$cityName, $countryName"
                 }
             )
@@ -262,6 +274,31 @@ fun CreateLoadAdScreen(
                     }
                 )
             )
+
+            if (selectedOriginPlace != null && selectedDestinationPlace != null && weight.text.isNotEmpty() && weight.text.toDoubleOrNull() != null) {
+                LaunchedEffect(selectedOriginPlace, selectedDestinationPlace, weight.text) {
+                    val origin = "${selectedOriginPlace?.name}, ${selectedOriginPlace?.countryName}"
+                    val destination = "${selectedDestinationPlace?.name}, ${selectedDestinationPlace?.countryName}"
+                    val weightValue = weight.text.toDouble()
+                     suggestedPriceText = viewModel.fetchSuggestedPrice(
+                         pickCountry = selectedOriginPlace?.countryName ?: "",
+                        pickCity = "",
+                        dropCountry = "",
+                        dropCity = "",
+                         weight = weightValue,
+                        VehicleTypeMapUtil.getEnumValueFromLabel(selectedCargoType) ?: "Others"
+                    ).value
+                }
+                Text(
+                    text = suggestedPriceText ?: "Önerilen Fiyat: Hesaplanıyor...",
+                    color = Color.Gray,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 4.dp)
+                )
+            }
+
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
