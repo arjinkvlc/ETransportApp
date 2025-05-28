@@ -55,8 +55,8 @@ class LoadAdViewModel : ViewModel() {
             val sorted = when (sort) {
                 "En Yeni" -> ads.sortedBy { it.createdDate }
                 "En Eski" -> ads.sortedByDescending { it.createdDate }
-                "Ucuzdan Pahalıya" -> ads.sortedBy { it.price }
-                "Pahalıdan Ucuza" -> ads.sortedByDescending { it.price }
+                "Ucuzdan Pahalıya" -> ads.sortedByDescending { it.price }
+                "Pahalıdan Ucuza" -> ads.sortedBy { it.price }
                 else -> ads
             }
 
