@@ -65,12 +65,11 @@ fun ProfileScreen(
 
     Column(
         modifier = modifier
-            .padding(16.dp)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
             .fillMaxSize(),
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-            Spacer(Modifier.height(24.dp))
 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Surface(
@@ -97,7 +96,7 @@ fun ProfileScreen(
                 }
             }
 
-            Spacer(Modifier.height(32.dp))
+            Spacer(Modifier.height(28.dp))
 
             Text("İletişim Bilgileri", fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(8.dp))
@@ -128,7 +127,6 @@ fun ProfileScreen(
 
             Text("Destek", fontWeight = FontWeight.SemiBold)
             Spacer(Modifier.height(8.dp))
-            ProfileMenuItem(text = "Yardım Merkezi", onClick = { })
             ProfileMenuItem(text = "Kullanım Koşulları", onClick = { })
             ProfileMenuItem(text = "Gizlilik Politikası", onClick = { })
         }
