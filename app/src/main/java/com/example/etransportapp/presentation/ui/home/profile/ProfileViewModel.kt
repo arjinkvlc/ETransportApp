@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.auth.UserProfileResponse
 import com.example.etransportapp.data.model.offer.CargoOfferResponse
+import com.example.etransportapp.data.model.offer.CargoOfferStatusUpdateRequest
 import com.example.etransportapp.data.model.offer.VehicleOfferResponse
 import com.example.etransportapp.data.model.offer.VehicleOfferStatusUpdateRequest
 import com.example.etransportapp.util.PreferenceHelper
@@ -97,7 +98,7 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    fun cancelOffer(
+    fun cancelLoadOffer(
         offerId: Int,
         onSuccess: () -> Unit = {},
         onError: (String) -> Unit = {}
@@ -130,6 +131,41 @@ class ProfileViewModel : ViewModel() {
             }
         }
     }
+
+    fun cancelCargoOffer(
+        offerId: Int,
+        onSuccess: () -> Unit = {},
+        onError: (String) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                val request = CargoOfferStatusUpdateRequest(
+                    offerId = offerId,
+                    status = "Cancelled"
+                )
+
+                val response = RetrofitInstance.cargoOfferApi.updateOfferStatus(
+                    offerId = offerId,
+                    request = request
+                )
+
+                if (response.isSuccessful) {
+                    _cargoOffersSent.value = _cargoOffersSent.value.map {
+                        if (it.id == offerId) it.copy(status = "Cancelled") else it
+                    }
+                    _cargoOffersReceived.value = _cargoOffersReceived.value.map {
+                        if (it.id == offerId) it.copy(status = "Cancelled") else it
+                    }
+                    onSuccess()
+                } else {
+                    onError("Hata kodu: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("İstisna: ${e.localizedMessage}")
+            }
+        }
+    }
+
 
 
 

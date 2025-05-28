@@ -23,7 +23,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.offer.CargoOfferResponse
-import com.example.etransportapp.data.model.offer.VehicleOfferResponse
 import com.example.etransportapp.presentation.ui.home.profile.ProfileViewModel
 import com.example.etransportapp.ui.theme.RoseRed
 
@@ -126,7 +125,7 @@ fun LoadOfferCard(
 
                 Button(
                     onClick = {
-                        viewModel.cancelOffer(
+                        viewModel.cancelLoadOffer(
                             offerId = offer.id,
                             onSuccess = { /* StateFlow günceller */ },
                             onError = { /* Hata gösterilebilir */ }

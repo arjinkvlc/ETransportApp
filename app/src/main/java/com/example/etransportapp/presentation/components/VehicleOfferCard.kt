@@ -125,7 +125,7 @@ fun VehicleOfferCard(
 
                 Button(
                     onClick = {
-                        viewModel.cancelOffer(
+                        viewModel.cancelLoadOffer(
                             offerId = offer.id,
                             onSuccess = { /* StateFlow günceller */ },
                             onError = { /* Hata gösterilebilir */ }
