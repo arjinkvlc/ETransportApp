@@ -78,7 +78,7 @@ fun VehicleOfferCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Araç: ${offer.vehicleAdTitle}",
+                    text = "İlan Başlığı: ${offer.vehicleAdTitle}",
                 style = MaterialTheme.typography.bodyMedium,
                 fontWeight = FontWeight.Medium
             )

@@ -62,7 +62,6 @@ fun LoadAdCard(item: CargoAdResponse, onClick: () -> Unit) {
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Top
             ) {
-                // Sol sütun: bilgiler
                 Column(modifier = Modifier.weight(1f)) {
                     InfoRow("Nereden:", "${item.pickCity}, ${item.pickCountry}")
                     InfoRow("Nereye:", "${item.dropCity}, ${item.dropCountry}")
@@ -72,7 +71,6 @@ fun LoadAdCard(item: CargoAdResponse, onClick: () -> Unit) {
 
                 Spacer(modifier = Modifier.width(12.dp))
 
-                // Sağ sütun: ikon ve fiyat
                 Column(
                     horizontalAlignment = Alignment.End,
                     verticalArrangement = Arrangement.SpaceBetween,
