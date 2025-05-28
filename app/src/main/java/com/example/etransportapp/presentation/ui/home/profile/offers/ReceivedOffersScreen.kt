@@ -14,6 +14,8 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -32,6 +34,7 @@ import com.example.etransportapp.presentation.components.LoadOfferCard
 import com.example.etransportapp.presentation.components.VehicleOfferCard
 import com.example.etransportapp.presentation.ui.home.profile.ProfileViewModel
 import com.example.etransportapp.ui.theme.DarkGray
+import com.example.etransportapp.ui.theme.RoseRed
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -77,17 +80,29 @@ fun ReceivedOffersScreen(
         Column(modifier = Modifier
             .fillMaxSize()
             .padding(innerPadding)) {
-        TabRow(selectedTabIndex = selectedTabIndex) {
-            tabTitles.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
-                    text = { Text(title) }
-                )
+            TabRow(
+                selectedTabIndex = selectedTabIndex,
+                contentColor = RoseRed,
+                indicator = { tabPositions ->
+                    TabRowDefaults.Indicator(
+                        Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex]),
+                        color = RoseRed
+                    )
+                }
+            ) {
+                tabTitles.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { selectedTabIndex = index },
+                        selectedContentColor = RoseRed,
+                        unselectedContentColor = Color.Gray,
+                        text = { Text(title) }
+                    )
+                }
             }
-        }
 
-        when (selectedTabIndex) {
+
+            when (selectedTabIndex) {
             0 -> {
                 LazyColumn {
                     items(vehicleOffers) { offer ->
