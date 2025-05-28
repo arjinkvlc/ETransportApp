@@ -1,5 +1,6 @@
 package com.example.etransportapp.presentation.ui.home.profile
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -47,7 +48,7 @@ import com.example.etransportapp.util.PreferenceHelper
 fun ProfileScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController,
-    viewModel: ProfileViewModel = viewModel()
+    viewModel: ProfileViewModel
 ) {
     val context = LocalContext.current
     val profile by viewModel.userProfile.collectAsState()
@@ -56,6 +57,10 @@ fun ProfileScreen(
 
     LaunchedEffect(true) {
         viewModel.fetchUserProfile(context)
+        val userId = PreferenceHelper.getUserId(context)
+        if (!userId.isNullOrEmpty()) {
+            viewModel.fetchAllOffers(userId)
+        }
     }
 
     Column(
@@ -111,6 +116,13 @@ fun ProfileScreen(
             ProfileMenuItem(text = "Parsiyel Hesaplama") {
                 showPartialCalculator = true
             }
+            ProfileMenuItem(text = "Gönderdiğim Teklifler") {
+                navController.navigate(NavRoutes.SENT_OFFERS)
+            }
+            ProfileMenuItem(text = "Gelen Teklifler") {
+                navController.navigate(NavRoutes.RECEIVED_OFFERS)
+            }
+
 
             Spacer(Modifier.height(32.dp))
 

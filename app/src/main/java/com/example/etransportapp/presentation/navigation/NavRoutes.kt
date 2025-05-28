@@ -16,5 +16,6 @@ object NavRoutes {
     const val VEHICLE_AD_DETAIL = "vehicle_ad_detail"
     const val MY_VEHICLES = "my_vehicles"
     const val NOTIFICATIONS = "notifications"
-
+    const val SENT_OFFERS = "sent_offers"
+    const val RECEIVED_OFFERS = "received_offers"
 }
