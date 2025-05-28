@@ -122,13 +122,6 @@ fun ProfileScreen(
                 navController.navigate(NavRoutes.RECEIVED_OFFERS)
             }
 
-
-            Spacer(Modifier.height(32.dp))
-
-            Text("Destek", fontWeight = FontWeight.SemiBold)
-            Spacer(Modifier.height(8.dp))
-            ProfileMenuItem(text = "Kullanım Koşulları", onClick = { })
-            ProfileMenuItem(text = "Gizlilik Politikası", onClick = { })
         }
 
         OutlinedButton(

@@ -1,7 +1,6 @@
 package com.example.etransportapp.presentation.ui.home.loadAds
 
 import RetrofitInstance
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -279,6 +278,5 @@ class LoadAdViewModel : ViewModel() {
             }
         }
     }
-
 
 }
