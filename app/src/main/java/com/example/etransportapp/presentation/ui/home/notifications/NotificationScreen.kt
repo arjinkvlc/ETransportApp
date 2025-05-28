@@ -28,7 +28,16 @@ fun NotificationScreen(
     LaunchedEffect(Unit) {
         viewModel.fetchNotifications()
         viewModel.fetchUnreadCount()
-        viewModel.markAllAsRead()
+    }
+
+    // Ekran terk edildiğinde çalışacak
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.markAllAsRead()
+            navController.previousBackStackEntry
+                ?.savedStateHandle
+                ?.set("shouldRefreshNotifications", true)
+        }
     }
 
     Scaffold(
@@ -36,13 +45,22 @@ fun NotificationScreen(
             TopAppBar(
                 title = { Text("Bildirimler", color = Color.White) },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = {
+                        viewModel.markAllAsRead {
+                            navController.previousBackStackEntry
+                                ?.savedStateHandle
+                                ?.set("shouldRefreshNotifications", true)
+                            navController.popBackStack()
+                        }
+                    }) {
                         Icon(
                             Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Geri",
                             tint = Color.White
                         )
                     }
+
+
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = DarkGray)
             )

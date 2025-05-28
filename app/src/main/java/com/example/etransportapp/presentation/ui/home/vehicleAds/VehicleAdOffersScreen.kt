@@ -3,6 +3,8 @@ package com.example.etransportapp.presentation.ui.home.vehicleAds
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -15,9 +17,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.ui.theme.RoseRed
-import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -39,21 +38,26 @@ fun VehicleAdOffersScreen(
                 title = { Text("Gelen Teklifler", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri", tint = Color.White)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Geri",
+                            tint = Color.White
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = DarkGray)
             )
         }
     ) { padding ->
-        Column(
+        // Column yerine LazyColumn kullanılacak
+        LazyColumn(
             modifier = Modifier
                 .padding(padding)
                 .padding(16.dp)
                 .fillMaxSize(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            offers.value.forEach { offer ->
+            items(offers.value) { offer ->
                 LaunchedEffect(offer.senderId) {
                     vehicleAdViewModel.fetchUserInfo(offer.senderId)
                 }
@@ -92,14 +96,6 @@ fun VehicleAdOffersScreen(
                                 color = Color.Gray
                             )
                         }
-/*
-                        Spacer(modifier = Modifier.height(4.dp))
-
-                        Text(
-                            text = "Teklif: ${offer.price} USD",
-                            style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold
-                        )*/
 
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
@@ -109,7 +105,7 @@ fun VehicleAdOffersScreen(
 
                         Spacer(modifier = Modifier.height(8.dp))
                         Text(
-                            text = if(offer.status == "Pending") "Durum: Beklemede" else "Durum: Reddedildi",
+                            text = if (offer.status == "Pending") "Durum: Beklemede" else "Durum: Reddedildi",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
                         )
@@ -120,7 +116,8 @@ fun VehicleAdOffersScreen(
                                 onClick = {
                                     val phone = sender?.phoneNumber
                                     if (!phone.isNullOrBlank()) {
-                                        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
+                                        val intent =
+                                            Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
                                         navController.context.startActivity(intent)
                                     }
                                 },
@@ -155,5 +152,7 @@ fun VehicleAdOffersScreen(
                 }
             }
         }
+
     }
 }
+

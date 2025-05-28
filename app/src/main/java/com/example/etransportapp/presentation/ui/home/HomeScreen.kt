@@ -41,6 +41,17 @@ fun HomeScreen(navController: NavHostController) {
 
     val notificationViewModel: NotificationViewModel = viewModel()
     val unreadCount by notificationViewModel.unreadCount.collectAsState()
+    val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+
+    LaunchedEffect(savedStateHandle?.get<Boolean>("shouldRefreshNotifications")) {
+        val shouldRefresh = savedStateHandle?.get<Boolean>("shouldRefreshNotifications") ?: false
+        if (shouldRefresh) {
+            notificationViewModel.fetchUnreadCount()
+            savedStateHandle?.set("shouldRefreshNotifications", false)
+        }
+    }
+
+
 
     LaunchedEffect(Unit) {
         notificationViewModel.fetchUnreadCount()
