@@ -56,6 +56,10 @@ fun ProfileScreen(
 
     LaunchedEffect(true) {
         viewModel.fetchUserProfile(context)
+        val userId = PreferenceHelper.getUserId(context)
+        if (!userId.isNullOrEmpty()) {
+            viewModel.fetchAllOffers(userId)
+        }
     }
 
     Column(
@@ -111,6 +115,13 @@ fun ProfileScreen(
             ProfileMenuItem(text = "Parsiyel Hesaplama") {
                 showPartialCalculator = true
             }
+            ProfileMenuItem(text = "Gönderdiğim Teklifler") {
+                navController.navigate(NavRoutes.SENT_OFFERS)
+            }
+            ProfileMenuItem(text = "Gelen Teklifler") {
+                navController.navigate(NavRoutes.RECEIVED_OFFERS)
+            }
+
 
             Spacer(Modifier.height(32.dp))
 

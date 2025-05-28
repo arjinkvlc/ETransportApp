@@ -19,6 +19,8 @@ import com.example.etransportapp.presentation.ui.home.myAds.MyAdsScreen
 import com.example.etransportapp.presentation.ui.home.notifications.NotificationScreen
 import com.example.etransportapp.presentation.ui.home.profile.ProfileScreen
 import com.example.etransportapp.presentation.ui.home.profile.myVehicles.MyVehiclesScreen
+import com.example.etransportapp.presentation.ui.home.profile.offers.ReceivedOffersScreen
+import com.example.etransportapp.presentation.ui.home.profile.offers.SentOffersScreen
 import com.example.etransportapp.presentation.ui.home.vehicleAds.CreateVehicleAdScreen
 import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdDetailScreen
 import com.example.etransportapp.presentation.ui.home.vehicleAds.VehicleAdOffersScreen
@@ -172,6 +174,12 @@ fun NavGraph(
         }
         composable(NavRoutes.NOTIFICATIONS) {
             NotificationScreen(navController)
+        }
+        composable(NavRoutes.SENT_OFFERS) {
+            SentOffersScreen(navController = navController)
+        }
+        composable(NavRoutes.RECEIVED_OFFERS) {
+            ReceivedOffersScreen(navController = navController)
         }
 
     }
