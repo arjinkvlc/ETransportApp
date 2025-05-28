@@ -39,6 +39,9 @@ fun LoadOfferCard(
     val isCancelled = offer.status == "Cancelled"
     val isPending = offer.status == "Pending"
 
+    val cargoAd = viewModel.cargoAdInfoMap[offer.cargoAdId]
+    val currency = cargoAd?.currency ?: ""
+
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -86,7 +89,7 @@ fun LoadOfferCard(
                 )
                 Spacer(modifier = Modifier.weight(1f))
                 Text(
-                    text = "Teklif Fiyatı: ${offer.price ?: "Bilinmiyor"}",
+                    text = "Teklif: ${offer.price} $currency",
                     style = MaterialTheme.typography.bodySmall,
                     fontWeight = FontWeight.Medium
                 )
@@ -137,8 +140,8 @@ fun LoadOfferCard(
                     onClick = {
                         viewModel.cancelLoadOffer(
                             offerId = offer.id,
-                            onSuccess = { /* StateFlow günceller */ },
-                            onError = { /* Hata gösterilebilir */ }
+                            onSuccess = { },
+                            onError = {  }
                         )
                     },
                     enabled = !isCancelled,
