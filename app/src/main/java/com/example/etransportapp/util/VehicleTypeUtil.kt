@@ -19,5 +19,10 @@ object VehicleTypeMapUtil {
         return vehicleTypeMap.entries.find { it.value == label }?.key
     }
 
+    fun getLabelFromEnumValue(enumValue: String): String {
+        return vehicleTypeMap[enumValue] ?: "Diğer"
+    }
+
+
     val vehicleTypeLabels = vehicleTypeMap.values.toList()
 }

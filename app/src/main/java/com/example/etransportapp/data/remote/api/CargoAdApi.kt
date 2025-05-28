@@ -1,6 +1,7 @@
 package com.example.etransportapp.data.remote.api
 
 import com.example.etransportapp.data.model.ad.CargoAdCreateRequest
+import com.example.etransportapp.data.model.ad.CargoAdPriceSuggestionRequest
 import com.example.etransportapp.data.model.ad.CargoAdResponse
 import com.example.etransportapp.data.model.ad.CargoAdUpdateRequest
 import retrofit2.Response
@@ -31,4 +32,9 @@ interface CargoAdApi {
 
     @GET("api/CargoAd/by-type/{cargoType}")
     suspend fun getCargoAdsByType(@Path("cargoType") cargoType: String): Response<List<CargoAdResponse>>
+
+    @GET("api/CargoAd/predict-suggested-price/")
+    suspend fun predictSuggestedPrice(
+        @Body request: CargoAdPriceSuggestionRequest
+    ): Response<List<Double>>
 }
