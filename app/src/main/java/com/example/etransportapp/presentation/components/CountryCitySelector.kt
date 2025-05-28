@@ -93,6 +93,8 @@ fun CountryCitySelector(
                             showCountryDropdown = false
                             cityQuery = ""
                             selectedCity = ""
+                            geoViewModel.searchCities(query = "", countryCode = country.countryCode, username = username)
+
                         }
                     )
                 }
