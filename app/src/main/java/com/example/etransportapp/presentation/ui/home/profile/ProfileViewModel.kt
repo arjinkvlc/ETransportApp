@@ -4,11 +4,13 @@ import RetrofitInstance.cargoOfferApi
 import RetrofitInstance.vehicleOfferApi
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.etransportapp.data.model.auth.UserProfileResponse
 import com.example.etransportapp.data.model.offer.CargoOfferResponse
 import com.example.etransportapp.data.model.offer.VehicleOfferResponse
+import com.example.etransportapp.data.model.offer.VehicleOfferStatusUpdateRequest
 import com.example.etransportapp.util.PreferenceHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +35,9 @@ class ProfileViewModel : ViewModel() {
 
     private val _cargoOffersReceived = MutableStateFlow<List<CargoOfferResponse>>(emptyList())
     val cargoOffersReceived: StateFlow<List<CargoOfferResponse>> = _cargoOffersReceived
+
+    private val _senderInfoMap = mutableStateMapOf<String, UserProfileResponse>()
+    val senderInfoMap: Map<String, UserProfileResponse> = _senderInfoMap
 
 
     fun fetchUserProfile(context: Context) {
@@ -75,6 +80,57 @@ class ProfileViewModel : ViewModel() {
 
 
     }
+
+    fun fetchUserInfoByUserId(userId: String) {
+        viewModelScope.launch {
+            if (_senderInfoMap.contains(userId)) return@launch
+            try {
+                val response = RetrofitInstance.userApi.getUserProfile(userId)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _senderInfoMap[userId] = it
+                    }
+                }
+            } catch (e: Exception) {
+                println("Kullanıcı bilgisi alınamadı: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun cancelOffer(
+        offerId: Int,
+        onSuccess: () -> Unit = {},
+        onError: (String) -> Unit = {}
+    ) {
+        viewModelScope.launch {
+            try {
+                val request = VehicleOfferStatusUpdateRequest(
+                    offerId = offerId,
+                    status = "Cancelled"
+                )
+
+                val response = RetrofitInstance.vehicleOfferApi.updateVehicleOfferStatus(
+                    id = offerId,
+                    request = request
+                )
+
+                if (response.isSuccessful) {
+                    _vehicleOffersSent.value = _vehicleOffersSent.value.map {
+                        if (it.id == offerId) it.copy(status = "Cancelled") else it
+                    }
+                    _vehicleOffersReceived.value = _vehicleOffersReceived.value.map {
+                        if (it.id == offerId) it.copy(status = "Cancelled") else it
+                    }
+                    onSuccess()
+                } else {
+                    onError("Hata kodu: ${response.code()}")
+                }
+            } catch (e: Exception) {
+                onError("İstisna: ${e.localizedMessage}")
+            }
+        }
+    }
+
 
 
 }
