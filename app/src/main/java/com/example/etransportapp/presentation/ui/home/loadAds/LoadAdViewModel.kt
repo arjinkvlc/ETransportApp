@@ -1,5 +1,6 @@
 package com.example.etransportapp.presentation.ui.home.loadAds
 
+import RetrofitInstance
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
@@ -23,6 +24,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 class LoadAdViewModel : ViewModel() {
     val sentOffers = mutableStateOf<List<CargoOfferResponse>>(emptyList())
@@ -246,23 +248,37 @@ class LoadAdViewModel : ViewModel() {
         viewModelScope.launch {
             try {
                 val request = CargoAdPriceSuggestionRequest(
-                    pickCountry = pickCountry,
+                    cargoType = cargoType,
                     pickCity = pickCity,
-                    dropCountry = dropCountry,
-                    dropCity = dropCity,
-                    weight = weight,
-                    cargoType = cargoType
+                    pickCountry = pickCountry,
+                    deliveryCity = dropCity,
+                    deliveryCountry = dropCountry,
+                    weight = weight
                 )
+
                 val response = RetrofitInstance.cargoAdApi.predictSuggestedPrice(request)
+
                 if (response.isSuccessful) {
-                    val range = response.body()
-                    _suggestedPriceText.value = range?.takeIf { it.isNotEmpty() }
-                        ?.let { "Önerilen Fiyat Aralığı: ${it.first()} - ${it.last()}" }
+                    response.body()?.let { priceResponse ->
+                        val min = priceResponse.price.minPrice
+                        val max = priceResponse.price.maxPrice
+                        val prediction = priceResponse.price.prediction
+                        val distance = priceResponse.distance
+
+                        _suggestedPriceText.value =
+                                    "Aralık: ${min.roundToInt()} - ${max.roundToInt()} EUR\n" +
+                                    "Mesafe: ${distance.roundToInt()} km\n"
+                    } ?: run {
+                        _suggestedPriceText.value = "Sunucudan veri alınamadı."
+                    }
+                } else {
+                    _suggestedPriceText.value = "Hata: ${response.code()}"
                 }
             } catch (e: Exception) {
                 _suggestedPriceText.value = "Sunucu hatası: ${e.message}"
             }
         }
     }
+
 
 }
