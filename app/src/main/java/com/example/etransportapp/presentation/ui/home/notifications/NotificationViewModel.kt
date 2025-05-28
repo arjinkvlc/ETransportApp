@@ -20,7 +20,7 @@ class NotificationViewModel : ViewModel() {
             try {
                 val response = RetrofitInstance.notificationApi.getUserNotifications()
                 if (response.isSuccessful) {
-                    _notifications.value = (response.body() ?: emptyList()).filter { !it.isRead }
+                    _notifications.value = response.body() ?: emptyList()
                 }
 
             } catch (e: Exception) {
@@ -58,7 +58,7 @@ class NotificationViewModel : ViewModel() {
         }
     }
 
-    fun markAllAsRead() {
+    fun markAllAsRead(onComplete: (() -> Unit)? = null) {
         viewModelScope.launch {
             try {
                 val response = RetrofitInstance.notificationApi.markAllAsRead()
@@ -68,8 +68,11 @@ class NotificationViewModel : ViewModel() {
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
+            } finally {
+                onComplete?.invoke()
             }
         }
     }
+
 
 }
