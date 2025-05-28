@@ -42,6 +42,10 @@ class LoadAdViewModel : ViewModel() {
     var selectedSort by mutableStateOf("Tümü")
     var selectedFilter by mutableStateOf("Tümü")
 
+    private val _suggestedPriceText = mutableStateOf<String?>(null)
+    val suggestedPriceText: State<String?> = _suggestedPriceText
+
+
     init {
         combine(
             loadAds,
@@ -238,8 +242,7 @@ class LoadAdViewModel : ViewModel() {
         dropCity: String,
         weight: Double,
         cargoType: String
-    ): MutableState<String> {
-        var suggestedPriceText = mutableStateOf("")
+    ) {
         viewModelScope.launch {
             try {
                 val request = CargoAdPriceSuggestionRequest(
@@ -252,16 +255,14 @@ class LoadAdViewModel : ViewModel() {
                 )
                 val response = RetrofitInstance.cargoAdApi.predictSuggestedPrice(request)
                 if (response.isSuccessful) {
-                    suggestedPriceText.value = "Önerilen Fiyat Aralığı: ${
-                        response.body()?.firstOrNull()
-                    } - ${response.body()?.lastOrNull()}"
-                } else {
-                    suggestedPriceText.value = "Önerilen fiyat alınamadı: ${response.code()}"
+                    val range = response.body()
+                    _suggestedPriceText.value = range?.takeIf { it.isNotEmpty() }
+                        ?.let { "Önerilen Fiyat Aralığı: ${it.first()} - ${it.last()}" }
                 }
             } catch (e: Exception) {
-                println("Hata oluştu: ${e.message}")
+                _suggestedPriceText.value = "Sunucu hatası: ${e.message}"
             }
         }
-        return suggestedPriceText
     }
+
 }
