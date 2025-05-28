@@ -70,7 +70,7 @@ fun ProfileScreen(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Column {
-
+            Spacer(Modifier.height(16.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Surface(
                     shape = CircleShape,
