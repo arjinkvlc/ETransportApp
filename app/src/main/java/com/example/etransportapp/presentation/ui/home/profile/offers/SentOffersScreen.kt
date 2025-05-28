@@ -17,6 +17,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,48 +45,86 @@ fun SentOffersScreen(
 
     val tabTitles = listOf("Araç Teklifleri", "Yük Teklifleri")
 
+    // Gönderilen teklifler için kullanıcı bilgilerini yükle
+    LaunchedEffect(vehicleOffers) {
+        vehicleOffers.forEach { offer ->
+            viewModel.fetchUserInfoByUserId(offer.receiverId)
+        }
+    }
+
+    LaunchedEffect(cargoOffers) {
+        cargoOffers.forEach { offer ->
+            viewModel.fetchUserInfoByUserId(offer.receiverId)
+        }
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Gelen Yük Teklifleri", color = Color.White) },
+                title = { Text("Gönderdiğim Teklifler", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri", tint = Color.White)
+                        Icon(
+                            Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Geri",
+                            tint = Color.White
+                        )
                     }
                 },
                 colors = TopAppBarDefaults.mediumTopAppBarColors(containerColor = DarkGray)
             )
         }
     ) { innerPadding ->
-        Column(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
-        TabRow(selectedTabIndex = selectedTabIndex) {
-            tabTitles.forEachIndexed { index, title ->
-                Tab(
-                    selected = selectedTabIndex == index,
-                    onClick = { selectedTabIndex = index },
-                    text = { Text(title) }
-                )
-            }
-        }
-
-        when (selectedTabIndex) {
-            0 -> {
-                LazyColumn {
-                    items(vehicleOffers) { offer ->
-                        VehicleOfferCard(offer = offer, navController = navController, viewModel = viewModel)
-                    }
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            TabRow(selectedTabIndex = selectedTabIndex) {
+                tabTitles.forEachIndexed { index, title ->
+                    Tab(
+                        selected = selectedTabIndex == index,
+                        onClick = { selectedTabIndex = index },
+                        text = { Text(title) }
+                    )
                 }
             }
 
-            1 -> {
-                LazyColumn {
-                    items(cargoOffers) { offer ->
-                        LoadOfferCard(offer = offer, navController = navController, viewModel = viewModel)
+            when (selectedTabIndex) {
+                0 -> {
+                    LazyColumn {
+                        items(vehicleOffers) { offer ->
+                            val receiver = viewModel.senderInfoMap[offer.receiverId]
+                            VehicleOfferCard(
+                                offer = offer,
+                                senderName = receiver?.name,
+                                senderSurname = receiver?.surname,
+                                senderPhone = receiver?.phoneNumber,
+                                senderEmail = receiver?.email,
+                                navController = navController,
+                                viewModel = viewModel
+                            )
+                        }
+                    }
+                }
+
+                1 -> {
+                    LazyColumn {
+                        items(cargoOffers) { offer ->
+                            val receiver = viewModel.senderInfoMap[offer.receiverId]
+                            LoadOfferCard(
+                                offer = offer,
+                                senderName = receiver?.name,
+                                senderSurname = receiver?.surname,
+                                senderPhone = receiver?.phoneNumber,
+                                senderEmail = receiver?.email,
+                                navController = navController,
+                                viewModel = viewModel
+                            )
+                        }
                     }
                 }
             }
         }
-    }
     }
 }
-

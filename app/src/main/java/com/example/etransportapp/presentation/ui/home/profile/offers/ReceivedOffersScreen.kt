@@ -47,10 +47,24 @@ fun ReceivedOffersScreen(
 
     val tabTitles = listOf("Araç Teklifleri", "Yük Teklifleri")
 
+    LaunchedEffect(vehicleOffers) {
+        vehicleOffers.forEach { offer ->
+            viewModel.fetchUserInfoByUserId(offer.senderId)
+        }
+    }
+
+    LaunchedEffect(cargoOffers) {
+        vehicleOffers.forEach { offer ->
+            viewModel.fetchUserInfoByUserId(offer.senderId)
+        }
+    }
+
+
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Gelen Yük Teklifleri", color = Color.White) },
+                title = { Text("Gelen Teklifler", color = Color.White) },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Geri", tint = Color.White)
@@ -77,7 +91,16 @@ fun ReceivedOffersScreen(
             0 -> {
                 LazyColumn {
                     items(vehicleOffers) { offer ->
-                        VehicleOfferCard(offer = offer, navController = navController, viewModel = viewModel)
+                        val sender = viewModel.senderInfoMap[offer.senderId]
+                        VehicleOfferCard(
+                            offer = offer,
+                            senderName = sender?.name,
+                            senderSurname = sender?.surname,
+                            senderPhone = sender?.phoneNumber,
+                            senderEmail = sender?.email,
+                            navController = navController,
+                            viewModel = viewModel
+                        )
                     }
                 }
             }
@@ -85,7 +108,16 @@ fun ReceivedOffersScreen(
             1 -> {
                 LazyColumn {
                     items(cargoOffers) { offer ->
-                        LoadOfferCard(offer = offer, navController = navController, viewModel = viewModel)
+                        val sender = viewModel.senderInfoMap[offer.senderId]
+                        LoadOfferCard(
+                            offer = offer,
+                            senderName = sender?.name,
+                            senderSurname = sender?.surname,
+                            senderPhone = sender?.phoneNumber,
+                            senderEmail = sender?.email,
+                            navController = navController,
+                            viewModel = viewModel
+                        )
                     }
                 }
             }
