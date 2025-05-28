@@ -98,7 +98,7 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    fun cancelLoadOffer(
+    fun cancelVehicleOffer(
         offerId: Int,
         onSuccess: () -> Unit = {},
         onError: (String) -> Unit = {}
@@ -132,7 +132,7 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-    fun cancelCargoOffer(
+    fun cancelLoadOffer(
         offerId: Int,
         onSuccess: () -> Unit = {},
         onError: (String) -> Unit = {}
