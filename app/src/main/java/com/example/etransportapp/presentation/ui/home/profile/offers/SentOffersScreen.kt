@@ -50,7 +50,6 @@ fun SentOffersScreen(
 
     val tabTitles = listOf("Araç Teklifleri", "Yük Teklifleri")
 
-    // Gönderilen teklifler için kullanıcı bilgilerini yükle
     LaunchedEffect(vehicleOffers) {
         vehicleOffers.forEach { offer ->
             viewModel.fetchUserInfoByUserId(offer.receiverId)
@@ -60,6 +59,7 @@ fun SentOffersScreen(
     LaunchedEffect(cargoOffers) {
         cargoOffers.forEach { offer ->
             viewModel.fetchUserInfoByUserId(offer.receiverId)
+            viewModel.fetchCargoAdById(offer.cargoAdId)
         }
     }
 

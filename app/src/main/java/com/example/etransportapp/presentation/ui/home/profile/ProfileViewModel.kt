@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.etransportapp.data.model.ad.CargoAdResponse
 import com.example.etransportapp.data.model.auth.UserProfileResponse
 import com.example.etransportapp.data.model.offer.CargoOfferResponse
 import com.example.etransportapp.data.model.offer.CargoOfferStatusUpdateRequest
@@ -40,6 +41,8 @@ class ProfileViewModel : ViewModel() {
     private val _senderInfoMap = mutableStateMapOf<String, UserProfileResponse>()
     val senderInfoMap: Map<String, UserProfileResponse> = _senderInfoMap
 
+    private val _cargoAdInfoMap = mutableStateMapOf<Int, CargoAdResponse>()
+    val cargoAdInfoMap: Map<Int, CargoAdResponse> = _cargoAdInfoMap
 
     fun fetchUserProfile(context: Context) {
         val userId = PreferenceHelper.getUserId(context) ?: return
@@ -166,7 +169,20 @@ class ProfileViewModel : ViewModel() {
         }
     }
 
-
-
+    fun fetchCargoAdById(cargoAdId: Int) {
+        viewModelScope.launch {
+            if (_cargoAdInfoMap.containsKey(cargoAdId)) return@launch
+            try {
+                val response = RetrofitInstance.cargoAdApi.getCargoAdById(cargoAdId)
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        _cargoAdInfoMap[cargoAdId] = it
+                    }
+                }
+            } catch (e: Exception) {
+                println("CargoAd bilgisi alınamadı: ${e.localizedMessage}")
+            }
+        }
+    }
 
 }

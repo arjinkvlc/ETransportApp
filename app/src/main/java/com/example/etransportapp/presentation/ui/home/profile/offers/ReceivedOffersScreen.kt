@@ -59,8 +59,9 @@ fun ReceivedOffersScreen(
     }
 
     LaunchedEffect(cargoOffers) {
-        vehicleOffers.forEach { offer ->
+        cargoOffers.forEach { offer ->
             viewModel.fetchUserInfoByUserId(offer.senderId)
+            viewModel.fetchCargoAdById(offer.cargoAdId)
         }
     }
 
