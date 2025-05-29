@@ -3,11 +3,11 @@ package com.example.etransportapp.presentation.ui.loginAndRegister.intro
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -39,18 +39,12 @@ fun IntroScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Spacer(modifier = Modifier.weight(1f))
-        Row(modifier = Modifier.padding(bottom = 20.dp)) {
-            Image(
-                modifier = Modifier,
-                painter = painterResource(id = R.drawable.ic_logo),
-                contentDescription = "Logo Image"
-            )
-            Image(
-                painter = painterResource(id = R.drawable.text_etasimacilik),
-                contentDescription = "E-Tasimacilik"
-            )
-        }
-
+        Image(
+            modifier = Modifier.size(128.dp),
+            painter = painterResource(id = R.drawable.ic_transport_logo),
+            contentDescription = "Logo Image"
+        )
+        Spacer(modifier = Modifier.weight(0.5f))
         Button(
             modifier = Modifier
                 .padding(horizontal = 30.dp)
@@ -63,7 +57,6 @@ fun IntroScreen(
             Text(text = "Giriş Yap")
         }
 
-        // Kayıt Ol Butonu
         Button(
             modifier = Modifier
                 .padding(horizontal = 30.dp)
@@ -90,11 +83,3 @@ fun IntroScreen(
         )
     }
 }
-
-
-/*
-@Preview
-@Composable
-fun IntroScreenPreview() {
-    IntroScreen(modifier, navController)
-}*/
