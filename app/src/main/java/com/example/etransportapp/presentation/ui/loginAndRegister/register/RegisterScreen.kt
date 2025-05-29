@@ -43,6 +43,8 @@ fun RegisterScreen(
     var passwordVisible by remember { mutableStateOf(false) }
     var confirmPasswordVisible by remember { mutableStateOf(false) }
     var verificationCode by remember { mutableStateOf("") }
+    var disclaimerAccepted by remember { mutableStateOf(false) }
+    var showDisclaimerDialog by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -151,7 +153,7 @@ fun RegisterScreen(
                                     confirmPasswordVisible = !confirmPasswordVisible
                                 }) {
                                     Icon(
-                                        painter = painterResource(id = if (passwordVisible) R.drawable.baseline_visibility_24 else R.drawable.baseline_visibility_off_24),
+                                        painter = painterResource(id = if (confirmPasswordVisible) R.drawable.baseline_visibility_24 else R.drawable.baseline_visibility_off_24),
                                         tint = Color.Gray,
                                         contentDescription = "Toggle password visibility"
                                     )
@@ -159,17 +161,26 @@ fun RegisterScreen(
                             },
                             modifier = Modifier.fillMaxWidth()
                         )
+                        DisclaimerCheckboxSection(
+                            checked = disclaimerAccepted,
+                            onCheckedChange = {
+                                if (!disclaimerAccepted) showDisclaimerDialog =
+                                    true else disclaimerAccepted = false
+                            }
+                        )
                         Button(
                             onClick = {
                                 viewModel.registerUser(context) {
                                     step = 3
                                 }
                             },
+                            enabled = disclaimerAccepted,
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(RoseRed)
                         ) {
                             Text("Devam Et")
                         }
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
 
                     3 -> Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -199,7 +210,6 @@ fun RegisterScreen(
                                         popUpTo("register") { inclusive = true }
                                     }
                                 }
-
                             },
                             modifier = Modifier.fillMaxWidth(),
                             colors = ButtonDefaults.buttonColors(RoseRed)
@@ -219,12 +229,21 @@ fun RegisterScreen(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
                 .fillMaxWidth()
-                .then(Modifier.alpha(0.6f)),
+                .then(Modifier.alpha(0.15f)),
             contentScale = ContentScale.Crop
         )
+
+        if (showDisclaimerDialog) {
+            DisclaimerDialog(
+                onDismiss = { showDisclaimerDialog = false },
+                onAccept = {
+                    disclaimerAccepted = true
+                    showDisclaimerDialog = false
+                }
+            )
+        }
     }
 }
-
 
 @Composable
 fun StepIndicator(currentStep: Int) {
@@ -244,4 +263,53 @@ fun StepIndicator(currentStep: Int) {
             )
         }
     }
+}
+
+@Composable
+fun DisclaimerCheckboxSection(
+    checked: Boolean,
+    onCheckedChange: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onCheckedChange() },
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Checkbox(
+            checked = checked,
+            onCheckedChange = { onCheckedChange() },
+            colors = CheckboxDefaults.colors(checkedColor = RoseRed)
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text("Hüküm ve koşulları okudum ve kabul ediyorum.")
+    }
+}
+
+@Composable
+fun DisclaimerDialog(
+    onDismiss: () -> Unit,
+    onAccept: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = { Text("Hüküm ve Koşullar") },
+        text = {
+            Text(
+                "Bu uygulama, kullanıcılar arasında yük ve araç paylaşımına aracılık eder. " +
+                        "Ancak uygulama yöneticileri, kullanıcılar arasında yapılan anlaşmalardan doğacak hukuki ve mali sorumlulukları kabul etmez. " +
+                        "Kullanıcılar, kendi aralarındaki iletişim, ödeme ve diğer anlaşmaların sorumluluğunu tamamen kendileri taşır."
+            )
+        },
+        confirmButton = {
+            TextButton(onClick = { onAccept() }) {
+                Text("Onaylıyorum", color = RoseRed)
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = { onDismiss() }) {
+                Text("Vazgeç", color = RoseRed)
+            }
+        }, containerColor = Color.White
+    )
 }
