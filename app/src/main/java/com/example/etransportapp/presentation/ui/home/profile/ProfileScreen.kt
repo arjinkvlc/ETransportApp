@@ -103,8 +103,6 @@ fun ProfileScreen(
             ProfileInfoRow(icon = R.drawable.baseline_phone_24, text = profile?.phoneNumber ?: "-")
             ProfileInfoRow(icon = R.drawable.baseline_email_24, text = profile?.email ?: "-")
 
-
-
             Spacer(Modifier.height(32.dp))
 
             Text("Hesap", fontWeight = FontWeight.SemiBold)

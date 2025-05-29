@@ -7,5 +7,5 @@ data class VehicleAdUpdateRequest(
     val country: String,
     val city: String,
     val vehicleType: String,
-    val capacity: Int
+    val capacity: Double
 )
