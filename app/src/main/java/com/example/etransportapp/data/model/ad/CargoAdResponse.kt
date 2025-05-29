@@ -15,5 +15,6 @@ data class CargoAdResponse(
     val cargoType: String,
     val price: Int,
     val isExpired: Boolean,
-    val createdDate: String
+    val createdDate: String,
+    val adDate: String
 )

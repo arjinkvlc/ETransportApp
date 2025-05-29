@@ -11,5 +11,6 @@ data class CargoAdCreateRequest(
     val pickCountry: String,
     val pickCity: String,
     val currency: String,
-    val price: Int
+    val price: Int,
+    val adDate : String
 )

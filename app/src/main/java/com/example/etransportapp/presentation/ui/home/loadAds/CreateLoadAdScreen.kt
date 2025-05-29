@@ -39,6 +39,9 @@ import com.example.etransportapp.ui.theme.RoseRed
 import com.example.etransportapp.util.Constants
 import com.example.etransportapp.util.PreferenceHelper
 import com.example.etransportapp.util.VehicleTypeMapUtil
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -138,6 +141,12 @@ fun CreateLoadAdScreen(
                                 stepTwoError = "Lütfen fiyat ve yükleme tarihini giriniz."
                             } else {
                                 stepTwoError = ""
+                                val selectedMillis = datePickerState.selectedDateMillis
+                                val isoFormattedDate = selectedMillis?.let {
+                                    val localDateTime = LocalDateTime.ofInstant(Date(it).toInstant(), ZoneId.systemDefault())
+                                    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS")
+                                    localDateTime.format(formatter)
+                                } ?: ""
                                 val request = CargoAdCreateRequest(
                                     userId = PreferenceHelper.getUserId(context) ?: "",
                                     title = title.text,
@@ -151,7 +160,8 @@ fun CreateLoadAdScreen(
                                     pickCountry = selectedOriginPlace?.countryName ?: "",
                                     pickCity = selectedOriginPlace?.name ?: "",
                                     currency = selectedCurrency,
-                                    price = price.text.toIntOrNull() ?: 0
+                                    price = price.text.toIntOrNull() ?: 0,
+                                    adDate = isoFormattedDate
                                 )
                                 viewModel.createCargoAd(
                                     request = request,
