@@ -9,7 +9,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -76,6 +75,11 @@ fun CreateLoadAdScreen(
     var currentStep by remember { mutableStateOf(1) }
     var stepOneError by remember { mutableStateOf("") }
     var stepTwoError by remember { mutableStateOf("") }
+    val displaySuggestedPrice = viewModel.getConvertedSuggestedPrice(selectedCurrency)
+
+    LaunchedEffect(Unit) {
+        viewModel.fetchExchangeRates()
+    }
 
     Scaffold(
         topBar = {
@@ -266,7 +270,7 @@ fun CreateLoadAdScreen(
                     )
                 }
             } else {
-                if (!suggestedPrice.isNullOrEmpty()) {
+                if (!displaySuggestedPrice.isNullOrEmpty()) {
                     Card(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -279,15 +283,15 @@ fun CreateLoadAdScreen(
                     ) {
                         Column(
                             modifier = Modifier.padding(16.dp),
-                            verticalArrangement = Arrangement.spacedBy(4.dp)
+                            verticalArrangement = Arrangement.spacedBy(4.dp),
                         ) {
                             Text(
                                 text = "Önerilen Fiyat Aralığı",
                                 style = MaterialTheme.typography.labelSmall.copy(color = Color.White)
                             )
                             Text(
-                                text = suggestedPrice!!,
-                                style = MaterialTheme.typography.headlineSmall.copy(
+                                text = displaySuggestedPrice!!,
+                                style = MaterialTheme.typography.headlineMedium.copy(
                                     color = Color.White,
                                     fontWeight = FontWeight.Bold
                                 )
