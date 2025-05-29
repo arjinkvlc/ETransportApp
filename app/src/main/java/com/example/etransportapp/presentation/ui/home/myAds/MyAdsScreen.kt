@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.CargoAdResponse
-import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.data.model.ad.VehicleAdGetResponse
 import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdViewModel
 import com.example.etransportapp.presentation.components.LoadAdCard
@@ -34,16 +33,17 @@ fun MyAdsScreen(
     vehicleAdViewModel: VehicleAdViewModel
 ) {
 
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
-        loadAdViewModel.fetchAllCargoAds()
-        vehicleAdViewModel.fetchAllVehicleAds()
+        loadAdViewModel.fetchMyCargoAds(context)
+        vehicleAdViewModel.fetchMyVehicleAds(context)
     }
 
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
     val tabTitles = listOf("Yük İlanları", "Araç İlanları")
 
-    val myLoadAds by loadAdViewModel.loadAds.collectAsState()
-    val myVehicleAds by vehicleAdViewModel.vehicleAds.collectAsState()
+    val myLoadAds by loadAdViewModel.myLoadAds.collectAsState()
+    val myVehicleAds by vehicleAdViewModel.myVehicleAds.collectAsState()
 
     val currentUserId = PreferenceHelper.getUserId(LocalContext.current) ?: ""
 

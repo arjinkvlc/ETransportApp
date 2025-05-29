@@ -12,6 +12,7 @@ import com.example.etransportapp.data.model.auth.UserProfileResponse
 import com.example.etransportapp.data.model.offer.VehicleOfferRequest
 import com.example.etransportapp.data.model.offer.VehicleOfferResponse
 import com.example.etransportapp.data.model.offer.VehicleOfferStatusUpdateRequest
+import com.example.etransportapp.util.PreferenceHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -39,6 +40,9 @@ class VehicleAdViewModel : ViewModel() {
 
     private val _filteredVehicleAds = MutableStateFlow<List<VehicleAdGetResponse>>(emptyList())
     val filteredVehicleAds: StateFlow<List<VehicleAdGetResponse>> = _filteredVehicleAds
+
+    private val _myVehicleAds = MutableStateFlow<List<VehicleAdGetResponse>>(emptyList())
+    val myVehicleAds: StateFlow<List<VehicleAdGetResponse>> = _myVehicleAds
 
     init {
         combine(vehicleAds, snapshotFlow { selectedFilter }, snapshotFlow { selectedSort }) { ads, filter, sort ->
@@ -68,12 +72,28 @@ class VehicleAdViewModel : ViewModel() {
     }
 
 
-    fun fetchAllVehicleAds() {
+    fun fetchAllAcceptedVehicleAds() {
         viewModelScope.launch {
             try {
                 val response = RetrofitInstance.vehicleAdApi.getAllVehicleAds()
                 if (response.isSuccessful) {
                     _vehicleAds.value = response.body() ?: emptyList()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    fun fetchMyVehicleAds(context: Context) {
+        viewModelScope.launch {
+            try {
+                val response = PreferenceHelper.getUserId(context)
+                    ?.let { RetrofitInstance.vehicleAdApi.getVehicleAdsByCarrierId(it) }
+                if (response != null) {
+                    if (response.isSuccessful) {
+                        _myVehicleAds.value = response.body() ?: emptyList()
+                    }
                 }
             } catch (e: Exception) {
                 e.printStackTrace()

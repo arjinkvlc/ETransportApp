@@ -19,6 +19,11 @@ interface VehicleAdApi {
     @GET("api/VehicleAd")
     suspend fun getAllVehicleAds(@Query("status") status: Int = 1): Response<List<VehicleAdGetResponse>>
 
+    @GET("api/VehicleAd/by-carrier/{id}")
+    suspend fun getVehicleAdsByCarrierId(
+        @Path("id") carrierId: String,
+    ): Response<List<VehicleAdGetResponse>>
+
     @DELETE("api/VehicleAd/{id}")
     suspend fun deleteVehicleAd(@Path("id") id: Int): Response<Unit>
 
