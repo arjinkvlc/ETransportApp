@@ -17,6 +17,7 @@ import com.example.etransportapp.data.model.auth.UserProfileResponse
 import com.example.etransportapp.data.model.offer.CargoOfferRequest
 import com.example.etransportapp.data.model.offer.CargoOfferResponse
 import com.example.etransportapp.data.model.offer.CargoOfferStatusUpdateRequest
+import com.example.etransportapp.data.remote.service.CurrencyService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -45,6 +46,9 @@ class LoadAdViewModel : ViewModel() {
 
     private val _suggestedPriceText = mutableStateOf<String?>(null)
     val suggestedPriceText: State<String?> = _suggestedPriceText
+
+    private val _exchangeRates = mutableStateOf<Map<String, Double>>(emptyMap())
+    val exchangeRates: State<Map<String, Double>> = _exchangeRates
 
 
     init {
@@ -259,14 +263,15 @@ class LoadAdViewModel : ViewModel() {
 
                 if (response.isSuccessful) {
                     response.body()?.let { priceResponse ->
-                        val min = priceResponse.price.minPrice
-                        val max = priceResponse.price.maxPrice
-                        val prediction = priceResponse.price.prediction
-                        val distance = priceResponse.distance
+                        val min = roundToNearestFifty(priceResponse.price.minPrice)
+                        val max = roundToNearestFifty(priceResponse.price.maxPrice)
+                        val distance = priceResponse.distance.roundToInt()
 
                         _suggestedPriceText.value =
-                                    "Aralık: ${min.roundToInt()} - ${max.roundToInt()} EUR\n" +
-                                    "Mesafe: ${distance.roundToInt()} km\n"
+                            if (min == max)
+                                "$min EUR \n Mesafe: $distance km"
+                            else
+                                "$min - $max EUR \n Mesafe: $distance km"
                     } ?: run {
                         _suggestedPriceText.value = "Sunucudan veri alınamadı."
                     }
@@ -276,6 +281,48 @@ class LoadAdViewModel : ViewModel() {
             } catch (e: Exception) {
                 _suggestedPriceText.value = "Sunucu hatası: ${e.message}"
             }
+        }
+    }
+
+    private fun roundToNearestFifty(value: Double): Int {
+        return (Math.round(value / 50.0) * 50).toInt()
+    }
+
+
+    fun fetchExchangeRates(base: String = "EUR") {
+        viewModelScope.launch {
+            try {
+                val response = CurrencyService.create().getRates(base)
+                if (response.result == "success") {
+                    _exchangeRates.value = response.rates
+                } else {
+                    println("Kur verisi alınamadı: ${response.result}")
+                }
+            } catch (e: Exception) {
+                println("Kur verisi hatası: ${e.localizedMessage}")
+            }
+        }
+    }
+
+    fun getConvertedSuggestedPrice(targetCurrency: String): String? {
+        val eurText = _suggestedPriceText.value ?: return null
+        val rates = _exchangeRates.value
+        val rate = rates[targetCurrency] ?: return eurText
+
+        val regex = Regex("""(\d+)(?: - (\d+))? EUR\s+\n\s+Mesafe: (\d+) km""")
+        val match = regex.find(eurText) ?: return eurText
+
+        val minPriceEur = match.groupValues[1].toDoubleOrNull() ?: return eurText
+        val maxPriceEur = match.groupValues.getOrNull(2)?.toDoubleOrNull()
+        val distanceKm = match.groupValues[3]
+
+        return if (maxPriceEur != null && minPriceEur != maxPriceEur) {
+            val convertedMin = roundToNearestFifty(minPriceEur * rate)
+            val convertedMax = roundToNearestFifty(maxPriceEur * rate)
+            "$convertedMin - $convertedMax $targetCurrency \n Mesafe: $distanceKm km"
+        } else {
+            val converted = roundToNearestFifty(minPriceEur * rate)
+            "$converted $targetCurrency \n Mesafe: $distanceKm km"
         }
     }
 
