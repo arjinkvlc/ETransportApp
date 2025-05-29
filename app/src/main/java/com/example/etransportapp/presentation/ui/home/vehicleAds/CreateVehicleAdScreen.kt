@@ -148,7 +148,7 @@ fun CreateVehicleAdScreen(
                                 country = selectedCountry,
                                 carrierId = userId,
                                 vehicleType = VehicleTypeMapUtil.getEnumValueFromLabel(selectedCargoType) ?: "Others",
-                                capacity = capacity.text.toIntOrNull() ?: 0,
+                                capacity = capacity.text.toDoubleOrNull() ?: 0.0,
                                 adDate = isoFormattedDate
                             )
 

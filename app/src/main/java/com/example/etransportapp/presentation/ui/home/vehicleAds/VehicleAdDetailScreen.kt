@@ -126,7 +126,7 @@ fun VehicleAdDetailScreen(
                                         vehicleType = selectedCargoType,
                                         country = selectedCountry,
                                         city = selectedCity,
-                                        capacity = capacity.toIntOrNull() ?: 0
+                                        capacity = capacity.toDoubleOrNull() ?: 0.0
                                     )
                                 )
                                 isEditing = false
