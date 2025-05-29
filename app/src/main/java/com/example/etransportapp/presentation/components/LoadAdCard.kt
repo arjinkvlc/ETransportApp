@@ -48,7 +48,7 @@ fun LoadAdCard(item: CargoAdResponse, onClick: () -> Unit) {
                 )
                 Spacer(modifier = Modifier.width(8.dp))
                 Text(
-                    text = item.createdDate.take(10),
+                    text = item.adDate.take(10),
                     style = MaterialTheme.typography.labelSmall
                 )
             }
