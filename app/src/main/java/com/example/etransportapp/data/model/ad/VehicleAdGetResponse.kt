@@ -10,5 +10,6 @@ data class VehicleAdGetResponse(
     val country: String,
     val city: String,
     val capacity: Int,
-    val createdDate: String
+    val createdDate: String,
+    val adDate: String
 )

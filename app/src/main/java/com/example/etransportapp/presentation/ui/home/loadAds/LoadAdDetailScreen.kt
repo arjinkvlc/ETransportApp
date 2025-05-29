@@ -79,7 +79,7 @@ fun LoadAdDetailScreen(
     var origin by remember { mutableStateOf("${loadAd.pickCity}, ${loadAd.pickCountry}") }
     var destination by remember { mutableStateOf("${loadAd.dropCity}, ${loadAd.dropCountry}") }
     var price by remember { mutableStateOf(loadAd.price.toString()) }
-    var date by remember { mutableStateOf(loadAd.createdDate.substring(0, 10)) }
+    var date by remember { mutableStateOf(loadAd.adDate.substring(0, 10)) }
     var weight by remember { mutableStateOf(loadAd.weight.toString()) }
     var currency by remember { mutableStateOf(loadAd.currency) }
     val currencies = listOf("TRY", "USD", "EUR")

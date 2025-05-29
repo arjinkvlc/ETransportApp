@@ -7,5 +7,6 @@ data class VehicleAdCreateRequest(
     val city: String,
     val carrierId: String,
     val vehicleType: String,
-    val capacity: Int
+    val capacity: Int,
+    val adDate: String
 )

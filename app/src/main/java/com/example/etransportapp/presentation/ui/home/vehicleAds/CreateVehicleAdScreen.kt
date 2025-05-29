@@ -35,6 +35,9 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.etransportapp.data.model.ad.VehicleAdCreateRequest
 import com.example.etransportapp.util.PreferenceHelper
 import com.example.etransportapp.util.VehicleTypeMapUtil
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -132,13 +135,21 @@ fun CreateVehicleAdScreen(
                             selectedCountry.isNotBlank() &&
                             userId != null
                         ) {
+                            val selectedMillis = datePickerState.selectedDateMillis
+                            val isoFormattedDate = selectedMillis?.let {
+                                val localDateTime = LocalDateTime.ofInstant(Date(it).toInstant(), ZoneId.systemDefault())
+                                val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSS")
+                                localDateTime.format(formatter)
+                            } ?: ""
                             val request = VehicleAdCreateRequest(
                                 title = title.text,
                                 description = description.text,
                                 city = selectedCity,
                                 country = selectedCountry,
                                 carrierId = userId,
-                                vehicleType = VehicleTypeMapUtil.getEnumValueFromLabel(selectedCargoType) ?: "Others",                                capacity = capacity.text.toIntOrNull() ?: 0
+                                vehicleType = VehicleTypeMapUtil.getEnumValueFromLabel(selectedCargoType) ?: "Others",
+                                capacity = capacity.text.toIntOrNull() ?: 0,
+                                adDate = isoFormattedDate
                             )
 
                             viewModel.createVehicleAd(

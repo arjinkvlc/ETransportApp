@@ -37,7 +37,7 @@ fun VehicleAdCard(item: VehicleAdGetResponse, onClick: () -> Unit) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(item.title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
-                Text(item.createdDate.substring(0, 10), style = MaterialTheme.typography.labelSmall)
+                Text(item.adDate.substring(0, 10), style = MaterialTheme.typography.labelSmall)
             }
 
             Spacer(Modifier.height(4.dp))
