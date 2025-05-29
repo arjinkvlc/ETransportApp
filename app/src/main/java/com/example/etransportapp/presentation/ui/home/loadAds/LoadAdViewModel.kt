@@ -348,5 +348,13 @@ class LoadAdViewModel : ViewModel() {
             "$converted $targetCurrency \n Mesafe: $distanceKm km"
         }
     }
+}
 
+fun convertStatusToString(status: String): String {
+    return when (status) {
+        "Accepted"-> "Aktif"
+        "Pending" -> "Beklemede"
+        "Rejected" -> "İptal Edildi"
+        else -> "Bilinmiyor"
+    }
 }

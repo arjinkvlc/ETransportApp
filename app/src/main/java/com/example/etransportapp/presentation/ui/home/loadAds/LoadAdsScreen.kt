@@ -85,7 +85,7 @@ fun LoadAdsScreen(
             contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp)
         ) {
             items(loads.asReversed()) { item ->
-                LoadAdCard(item) {
+                LoadAdCard(item, isComingFromMyAds = false){
                     viewModel.selectedAd = item
                     navController.navigate(NavRoutes.LOAD_AD_DETAIL)
                 }
