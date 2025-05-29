@@ -1,6 +1,7 @@
 package com.example.etransportapp.presentation.ui.home.loadAds
 
 import RetrofitInstance
+import android.content.Context
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -18,6 +19,7 @@ import com.example.etransportapp.data.model.offer.CargoOfferRequest
 import com.example.etransportapp.data.model.offer.CargoOfferResponse
 import com.example.etransportapp.data.model.offer.CargoOfferStatusUpdateRequest
 import com.example.etransportapp.data.remote.service.CurrencyService
+import com.example.etransportapp.util.PreferenceHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.combine
@@ -35,6 +37,9 @@ class LoadAdViewModel : ViewModel() {
 
     private val _loadAds = MutableStateFlow<List<CargoAdResponse>>(emptyList())
     val loadAds: StateFlow<List<CargoAdResponse>> = _loadAds
+
+    private val _myLoadAds = MutableStateFlow<List<CargoAdResponse>>(emptyList())
+    val myLoadAds: StateFlow<List<CargoAdResponse>> = _myLoadAds
 
     private val _filteredLoadAds = MutableStateFlow<List<CargoAdResponse>>(emptyList())
     val filteredLoadAds: StateFlow<List<CargoAdResponse>> = _filteredLoadAds
@@ -89,6 +94,24 @@ class LoadAdViewModel : ViewModel() {
         }
     }
 
+    fun fetchMyCargoAds(context: Context) {
+        viewModelScope.launch {
+            try {
+                val response = PreferenceHelper.getUserId(context)
+                    ?.let { RetrofitInstance.cargoAdApi.getCargoAdsByCustomer(it) }
+                if (response != null) {
+                    if (response.isSuccessful) {
+                        _myLoadAds.value = response.body() ?: emptyList()
+                        println("Yüklenen kargo ilanları: ${_loadAds.value}")
+                    } else {
+                        println("Kargo ilanları çekilemedi: ${response.code()}")
+                    }
+                }
+            } catch (e: Exception) {
+                println("Hata oluştu: ${e.message}")
+            }
+        }
+    }
     var adOwnerInfo = mutableStateOf<UserProfileResponse?>(null)
         private set
 
@@ -325,5 +348,13 @@ class LoadAdViewModel : ViewModel() {
             "$converted $targetCurrency \n Mesafe: $distanceKm km"
         }
     }
+}
 
+fun convertStatusToString(status: String): String {
+    return when (status) {
+        "Accepted"-> "Aktif"
+        "Pending" -> "Beklemede"
+        "Rejected" -> "İptal Edildi"
+        else -> "Bilinmiyor"
+    }
 }

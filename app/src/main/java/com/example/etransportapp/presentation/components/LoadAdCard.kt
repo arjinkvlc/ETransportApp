@@ -17,11 +17,12 @@ import androidx.compose.ui.unit.sp
 import com.example.etransportapp.R
 import com.example.etransportapp.data.model.ad.CargoAdResponse
 import com.example.etransportapp.data.model.ad.LoadAd
+import com.example.etransportapp.presentation.ui.home.loadAds.convertStatusToString
 import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.util.VehicleTypeMapUtil
 
 @Composable
-fun LoadAdCard(item: CargoAdResponse, onClick: () -> Unit) {
+fun LoadAdCard(item: CargoAdResponse,isComingFromMyAds: Boolean = false, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -67,6 +68,9 @@ fun LoadAdCard(item: CargoAdResponse, onClick: () -> Unit) {
                     InfoRow("Nereye:", "${item.dropCity}, ${item.dropCountry}")
                     InfoRow("Yük Tipi:", VehicleTypeMapUtil.getLabelFromEnumValue(item.cargoType))
                     InfoRow("Ağırlık:", "${item.weight} Ton")
+                    if (isComingFromMyAds){
+                        InfoRow("İlan Durumu:", convertStatusToString(item.status))
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -106,3 +110,5 @@ fun LoadAdCard(item: CargoAdResponse, onClick: () -> Unit) {
         }
     }
 }
+
+

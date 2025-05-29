@@ -30,7 +30,7 @@ interface CargoOfferApi {
     suspend fun getOffersByReceiver(@Path("receiverId") receiverId: String): Response<List<CargoOfferResponse>>
 
     @GET("api/CargoOffer/cargo-ad/{cargoAdId}")
-    suspend fun getOffersByCargoAd(@Path("cargoAdId") cargoAdId: Int): Response<List<CargoOfferResponse>>
+    suspend fun getOffersByCargoAd(@Path("cargoAdId") cargoAdId: Int, @Query("status") status: Int =1): Response<List<CargoOfferResponse>>
 
     @GET("api/CargoOffer/pending/{userId}")
     suspend fun getPendingOffers(@Path("userId") userId: String): Response<List<CargoOfferResponse>>

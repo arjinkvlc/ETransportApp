@@ -14,6 +14,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -31,7 +32,6 @@ import com.example.etransportapp.presentation.navigation.NavRoutes
 import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.ui.theme.RoseRed
 
-
 @Composable
 fun LoginScreen(
     viewModel: LoginViewModel = viewModel(),
@@ -41,103 +41,111 @@ fun LoginScreen(
     val context = LocalContext.current
     var passwordVisible by remember { mutableStateOf(false) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 24.dp),
-            verticalAlignment = Alignment.CenterVertically
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Icon(
-                imageVector = Icons.Default.Close,
-                contentDescription = "Kapat",
+            Row(
                 modifier = Modifier
-                    .size(32.dp)
-                    .clickable {
-                        navController.popBackStack()
-                    }
-            )
-        }
-
-        Spacer(modifier = Modifier.height(50.dp))
-
-        Text("Giriş Yap", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-        Spacer(modifier = Modifier.height(32.dp))
-
-        OutlinedTextField(
-            value = viewModel.email,
-            onValueChange = { viewModel.email = it },
-            label = { Text("E-posta") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = viewModel.password,
-            onValueChange = { viewModel.password = it },
-            label = { Text("Şifre") },
-            visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
-            trailingIcon = {
-                IconButton(onClick = { passwordVisible = !passwordVisible }) {
-                    Icon(
-                        painter = painterResource(id = if (passwordVisible) R.drawable.baseline_visibility_24 else R.drawable.baseline_visibility_off_24),
-                        tint = Color.Gray,
-                        contentDescription = "Toggle password visibility")
-                }
-            },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        Button(
-            onClick = {
-                if (viewModel.email.isNotEmpty() && viewModel.password.isNotEmpty()) {
-                    viewModel.login(context) {
-                        navController.navigate("load_ads") {
-                            popUpTo("login") { inclusive = true }
+                    .fillMaxWidth()
+                    .padding(bottom = 24.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Close,
+                    contentDescription = "Kapat",
+                    modifier = Modifier
+                        .size(32.dp)
+                        .clickable {
+                            navController.popBackStack()
                         }
+                )
+            }
+
+            Spacer(modifier = Modifier.height(50.dp))
+
+            Text("Giriş Yap", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+            Spacer(modifier = Modifier.height(32.dp))
+
+            OutlinedTextField(
+                value = viewModel.email,
+                onValueChange = { viewModel.email = it },
+                label = { Text("E-posta") },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = viewModel.password,
+                onValueChange = { viewModel.password = it },
+                label = { Text("Şifre") },
+                visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                trailingIcon = {
+                    IconButton(onClick = { passwordVisible = !passwordVisible }) {
+                        Icon(
+                            painter = painterResource(
+                                id = if (passwordVisible)
+                                    R.drawable.baseline_visibility_24
+                                else
+                                    R.drawable.baseline_visibility_off_24
+                            ),
+                            tint = Color.Gray,
+                            contentDescription = "Toggle password visibility"
+                        )
                     }
-                } else {
-                    Toast.makeText(context, "E-posta ve şifre boş olamaz", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            },
-            modifier = Modifier.fillMaxWidth(),
-            colors = ButtonDefaults.buttonColors(RoseRed)
-        ) {
-            Text("Giriş Yap", fontSize = 18.sp)
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    if (viewModel.email.isNotEmpty() && viewModel.password.isNotEmpty()) {
+                        viewModel.login(context) {
+                            navController.navigate("load_ads") {
+                                popUpTo("login") { inclusive = true }
+                            }
+                        }
+                    } else {
+                        Toast.makeText(context, "E-posta ve şifre boş olamaz", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                },
+                modifier = Modifier.fillMaxWidth(),
+                colors = ButtonDefaults.buttonColors(RoseRed)
+            ) {
+                Text("Giriş Yap", fontSize = 18.sp)
+            }
+
+            Spacer(modifier = Modifier.height(12.dp))
+
+            Text(
+                text = "Şifremi unuttum?",
+                color = DarkGray,
+                modifier = Modifier.clickable {
+                    navController.navigate("forgot_password")
+                },
+                fontWeight = FontWeight.Bold
+            )
+
+            Spacer(modifier = Modifier.weight(1f))
+
         }
 
-        Spacer(modifier = Modifier.height(12.dp))
-
-        Text(
-            text = "Şifremi unuttum?",
-            color = DarkGray,
-            modifier = Modifier.clickable {
-                navController.navigate("forgot_password")
-            },
-            fontWeight = FontWeight.Bold
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Text(
-            text = "Hesabın yok mu? Kayıt Ol",
-            color = DarkGray,
+        Image(
+            painter = painterResource(id = R.drawable.intro_truck),
+            contentDescription = "Truck Image",
             modifier = Modifier
-                .clickable {
-                    navController.navigate(NavRoutes.REGISTER)
-                }
-                .padding(vertical = 16.dp),
-            fontWeight = FontWeight.Bold
+                .align(Alignment.BottomCenter)
+                .fillMaxWidth()
+                .then(Modifier.alpha(0.6f)),
+            contentScale = ContentScale.Crop
         )
     }
 }

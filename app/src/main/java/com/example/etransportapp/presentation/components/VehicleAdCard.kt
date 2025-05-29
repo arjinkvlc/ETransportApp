@@ -16,11 +16,16 @@ import androidx.compose.ui.unit.sp
 import com.example.etransportapp.R
 import com.example.etransportapp.data.model.ad.VehicleAd
 import com.example.etransportapp.data.model.ad.VehicleAdGetResponse
+import com.example.etransportapp.presentation.ui.home.loadAds.convertStatusToString
 import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.util.VehicleTypeMapUtil
 
 @Composable
-fun VehicleAdCard(item: VehicleAdGetResponse, onClick: () -> Unit) {
+fun VehicleAdCard(
+    item: VehicleAdGetResponse,
+    isComingFromMyAds: Boolean = false,
+    onClick: () -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -50,8 +55,14 @@ fun VehicleAdCard(item: VehicleAdGetResponse, onClick: () -> Unit) {
             ) {
                 Column(modifier = Modifier.weight(1f)) {
                     InfoRow("Konum:", "${item.city}, ${item.country}")
-                    InfoRow("Araç Türü:", VehicleTypeMapUtil.getLabelFromEnumValue(item.vehicleType))
+                    InfoRow(
+                        "Araç Türü:",
+                        VehicleTypeMapUtil.getLabelFromEnumValue(item.vehicleType)
+                    )
                     InfoRow("Kapasite:", "${item.capacity} Ton")
+                    if (isComingFromMyAds) {
+                        InfoRow("İlan Durumu:", convertStatusToString(item.status))
+                    }
                 }
 
                 Spacer(modifier = Modifier.width(12.dp))
@@ -66,7 +77,8 @@ fun VehicleAdCard(item: VehicleAdGetResponse, onClick: () -> Unit) {
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
-                            text = item.carrierName?.firstOrNull()?.uppercaseChar()?.toString() ?: "?",
+                            text = item.carrierName?.firstOrNull()?.uppercaseChar()?.toString()
+                                ?: "?",
                             color = Color.White,
                             fontSize = 20.sp,
                             fontWeight = FontWeight.Bold
@@ -77,7 +89,6 @@ fun VehicleAdCard(item: VehicleAdGetResponse, onClick: () -> Unit) {
         }
     }
 }
-
 
 
 @Composable

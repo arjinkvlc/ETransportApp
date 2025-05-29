@@ -15,7 +15,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.ad.CargoAdResponse
-import com.example.etransportapp.data.model.ad.LoadAd
 import com.example.etransportapp.data.model.ad.VehicleAdGetResponse
 import com.example.etransportapp.presentation.ui.home.loadAds.LoadAdViewModel
 import com.example.etransportapp.presentation.components.LoadAdCard
@@ -34,16 +33,17 @@ fun MyAdsScreen(
     vehicleAdViewModel: VehicleAdViewModel
 ) {
 
+    val context = LocalContext.current
     LaunchedEffect(Unit) {
-        loadAdViewModel.fetchAllCargoAds()
-        vehicleAdViewModel.fetchAllVehicleAds()
+        loadAdViewModel.fetchMyCargoAds(context)
+        vehicleAdViewModel.fetchMyVehicleAds(context)
     }
 
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
     val tabTitles = listOf("Yük İlanları", "Araç İlanları")
 
-    val myLoadAds by loadAdViewModel.loadAds.collectAsState()
-    val myVehicleAds by vehicleAdViewModel.vehicleAds.collectAsState()
+    val myLoadAds by loadAdViewModel.myLoadAds.collectAsState()
+    val myVehicleAds by vehicleAdViewModel.myVehicleAds.collectAsState()
 
     val currentUserId = PreferenceHelper.getUserId(LocalContext.current) ?: ""
 
@@ -68,7 +68,13 @@ fun MyAdsScreen(
                 Tab(
                     selected = selectedTabIndex == index,
                     onClick = { selectedTabIndex = index },
-                    text = { Text(text = title, fontSize =if (selectedTabIndex == index) 16.sp else 12.sp, fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Medium) },
+                    text = {
+                        Text(
+                            text = title,
+                            fontSize = if (selectedTabIndex == index) 16.sp else 12.sp,
+                            fontWeight = if (selectedTabIndex == index) FontWeight.Bold else FontWeight.Medium
+                        )
+                    },
                 )
             }
         }
@@ -91,16 +97,19 @@ fun MyAdsScreen(
 fun LoadAdsList(loadAds: List<CargoAdResponse>, onAdClick: (CargoAdResponse) -> Unit) {
     LazyColumn(modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)) {
         items(loadAds) { ad ->
-            LoadAdCard(item = ad, onClick = { onAdClick(ad) })
+            LoadAdCard(item = ad, onClick = { onAdClick(ad) }, isComingFromMyAds = true)
         }
     }
 }
 
 @Composable
-fun VehicleAdsList(vehicleAds: List<VehicleAdGetResponse>, onAdClick: (VehicleAdGetResponse) -> Unit) {
+fun VehicleAdsList(
+    vehicleAds: List<VehicleAdGetResponse>,
+    onAdClick: (VehicleAdGetResponse) -> Unit
+) {
     LazyColumn(modifier = Modifier.padding(horizontal = 4.dp, vertical = 8.dp)) {
         items(vehicleAds) { ad ->
-            VehicleAdCard(item = ad, onClick = { onAdClick(ad) })
+            VehicleAdCard(item = ad, onClick = { onAdClick(ad) }, isComingFromMyAds = true)
         }
     }
 }

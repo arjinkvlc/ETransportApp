@@ -11,7 +11,7 @@ import retrofit2.http.*
 interface CargoAdApi {
 
     @GET("api/CargoAd")
-    suspend fun getAllCargoAds(): Response<List<CargoAdResponse>>
+    suspend fun getAllCargoAds(@Query("status") status: Int = 1): Response<List<CargoAdResponse>>
 
     @GET("api/CargoAd/{id}")
     suspend fun getCargoAdById(@Path("id") id: Int): Response<CargoAdResponse>

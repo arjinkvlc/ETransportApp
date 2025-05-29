@@ -30,7 +30,10 @@ interface VehicleOfferApi {
     suspend fun getVehicleOffersByReceiverId(@Path("receiverId") receiverId: String): Response<List<VehicleOfferResponse>>
 
     @GET("api/VehicleOffer/vehicle-ad/{vehicleAdId}")
-    suspend fun getVehicleOffersByVehicleAdId(@Path("vehicleAdId") vehicleAdId: Int): Response<List<VehicleOfferResponse>>
+    suspend fun getVehicleOffersByVehicleAdId(
+        @Path("vehicleAdId") vehicleAdId: Int,
+        @Query("status") status: Int = 1
+    ): Response<List<VehicleOfferResponse>>
 
     @GET("api/VehicleOffer/pending/{userId}")
     suspend fun getPendingVehicleOffersByUserId(@Path("userId") userId: String): Response<List<VehicleOfferResponse>>
