@@ -10,21 +10,22 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface VehicleAdApi {
     @POST("api/VehicleAd")
     suspend fun createVehicleAd(@Body request: VehicleAdCreateRequest): Response<VehicleAdGetResponse>
 
     @GET("api/VehicleAd")
-    suspend fun getAllVehicleAds(): Response<List<VehicleAdGetResponse>>
+    suspend fun getAllVehicleAds(@Query("status") status: Int = 1): Response<List<VehicleAdGetResponse>>
 
     @DELETE("api/VehicleAd/{id}")
-    suspend fun deleteVehicleAd(@Path("id") id: Int): retrofit2.Response<Unit>
+    suspend fun deleteVehicleAd(@Path("id") id: Int): Response<Unit>
 
     @PUT("api/VehicleAd/{id}")
     suspend fun updateVehicleAd(
         @Path("id") id: Int,
         @Body request: VehicleAdUpdateRequest
-    ): retrofit2.Response<Unit>
+    ): Response<Unit>
 
 }
