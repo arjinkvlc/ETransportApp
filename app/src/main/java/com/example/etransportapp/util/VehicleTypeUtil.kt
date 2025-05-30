@@ -2,16 +2,16 @@ package com.example.etransportapp.util
 
 object VehicleTypeMapUtil {
     val vehicleTypeMap = mapOf(
-        "Tarpaulin Truck" to "Tenteli Tır",
-        "Box Truck" to "Kasa Kamyon",
-        "Refrigerated Truck" to "Soğutuculu Tır",
-        "Semi-Trailer" to "Dorse",
-        "Light Truck" to "Hafif Kamyonet",
-        "Container Carrier" to "Konteyner Taşıyıcı",
-        "Tank Truck" to "Tanker",
-        "Lowbed Trailer" to "Alçak Dorseli Römork",
-        "Dump Truck" to "Damperli Kamyon",
-        "Panel Van" to "Panelvan",
+        "General" to "Tenteli Tır",
+        "Fragile" to "Kasa Kamyon",
+        "Refrigerated" to "Soğutuculu Tır",
+        "Oversized" to "Dorse",
+        "LightFreight" to "Hafif Kamyonet",
+        "Containerized" to "Konteyner Taşıyıcı",
+        "Liquid" to "Tanker",
+        "HeavyMachinery" to "Alçak Dorseli Römork",
+        "Construction" to "Damperli Kamyon",
+        "Parcel" to "Panelvan",
         "Others" to "Diğer"
     )
 
