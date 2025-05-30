@@ -60,8 +60,6 @@ class VehicleAdViewModel : ViewModel() {
         }.launchIn(viewModelScope)
     }
 
-
-
     val sortedVehicleAds = derivedStateOf {
         when (selectedSort) {
             "En Yeni" -> vehicleAds.value.sortedBy { it.createdDate }
