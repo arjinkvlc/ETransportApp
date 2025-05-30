@@ -2,24 +2,13 @@ package com.example.etransportapp.presentation.components
 
 import android.content.Intent
 import android.net.Uri
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.example.etransportapp.data.model.offer.VehicleOfferResponse
@@ -37,7 +26,6 @@ fun VehicleOfferCard(
     viewModel: ProfileViewModel
 ) {
     val isCancelled = offer.status == "Cancelled"
-    val isPending = offer.status == "Pending"
 
     Card(
         modifier = Modifier
@@ -47,50 +35,65 @@ fun VehicleOfferCard(
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Row {
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
                 Text(
                     text = "${senderName.orEmpty()} ${senderSurname.orEmpty()}",
-                    style = MaterialTheme.typography.titleMedium
+                    style = MaterialTheme.typography.titleMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
                 )
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = offer.createdDate.substring(0, 10),
-                    style = MaterialTheme.typography.titleSmall
+                    style = MaterialTheme.typography.titleSmall,
+                    modifier = Modifier.wrapContentWidth()
                 )
             }
 
             Spacer(modifier = Modifier.height(6.dp))
 
-            Row {
+            Row(modifier = Modifier.fillMaxWidth()) {
                 Text(
                     text = "Telefon: ${senderPhone ?: "Bilinmiyor"}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
+                    color = Color.Gray,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
                 )
-                Spacer(modifier = Modifier.weight(1f))
+                Spacer(modifier = Modifier.width(8.dp))
                 Text(
                     text = "Mail: ${senderEmail ?: "Bilinmiyor"}",
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.Gray
+                    color = Color.Gray,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f)
                 )
             }
 
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                    text = "İlan Başlığı: ${offer.vehicleAdTitle}",
+                text = "İlan Başlığı: ${offer.vehicleAdTitle}",
                 style = MaterialTheme.typography.bodyMedium,
-                fontWeight = FontWeight.Medium
+                fontWeight = FontWeight.Medium,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
-
-            Spacer(modifier = Modifier.height(6.dp))
-
 
             Spacer(modifier = Modifier.height(6.dp))
 
             Text(
                 text = "Mesaj: ${offer.message}",
-                style = MaterialTheme.typography.bodyMedium
+                style = MaterialTheme.typography.bodyMedium,
+                maxLines = 5,
+                overflow = TextOverflow.Ellipsis
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -127,8 +130,8 @@ fun VehicleOfferCard(
                     onClick = {
                         viewModel.cancelVehicleOffer(
                             offerId = offer.id,
-                            onSuccess = { /* StateFlow günceller */ },
-                            onError = { /* Hata gösterilebilir */ }
+                            onSuccess = { /* State güncellenir */ },
+                            onError = { /* Hata gösterilir */ }
                         )
                     },
                     enabled = !isCancelled,
@@ -143,4 +146,3 @@ fun VehicleOfferCard(
         }
     }
 }
-

@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.etransportapp.R
@@ -39,9 +40,17 @@ fun VehicleAdCard(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                Text(item.title, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                Text(
+                    item.title,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1,
+                    modifier = Modifier.weight(1f)
+                )
+
                 Text(item.adDate.substring(0, 10), style = MaterialTheme.typography.labelSmall)
             }
 
