@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -49,7 +50,6 @@ fun VehicleAdOffersScreen(
             )
         }
     ) { padding ->
-        // Column yerine LazyColumn kullanılacak
         LazyColumn(
             modifier = Modifier
                 .padding(padding)
@@ -70,37 +70,55 @@ fun VehicleAdOffersScreen(
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Row {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
                             Text(
                                 text = "${sender?.name.orEmpty()} ${sender?.surname.orEmpty()}",
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.titleMedium,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                modifier = Modifier.weight(1f)
                             )
-                            Spacer(modifier = Modifier.weight(1f))
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = offer.createdDate.substring(0, 10),
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.titleSmall,
+                                modifier = Modifier.wrapContentWidth()
                             )
                         }
 
                         Spacer(modifier = Modifier.height(4.dp))
-                        Row {
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
                             Text(
                                 text = "Telefon: ${sender?.phoneNumber ?: "Bilinmiyor"}",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.Gray
+                                color = Color.Gray,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                modifier = Modifier.weight(1f)
                             )
-                            Spacer(modifier = Modifier.weight(1f))
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = "Mail: ${sender?.email ?: "Bilinmiyor"}",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.Gray
+                                color = Color.Gray,
+                                overflow = TextOverflow.Ellipsis,
+                                maxLines = 1,
+                                modifier = Modifier.weight(1f)
                             )
                         }
 
                         Spacer(modifier = Modifier.height(12.dp))
                         Text(
                             text = "Mesaj: ${offer.message}",
-                            style = MaterialTheme.typography.bodyMedium
+                            style = MaterialTheme.typography.bodyMedium,
+                            overflow = TextOverflow.Ellipsis,
+                            maxLines = 5
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
@@ -111,23 +129,23 @@ fun VehicleAdOffersScreen(
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
                             OutlinedButton(
                                 onClick = {
                                     val phone = sender?.phoneNumber
                                     if (!phone.isNullOrBlank()) {
-                                        val intent =
-                                            Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
+                                        val intent = Intent(Intent.ACTION_DIAL, Uri.parse("tel:$phone"))
                                         navController.context.startActivity(intent)
                                     }
                                 },
                                 enabled = sender?.phoneNumber != null,
-                                modifier = Modifier.width(140.dp)
+                                modifier = Modifier.weight(1f)
                             ) {
                                 Text("İletişime Geç", color = RoseRed)
                             }
-
-                            Spacer(modifier = Modifier.weight(1f))
 
                             val isCancelled = offer.status == "Cancelled"
 
@@ -135,15 +153,15 @@ fun VehicleAdOffersScreen(
                                 onClick = {
                                     vehicleAdViewModel.cancelVehicleOffer(
                                         offerId = offer.id,
-                                        onSuccess = { /* Güncellenecek */ },
-                                        onError = { /* Hata gösterilebilir */ }
+                                        onSuccess = { /* opsiyonel geri bildirim */ },
+                                        onError = { /* opsiyonel hata gösterimi */ }
                                     )
                                 },
                                 enabled = !isCancelled,
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = if (isCancelled) Color.Gray else RoseRed
                                 ),
-                                modifier = Modifier.width(140.dp)
+                                modifier = Modifier.weight(1f)
                             ) {
                                 Text("Reddet", color = Color.White)
                             }
@@ -152,7 +170,5 @@ fun VehicleAdOffersScreen(
                 }
             }
         }
-
     }
 }
-

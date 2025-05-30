@@ -13,12 +13,12 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.ui.theme.RoseRed
-import java.util.*
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -26,7 +26,6 @@ fun LoadAdOffersScreen(
     loadAdId: String,
     navController: NavHostController
 ) {
-
     val viewModel: LoadAdViewModel = viewModel()
     val offers = viewModel.cargoAdOffers
     val senderInfoMap = viewModel.senderInfoMap
@@ -72,55 +71,81 @@ fun LoadAdOffersScreen(
                     elevation = CardDefaults.cardElevation(4.dp)
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
-                        Row {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
                             Text(
                                 text = "${sender?.name.orEmpty()} ${sender?.surname.orEmpty()}",
-                                style = MaterialTheme.typography.titleMedium
+                                style = MaterialTheme.typography.titleMedium,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f)
                             )
-                            Spacer(modifier = Modifier.weight(1f))
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = offer.createdDate.substring(0, 10),
-                                style = MaterialTheme.typography.titleSmall
+                                style = MaterialTheme.typography.titleSmall,
+                                modifier = Modifier.wrapContentWidth()
                             )
                         }
 
                         Spacer(modifier = Modifier.height(4.dp))
-                        Row {
+
+                        Row(modifier = Modifier.fillMaxWidth()) {
                             Text(
                                 text = "Telefon: ${sender?.phoneNumber ?: "Bilinmiyor"}",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.Gray
+                                color = Color.Gray,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f)
                             )
-                            Spacer(modifier = Modifier.weight(1f))
+                            Spacer(modifier = Modifier.width(8.dp))
                             Text(
                                 text = "Mail: ${sender?.email ?: "Bilinmiyor"}",
                                 style = MaterialTheme.typography.bodySmall,
-                                color = Color.Gray
+                                color = Color.Gray,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier.weight(1f)
                             )
                         }
 
                         Spacer(modifier = Modifier.height(4.dp))
+
                         Text(
                             text = "Teklif: ${offer.price} USD",
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
 
                         Spacer(modifier = Modifier.height(12.dp))
+
                         Text(
                             text = "Mesaj: ${offer.message}",
                             style = MaterialTheme.typography.bodyMedium,
-                            fontWeight = FontWeight.SemiBold
+                            fontWeight = FontWeight.SemiBold,
+                            maxLines = 5,
+                            overflow = TextOverflow.Ellipsis
                         )
 
                         Spacer(modifier = Modifier.height(8.dp))
+
                         Text(
                             text = if (offer.status == "Pending") "Durum: Beklemede" else "Durum: Reddedildi",
                             style = MaterialTheme.typography.bodySmall,
                             color = Color.Gray
                         )
 
-                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp)
+                        ) {
                             OutlinedButton(
                                 onClick = {
                                     val phone = sender?.phoneNumber
@@ -131,12 +156,10 @@ fun LoadAdOffersScreen(
                                     }
                                 },
                                 enabled = sender?.phoneNumber != null,
-                                modifier = Modifier.width(140.dp)
+                                modifier = Modifier.weight(1f)
                             ) {
                                 Text("İletişime Geç", color = RoseRed)
                             }
-
-                            Spacer(modifier = Modifier.weight(1f))
 
                             val isCancelled = offer.status == "Cancelled"
 
@@ -152,7 +175,7 @@ fun LoadAdOffersScreen(
                                 colors = ButtonDefaults.buttonColors(
                                     containerColor = if (isCancelled) Color.Gray else RoseRed
                                 ),
-                                modifier = Modifier.width(140.dp)
+                                modifier = Modifier.weight(1f)
                             ) {
                                 Text("Reddet", color = Color.White)
                             }
@@ -163,4 +186,3 @@ fun LoadAdOffersScreen(
         }
     }
 }
-

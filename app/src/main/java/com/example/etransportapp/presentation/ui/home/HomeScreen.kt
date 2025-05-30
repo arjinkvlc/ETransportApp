@@ -23,7 +23,6 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.example.etransportapp.R
 import com.example.etransportapp.presentation.components.FloatingActionMenu
 import com.example.etransportapp.presentation.navigation.BottomBarScreen
 import com.example.etransportapp.presentation.navigation.NavGraph
