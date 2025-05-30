@@ -31,6 +31,7 @@ import com.example.etransportapp.presentation.navigation.NavRoutes
 import com.example.etransportapp.presentation.ui.home.notifications.NotificationViewModel
 import com.example.etransportapp.ui.theme.DarkGray
 import com.example.etransportapp.ui.theme.RoseRed
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,11 +52,18 @@ fun HomeScreen(navController: NavHostController) {
         }
     }
 
+    LaunchedEffect(Unit) {
+        while (true) {
+            notificationViewModel.fetchUnreadCount()
+            delay(3000)
+        }
+    }
 
 
+/*
     LaunchedEffect(Unit) {
         notificationViewModel.fetchUnreadCount()
-    }
+    }*/
 
     var showActionModal by remember { mutableStateOf(false) }
 
